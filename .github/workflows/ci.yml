@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Build & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run build # tsc --noEmit + vite build
+      - run: npm test # Vitest unit/component tests
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-jammy
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      # Visual baselines are committed for macOS (*-darwin.png). On Linux CI they
+      # won't match, so pixel comparisons are skipped here while EVERY functional,
+      # navigation, projects, command-palette, mobile & responsive test still runs.
+      # To also enforce visual regression in CI: generate Linux baselines once
+      # (run `npx playwright test --update-snapshots` inside this same container),
+      # commit the new *-linux.png files, and remove `--ignore-snapshots` below.
+      - run: npx playwright test --ignore-snapshots
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
