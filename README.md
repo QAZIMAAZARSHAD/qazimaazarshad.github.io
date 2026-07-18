@@ -87,6 +87,7 @@ tests/
   unit/               # Vitest + RTL unit/component tests (mirrors src/)
   e2e/                # Playwright specs + visual baselines
 public/               # images, resume, static assets
+.github/workflows/    # ci.yml (verify) + deploy.yml (Pages)
 ```
 
 ## ✍️ Editing content
@@ -94,13 +95,24 @@ public/               # images, resume, static assets
 Everything — profile, experience, projects, skills, education, achievements — lives in
 `src/data/content.ts`. Update the data and the UI updates automatically; no markup changes needed.
 
+## 🔄 CI/CD
+
+Two GitHub Actions workflows run automatically:
+
+- **`ci.yml`** — on every push and pull request: type-check + build, unit tests
+  (Vitest), and the Playwright e2e/functional/responsive suite.
+- **`deploy.yml`** — on every push to `main`: builds and deploys to **GitHub Pages**
+  at [qazimaazarshad.github.io](https://qazimaazarshad.github.io/) (Pages source is
+  "GitHub Actions").
+
 ## 📦 Deployment
 
-Deployed to **GitHub Pages** (user site) from the `gh-pages` branch:
+Deployment is fully automated via `deploy.yml` — just push to `main`. To build/preview
+locally:
 
 ```bash
-npm run build
-npx gh-pages -d dist
+npm run build      # → dist/
+npm run preview
 ```
 
 ## 📫 Connect
