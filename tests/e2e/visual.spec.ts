@@ -14,10 +14,12 @@ const SECTION_IDS = [
   "hero",
   "about",
   "experience",
+  "earlier",
   "projects",
   "skills",
   "education",
   "achievements",
+  "hobbies",
   "contact",
 ] as const;
 
@@ -64,4 +66,20 @@ test("projects filtered by Game", async ({ page }) => {
   const grid = projects.locator("div.grid").first();
   await expect(grid).toBeVisible();
   await expect(grid).toHaveScreenshot("projects-filtered-game.png");
+});
+
+test("footer", async ({ page }) => {
+  const footer = page.locator("footer");
+  await footer.scrollIntoViewIfNeeded();
+  await expect(footer.getByRole("heading").first()).toBeVisible();
+  await page.waitForTimeout(500);
+  await expect(footer).toHaveScreenshot("footer.png");
+});
+
+test("command palette", async ({ page }) => {
+  await page.keyboard.press("ControlOrMeta+k");
+  const dialog = page.getByRole("dialog", { name: /command palette/i });
+  await expect(dialog).toBeVisible();
+  await page.waitForTimeout(300);
+  await expect(dialog).toHaveScreenshot("command-palette.png");
 });
