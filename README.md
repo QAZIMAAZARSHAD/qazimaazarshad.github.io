@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-37_unit_·_29_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-38_unit_·_29_e2e-16a34a)
 
 <br/>
 
@@ -82,7 +82,10 @@ src/
     …                 # hero / projects / skills / timeline / …
   sections/           # Navbar, Hero, About, Experience, Projects, Skills, …
   App.tsx             # composition root
-e2e/                  # Playwright specs + visual baselines
+tests/
+  setup.ts            # Vitest setup (jsdom globals, jest-dom)
+  unit/               # Vitest + RTL unit/component tests (mirrors src/)
+  e2e/                # Playwright specs + visual baselines
 public/               # images, resume, static assets
 ```
 

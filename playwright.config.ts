@@ -5,7 +5,7 @@ import { defineConfig, devices } from "@playwright/test";
  * Uses the Vite dev server (base "/"), reusing one if already running.
  */
 export default defineConfig({
-  testDir: "./e2e",
+  testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

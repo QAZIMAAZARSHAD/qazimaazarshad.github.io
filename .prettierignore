@@ -5,4 +5,4 @@ test-results
 playwright-report
 package-lock.json
 public
-e2e/**/*-snapshots
+tests/e2e/**/*-snapshots
