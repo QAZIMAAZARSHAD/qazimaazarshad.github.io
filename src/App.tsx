@@ -2,6 +2,7 @@ import { MotionConfig } from "framer-motion";
 import { AnimatedBackground } from "@/components/effects/AnimatedBackground";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { Preloader } from "@/components/effects/Preloader";
+import { CommandPalette } from "@/components/command/CommandPalette";
 import { Navbar } from "@/sections/Navbar";
 import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
@@ -18,6 +19,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <Preloader />
+      <CommandPalette />
       <AnimatedBackground />
       <ScrollProgress />
       <Navbar />

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FileText, Menu, X } from "lucide-react";
+import { FileText, Menu, Search, X } from "lucide-react";
 import { navSections, profile } from "@/data/content";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { SocialLinks } from "@/components/ui/SocialLinks";
@@ -19,10 +19,31 @@ export function Navbar() {
   const drawerRef = useRef<HTMLDivElement>(null);
 
   // Close the drawer and return focus to the hamburger toggle.
+  // `preventScroll` is critical: without it, returning focus to the top-of-page
+  // toggle scrolls the viewport back up and cancels the in-page anchor
+  // navigation triggered by tapping a nav link on mobile.
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
-    toggleRef.current?.focus();
+    toggleRef.current?.focus({ preventScroll: true });
   }, []);
+
+  // Mobile nav taps: close the drawer, release the body scroll-lock, then
+  // scroll to the target ourselves. Doing it manually (instead of relying on
+  // the native anchor jump) avoids the race where the lock is still active
+  // when the browser tries to scroll — which left navigation broken on mobile.
+  const goToSection = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+      e.preventDefault();
+      setMenuOpen(false);
+      document.body.style.overflow = "";
+      toggleRef.current?.focus({ preventScroll: true });
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        history.replaceState(null, "", `#${id}`);
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -86,6 +107,9 @@ export function Navbar() {
 
   const resumeHref = asset(profile.resume);
 
+  const openPalette = () =>
+    window.dispatchEvent(new CustomEvent("open-command-palette"));
+
   return (
     <header
       className={cn(
@@ -146,6 +170,15 @@ export function Navbar() {
 
         {/* Desktop actions */}
         <div className="hidden items-center gap-3 xl:flex">
+          <button
+            type="button"
+            onClick={openPalette}
+            aria-label="Open command palette"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-400 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+          >
+            <Search className="h-4 w-4" aria-hidden />
+            <kbd className="font-mono text-xs">⌘K</kbd>
+          </button>
           <a
             href={resumeHref}
             target="_blank"
@@ -158,22 +191,32 @@ export function Navbar() {
           </a>
         </div>
 
-        {/* Mobile toggle */}
-        <button
-          ref={toggleRef}
-          type="button"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60 xl:hidden"
-        >
-          {menuOpen ? (
-            <X className="h-5 w-5" aria-hidden />
-          ) : (
-            <Menu className="h-5 w-5" aria-hidden />
-          )}
-        </button>
+        {/* Mobile actions */}
+        <div className="flex items-center gap-2 xl:hidden">
+          <button
+            type="button"
+            onClick={openPalette}
+            aria-label="Open command palette"
+            className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+          >
+            <Search className="h-5 w-5" aria-hidden />
+          </button>
+          <button
+            ref={toggleRef}
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+          >
+            {menuOpen ? (
+              <X className="h-5 w-5" aria-hidden />
+            ) : (
+              <Menu className="h-5 w-5" aria-hidden />
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile drawer */}
@@ -188,7 +231,7 @@ export function Navbar() {
             transition={{ duration: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
             className="overflow-hidden border-t border-white/10 xl:hidden"
           >
-            <div className="container-page flex flex-col gap-2 py-5">
+            <div className="container-page flex max-h-[calc(100dvh-4rem)] flex-col gap-2 overflow-y-auto py-5">
               <ul className="flex flex-col">
                 {navSections.map((section) => {
                   const isActive = active === section.id;
@@ -196,7 +239,7 @@ export function Navbar() {
                     <li key={section.id}>
                       <a
                         href={`#${section.id}`}
-                        onClick={closeMenu}
+                        onClick={(e) => goToSection(e, section.id)}
                         aria-current={isActive ? "page" : undefined}
                         className={cn(
                           "flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",

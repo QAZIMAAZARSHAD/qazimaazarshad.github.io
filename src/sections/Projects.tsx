@@ -11,7 +11,7 @@ import {
   type ProjectCategory,
   type ProjectItem,
 } from "@/data/content";
-import { staggerContainer, viewportOnce } from "@/lib/motion";
+import { staggerContainer } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 type Filter = ProjectCategory | "All";
@@ -20,7 +20,6 @@ export function Projects() {
   const [activeCategory, setActiveCategory] = useState<Filter>("All");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<ProjectItem | null>(null);
-  const [hasEntered, setHasEntered] = useState(false);
 
   const filtered = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -127,10 +126,7 @@ export function Projects() {
           key={gridKey}
           variants={staggerContainer}
           initial="hidden"
-          animate={hasEntered ? "show" : undefined}
-          whileInView={hasEntered ? undefined : "show"}
-          viewport={viewportOnce}
-          onViewportEnter={() => setHasEntered(true)}
+          animate="show"
           className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
           {filtered.map((project) => (
