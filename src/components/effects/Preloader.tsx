@@ -63,22 +63,17 @@ export function Preloader() {
           transition={{ duration: 0.5, ease: "easeInOut" }}
           className="fixed inset-0 z-[100] grid place-items-center bg-ink-950"
         >
-          {/* soft aura */}
           <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-accent-600/20 blur-[120px]" />
 
           <div className="relative flex flex-col items-center gap-7">
             <div className="relative h-20 w-20">
-              {/* pulsing glow */}
               <span className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-accent-500 to-cyan-400 opacity-50 blur-lg" />
-              {/* spinning ring */}
               <span className="absolute -inset-2 animate-spin rounded-[1.4rem] border-2 border-transparent border-t-accent-400 border-r-cyan-400/60 [animation-duration:1.1s]" />
-              {/* monogram tile */}
               <span className="relative grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-accent-500 via-accent-400 to-cyan-400 font-display text-2xl font-bold tracking-tight text-white shadow-xl shadow-accent-500/30">
                 QMA
               </span>
             </div>
 
-            {/* indeterminate progress bar */}
             <div className="relative h-1 w-44 overflow-hidden rounded-full bg-white/10">
               <motion.span
                 className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-gradient-to-r from-accent-500 to-cyan-400"

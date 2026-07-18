@@ -101,14 +101,12 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-md"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Dialog */}
       <motion.div
         ref={dialogRef}
         role="dialog"
@@ -120,7 +118,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         transition={{ duration: 0.28, ease: [0.21, 0.47, 0.32, 0.98] }}
         className="glass relative z-10 flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl shadow-2xl shadow-accent-500/10"
       >
-        {/* Close button */}
         <button
           ref={closeButtonRef}
           type="button"
@@ -132,7 +129,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         </button>
 
         <div className="overflow-y-auto">
-          {/* Hero image */}
           <div className="relative aspect-video overflow-hidden">
             <img
               src={asset(project.image)}
@@ -145,7 +141,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             </span>
           </div>
 
-          {/* Content */}
           <div className="flex flex-col gap-5 p-6 sm:p-8">
             <div className="flex flex-col gap-2">
               <h3
@@ -170,7 +165,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               {project.description}
             </p>
 
-            {/* Tech stack */}
             <div className="flex flex-col gap-2">
               <span className="font-mono text-xs uppercase tracking-[0.2em] text-accent-300">
                 Tech stack
@@ -187,7 +181,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               </div>
             </div>
 
-            {/* CTA */}
             {project.link && (
               <a
                 href={project.link}

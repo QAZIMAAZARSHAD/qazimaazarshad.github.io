@@ -42,7 +42,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("navbar", async ({ page }) => {
-  // Capture the navbar at the very top of the page.
   await expect(page.locator("nav").first()).toHaveScreenshot("navbar.png");
 });
 

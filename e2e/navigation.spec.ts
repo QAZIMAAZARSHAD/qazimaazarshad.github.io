@@ -50,10 +50,8 @@ test.describe("Navigation & page shell", () => {
   }) => {
     const backToTop = page.getByRole("button", { name: "Back to top" });
 
-    // Hidden at the top of the page.
     await expect(backToTop).toBeHidden();
 
-    // Scroll far down so the control reveals itself.
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await expect(backToTop).toBeVisible();
 

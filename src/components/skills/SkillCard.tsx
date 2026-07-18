@@ -26,7 +26,6 @@ export function SkillCard({ group, className }: Readonly<SkillCardProps>) {
         className,
       )}
     >
-      {/* Soft accent glow that intensifies on hover */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent-500/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100 opacity-40"

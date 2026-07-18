@@ -17,7 +17,6 @@ export function Contact() {
         viewport={viewportOnce}
         className="relative mx-auto max-w-3xl"
       >
-        {/* Glowing gradient aura behind the card */}
         <div
           aria-hidden
           className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-r from-accent-500/30 via-accent-400/20 to-cyan-400/30 opacity-70 blur-3xl"
@@ -27,7 +26,6 @@ export function Contact() {
           variants={scaleIn}
           className="glass relative overflow-hidden rounded-3xl px-6 py-14 text-center shadow-2xl shadow-accent-500/10 sm:px-12 sm:py-16"
         >
-          {/* Inner top glow */}
           <div
             aria-hidden
             className="pointer-events-none absolute -top-24 left-1/2 h-48 w-96 -translate-x-1/2 rounded-full bg-accent-500/20 blur-3xl"

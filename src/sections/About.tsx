@@ -20,7 +20,6 @@ export function About() {
       />
 
       <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-14">
-        {/* Left — narrative */}
         <div className="flex flex-col gap-8">
           <Reveal>
             <p className="text-lg leading-relaxed text-ink-200 sm:text-xl">
@@ -55,7 +54,6 @@ export function About() {
           </motion.ul>
         </div>
 
-        {/* Right — stat cards */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"

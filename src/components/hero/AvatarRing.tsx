@@ -61,13 +61,11 @@ export function AvatarRing() {
       transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.2 }}
       className="relative mx-auto aspect-square w-64 sm:w-80 lg:w-[24rem]"
     >
-      {/* soft glow behind the ring */}
       <div
         className="absolute inset-0 rounded-full bg-accent-500/20 blur-3xl"
         aria-hidden
       />
 
-      {/* rotating conic gradient ring */}
       <motion.div
         aria-hidden
         className="absolute inset-0 rounded-full"
@@ -96,11 +94,9 @@ export function AvatarRing() {
           loading="eager"
           decoding="async"
         />
-        {/* subtle top-down sheen over the photo */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/40 via-transparent to-transparent" />
       </div>
 
-      {/* floating tech chips */}
       {BADGES.map((badge, i) => (
         <motion.div
           key={badge.label}

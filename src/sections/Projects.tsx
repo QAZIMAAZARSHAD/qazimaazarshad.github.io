@@ -56,9 +56,7 @@ export function Projects() {
         description="A selection of things I've built — from recent side projects to my college and learning years. (My work at Salesforce is proprietary.) Filter by category or search to explore."
       />
 
-      {/* Control bar */}
       <div className="mb-10 flex flex-col gap-5">
-        {/* Category pills */}
         <div
           className="flex flex-wrap gap-2"
           role="group"
@@ -86,7 +84,6 @@ export function Projects() {
           })}
         </div>
 
-        {/* Search + result count */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="glass glass-hover relative flex items-center rounded-2xl sm:max-w-sm sm:flex-1">
             <Search
@@ -120,7 +117,6 @@ export function Projects() {
         </div>
       </div>
 
-      {/* Grid / empty state */}
       {filtered.length > 0 ? (
         <motion.div
           key={gridKey}
@@ -161,7 +157,6 @@ export function Projects() {
         </div>
       )}
 
-      {/* Detail modal */}
       <AnimatePresence>
         {selected && (
           <ProjectModal project={selected} onClose={() => setSelected(null)} />

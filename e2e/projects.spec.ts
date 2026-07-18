@@ -65,7 +65,6 @@ test.describe("Projects — filtering, search, and detail modal", () => {
       await expect(card(page, title)).toHaveCSS("opacity", "1");
     }
 
-    // A non-game project must not be rendered at all.
     await expect(
       page.getByRole("heading", { name: "Movie Streaming Website" }),
     ).toHaveCount(0);
@@ -104,7 +103,6 @@ test.describe("Projects — filtering, search, and detail modal", () => {
     await expect(openLink).toHaveAttribute("target", "_blank");
     await expect(openLink).toHaveAttribute("href", /^https?:\/\//);
 
-    // Escape closes the dialog.
     await page.keyboard.press("Escape");
     await expect(dialog).toHaveCount(0);
 

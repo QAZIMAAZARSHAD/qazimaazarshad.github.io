@@ -78,7 +78,6 @@ export function AnimatedBackground() {
         if (p.y < 0 || p.y > height) p.vy *= -1;
       }
 
-      // links
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i];
@@ -96,7 +95,6 @@ export function AnimatedBackground() {
         }
       }
 
-      // nodes
       for (const p of particles) {
         ctx.fillStyle = "rgba(165, 180, 252, 0.55)";
         ctx.beginPath();
@@ -133,10 +131,8 @@ export function AnimatedBackground() {
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* base wash */}
       <div className="absolute inset-0 bg-ink-950" />
 
-      {/* aurora blobs */}
       <div className="absolute -left-40 -top-40 h-[38rem] w-[38rem] rounded-full bg-accent-600/20 blur-[120px] animate-float" />
       <div
         className="absolute -right-32 top-1/3 h-[32rem] w-[32rem] rounded-full bg-cyan-500/15 blur-[120px] animate-float"
@@ -147,7 +143,6 @@ export function AnimatedBackground() {
         style={{ animationDelay: "-4s" }}
       />
 
-      {/* grid overlay */}
       <div
         className="absolute inset-0 opacity-[0.4]"
         style={{
@@ -161,10 +156,8 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* particle constellation */}
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
-      {/* vignette */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink-950" />
     </div>
   );

@@ -12,6 +12,7 @@ import { Projects } from "@/sections/Projects";
 import { Skills } from "@/sections/Skills";
 import { Education } from "@/sections/Education";
 import { Achievements } from "@/sections/Achievements";
+import { Hobbies } from "@/sections/Hobbies";
 import { Contact } from "@/sections/Contact";
 import { Footer } from "@/sections/Footer";
 
@@ -32,6 +33,7 @@ export default function App() {
         <Skills />
         <Education />
         <Achievements />
+        <Hobbies />
         <Contact />
       </main>
       <Footer />

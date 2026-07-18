@@ -125,7 +125,6 @@ export function Navbar() {
         aria-label="Primary"
         className="container-page flex h-16 items-center justify-between gap-4 sm:h-20"
       >
-        {/* Brand */}
         <a
           href="#hero"
           className="group flex items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
@@ -134,12 +133,11 @@ export function Navbar() {
           <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-accent-500 to-cyan-400 font-display text-sm font-bold text-white shadow-lg shadow-accent-500/25 transition-transform duration-300 group-hover:scale-105">
             QMA
           </span>
-          <span className="hidden whitespace-nowrap font-display text-base font-semibold text-white sm:block">
+          <span className="hidden whitespace-nowrap font-display text-base font-semibold text-white sm:block xl:hidden">
             {profile.name}
           </span>
         </a>
 
-        {/* Desktop links */}
         <ul className="hidden items-center gap-1 xl:flex">
           {navSections.map((section) => {
             const isActive = active === section.id;
@@ -149,7 +147,7 @@ export function Navbar() {
                   href={`#${section.id}`}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "group relative rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
+                    "group relative rounded-lg px-2.5 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
                     isActive ? "text-white" : "text-ink-400 hover:text-white",
                   )}
                 >
@@ -168,7 +166,6 @@ export function Navbar() {
           })}
         </ul>
 
-        {/* Desktop actions */}
         <div className="hidden items-center gap-3 xl:flex">
           <button
             type="button"
@@ -191,7 +188,6 @@ export function Navbar() {
           </a>
         </div>
 
-        {/* Mobile actions */}
         <div className="flex items-center gap-2 xl:hidden">
           <button
             type="button"
@@ -219,7 +215,6 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile drawer */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div

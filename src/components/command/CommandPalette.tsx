@@ -19,6 +19,7 @@ import {
   Wrench,
   GraduationCap,
   Award,
+  Gamepad2,
   Mail,
   FileText,
   Copy,
@@ -64,6 +65,7 @@ const NAV_ICONS: Record<string, IconComp> = {
   skills: Wrench,
   education: GraduationCap,
   achievements: Award,
+  hobbies: Gamepad2,
   contact: Mail,
 };
 
@@ -255,7 +257,6 @@ export function CommandPalette() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
         >
-          {/* Backdrop */}
           <button
             type="button"
             aria-label="Close command palette"
@@ -263,7 +264,6 @@ export function CommandPalette() {
             className="absolute inset-0 cursor-default bg-ink-950/70 backdrop-blur-sm"
           />
 
-          {/* Panel */}
           <motion.div
             role="dialog"
             aria-modal="true"
@@ -275,7 +275,6 @@ export function CommandPalette() {
             transition={{ duration: 0.18, ease: [0.21, 0.47, 0.32, 0.98] }}
             className="glass relative z-10 w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-black/50"
           >
-            {/* Search */}
             <div className="flex items-center gap-3 border-b border-white/10 px-4">
               <Search className="h-4 w-4 shrink-0 text-ink-400" aria-hidden />
               <input
@@ -291,7 +290,6 @@ export function CommandPalette() {
               </kbd>
             </div>
 
-            {/* Results */}
             <div ref={listRef} className="max-h-[52vh] overflow-y-auto p-2">
               {filtered.length === 0 ? (
                 <p className="px-3 py-8 text-center text-sm text-ink-400">
@@ -350,7 +348,6 @@ export function CommandPalette() {
               )}
             </div>
 
-            {/* Footer hints */}
             <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2.5 text-[11px] text-ink-500">
               <span className="inline-flex items-center gap-1.5">
                 <CommandIcon className="h-3 w-3" aria-hidden />

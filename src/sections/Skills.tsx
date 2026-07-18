@@ -11,7 +11,6 @@ export function Skills() {
     <Section id="skills">
       <SectionHeading kicker="Toolbox" title="Skills & technologies" />
 
-      {/* Top / headline skills */}
       <Reveal className="mb-10">
         <div className="flex flex-col gap-3">
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-500">

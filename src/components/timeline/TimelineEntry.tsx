@@ -30,7 +30,6 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
 
   return (
     <div className="group relative pl-14 sm:pl-20">
-      {/* Rail node */}
       <span
         aria-hidden
         className="absolute left-8 top-12 z-10 -translate-x-1/2 -translate-y-1/2 sm:left-10"
@@ -50,13 +49,11 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
         </span>
       </span>
 
-      {/* Connector from rail to card */}
       <span
         aria-hidden
         className="absolute left-8 top-12 h-px w-6 -translate-y-1/2 bg-gradient-to-r from-accent-400/50 to-transparent sm:left-10 sm:w-10"
       />
 
-      {/* Card */}
       <article className="glass glass-hover rounded-2xl p-5 shadow-lg shadow-black/20 hover:shadow-accent-500/20 sm:p-6">
         <div className="flex items-start gap-4">
           <LogoTile

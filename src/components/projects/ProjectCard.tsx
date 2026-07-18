@@ -30,7 +30,6 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
       )}
     >
-      {/* Cover image */}
       <div className="relative aspect-video overflow-hidden">
         <img
           src={asset(project.image)}
@@ -42,18 +41,15 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
         <div className="absolute inset-0 bg-ink-950/0 transition-colors duration-300 group-hover:bg-ink-950/30" />
 
-        {/* Category badge */}
         <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-accent-200 backdrop-blur">
           {project.category}
         </span>
 
-        {/* Date */}
         <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-[11px] text-ink-300 backdrop-blur">
           <Calendar className="h-3 w-3" aria-hidden="true" />
           {project.date}
         </span>
 
-        {/* View details affordance */}
         <span
           className={cn(
             "absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full",
@@ -67,7 +63,6 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
         </span>
       </div>
 
-      {/* Body */}
       <div className="flex flex-1 flex-col gap-3 p-5">
         <h3 className="font-display text-lg font-semibold leading-snug text-white transition-colors duration-300 group-hover:text-accent-200">
           {project.title}
@@ -76,7 +71,6 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
           {project.blurb}
         </p>
 
-        {/* Tech chips */}
         <div className="mt-auto flex flex-wrap gap-2 pt-2">
           {visibleTech.map((tech) => (
             <span

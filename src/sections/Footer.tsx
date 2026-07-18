@@ -8,7 +8,6 @@ export function Footer() {
 
   return (
     <footer className="relative mt-24 border-t border-white/10 bg-ink-950/60">
-      {/* Gradient hairline accent along the top border */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-500/50 to-transparent"
@@ -16,7 +15,6 @@ export function Footer() {
 
       <div className="container-page py-14 sm:py-16">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-          {/* Brand */}
           <div className="lg:col-span-5">
             <a
               href="#hero"
@@ -38,7 +36,6 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Quick links */}
           <nav aria-label="Footer navigation" className="lg:col-span-4">
             <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-accent-300">
               Explore
@@ -61,7 +58,6 @@ export function Footer() {
             </ul>
           </nav>
 
-          {/* Connect */}
           <div className="lg:col-span-3">
             <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-accent-300">
               Connect
@@ -79,7 +75,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center gap-3 border-t border-white/10 pt-8 text-center sm:flex-row sm:justify-between sm:text-left">
           <p className="text-sm text-ink-400">
             &copy; {year} {profile.name}. All rights reserved.

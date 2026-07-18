@@ -4,8 +4,6 @@
  * Every section component reads from here — no content is hard-coded in views.
  */
 
-/* ----------------------------- Types ----------------------------- */
-
 export type SocialId =
   | "linkedin"
   | "github"
@@ -69,8 +67,6 @@ export interface SkillGroup {
   icon: string; // lucide-react icon name, mapped in the Skills view
   skills: string[];
 }
-
-/* ----------------------------- Profile ----------------------------- */
 
 export const profile = {
   name: "Qazi Maaz Arshad",
@@ -145,8 +141,6 @@ export const stats: Stat[] = [
   { label: "Orchestrating AI agent teams", value: "Agent teams" },
 ];
 
-/* ----------------------------- Navigation ----------------------------- */
-
 export const navSections = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },
@@ -155,6 +149,7 @@ export const navSections = [
   { id: "skills", label: "Skills" },
   { id: "education", label: "Education" },
   { id: "achievements", label: "Achievements" },
+  { id: "hobbies", label: "Hobbies" },
   { id: "contact", label: "Contact" },
 ] as const;
 
@@ -166,8 +161,6 @@ export const topSkills: string[] = [
   "Spring Boot",
   "Microservices",
 ];
-
-/* ----------------------------- Education ----------------------------- */
 
 export const education: EducationItem[] = [
   {
@@ -195,8 +188,6 @@ export const education: EducationItem[] = [
     link: "https://barrowsschool.in/",
   },
 ];
-
-/* ----------------------------- Experience ----------------------------- */
 
 export const experience: ExperienceItem[] = [
   {
@@ -385,8 +376,6 @@ export const earlierExperience: ExperienceItem[] = [
     link: "https://www.spadelpu.com/",
   },
 ];
-
-/* ----------------------------- Projects ----------------------------- */
 
 export const projects: ProjectItem[] = [
   {
@@ -655,8 +644,6 @@ export const projectCategories: (ProjectCategory | "All")[] = [
   "App",
 ];
 
-/* ----------------------------- Skills ----------------------------- */
-
 export const skillGroups: SkillGroup[] = [
   {
     name: "Languages",
@@ -713,8 +700,6 @@ export const skillGroups: SkillGroup[] = [
   },
 ];
 
-/* ----------------------------- Achievements ----------------------------- */
-
 export const achievements: string[] = [
   "Gold Medal — International Humanity Olympiad",
   "All India Rank 49 — National Engineering Olympiad",
@@ -731,8 +716,6 @@ export const achievements: string[] = [
   "3rd Prize — Inter-School Literary Championship Quiz",
   "Winner — Badminton Championship",
 ];
-
-/* ----------------------------- Hobbies ----------------------------- */
 
 export const hobbies: string[] = [
   "Movies",

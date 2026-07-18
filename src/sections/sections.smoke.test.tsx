@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { About } from "@/sections/About";
 import { Skills } from "@/sections/Skills";
 import { Achievements } from "@/sections/Achievements";
+import { Hobbies } from "@/sections/Hobbies";
 import { Experience } from "@/sections/Experience";
 import { Education } from "@/sections/Education";
 import {
@@ -10,6 +11,7 @@ import {
   stats,
   skillGroups,
   achievements,
+  hobbies,
   experience,
   education,
 } from "@/data/content";
@@ -50,10 +52,20 @@ describe("Achievements", () => {
     expect(
       screen.getByRole("heading", { name: /awards & achievements/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText(achievements[0])).toBeInTheDocument();
+  });
+});
+
+describe("Hobbies", () => {
+  it("renders its heading and every hobby", () => {
+    render(<Hobbies />);
+
     expect(
       screen.getByRole("heading", { name: /beyond the code/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(achievements[0])).toBeInTheDocument();
+    for (const hobby of hobbies) {
+      expect(screen.getByText(hobby)).toBeInTheDocument();
+    }
   });
 });
 

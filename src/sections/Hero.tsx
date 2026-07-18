@@ -16,14 +16,12 @@ export function Hero() {
       className="relative flex min-h-screen items-center overflow-hidden pb-40 pt-28 sm:pt-32 lg:pb-24"
     >
       <div className="container-page grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
-        {/* Left — copy */}
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           animate="show"
           className="flex flex-col items-start gap-6 text-left"
         >
-          {/* Status pill */}
           <motion.span
             variants={fadeUp}
             className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-xs text-ink-300"
@@ -35,7 +33,6 @@ export function Hero() {
             Available · Building at {profile.company}
           </motion.span>
 
-          {/* Headline — name, staggered word reveal */}
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[3.75rem] xl:text-7xl">
             <span className="sr-only">{profile.name}</span>
             <span
@@ -54,7 +51,6 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* Role line */}
           <motion.p
             variants={fadeUp}
             className="text-lg text-ink-300 sm:text-xl"
@@ -64,7 +60,6 @@ export function Hero() {
             <span className="text-accent-300">{profile.company}</span>
           </motion.p>
 
-          {/* Tagline */}
           <motion.p
             variants={fadeUp}
             className="max-w-xl text-base leading-relaxed text-ink-400 sm:text-lg"
@@ -72,7 +67,6 @@ export function Hero() {
             {profile.tagline}
           </motion.p>
 
-          {/* CTAs */}
           <motion.div
             variants={fadeUp}
             className="flex flex-wrap items-center gap-3"
@@ -106,13 +100,11 @@ export function Hero() {
             </a>
           </motion.div>
 
-          {/* Socials */}
           <motion.div variants={fadeUp}>
             <SocialLinks only={["github", "linkedin", "instagram", "email"]} />
           </motion.div>
         </motion.div>
 
-        {/* Right — decorative avatar */}
         <div className="order-first flex justify-center lg:order-none lg:justify-end">
           <AvatarRing />
         </div>

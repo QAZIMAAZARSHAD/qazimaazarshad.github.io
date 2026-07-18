@@ -55,7 +55,6 @@ for (const viewport of VIEWPORTS) {
     );
     expect(scrollWidth).toBeLessThanOrEqual(viewport.width + 1);
 
-    // Responsive nav behavior around the `xl` breakpoint.
     const hamburger = page.getByRole("button", { name: "Open menu" });
     // Scope to the Primary navigation so we don't also match the footer nav.
     const desktopLink = page
@@ -70,7 +69,6 @@ for (const viewport of VIEWPORTS) {
       await expect(hamburger).toBeHidden();
     }
 
-    // Hero name is present.
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
     // Visual record — hero section element screenshot per viewport.
