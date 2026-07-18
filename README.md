@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-38_unit_·_29_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-38_unit_·_40_e2e-16a34a)
 
 <br/>
 
@@ -33,10 +33,11 @@ responsiveness test suite.
 
 ## ✨ Highlights
 
+- **⌘K command palette** — Spotlight-style launcher to jump to any section, open projects, copy email, or download the résumé (keyboard-driven)
 - **Animated canvas** particle constellation + aurora backdrop that reacts to the cursor
 - **Interactive projects gallery** — searchable, category-filterable, with detail modals (focus-trapped & accessible)
 - **Scroll-reveal** animations, scroll progress bar, active-section nav tracking, 3D tilt cards, glassmorphism UI
-- **Fancy preloader**, custom favicon, and a polished dark theme (violet → cyan)
+- **Fancy preloader**, custom QMA favicon, and a polished dark theme (violet → cyan)
 - **Fully responsive** (verified across 7 viewports) and **accessible** — keyboard-navigable, `prefers-reduced-motion` aware
 - **100% data-driven** — all content lives in one typed source (`src/data/content.ts`)
 
@@ -50,6 +51,7 @@ responsiveness test suite.
 | Animation | **Framer Motion**                                                             |
 | Icons     | lucide-react + react-icons                                                    |
 | Testing   | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
+| CI/CD     | **GitHub Actions** — verify on push/PR, auto-deploy to Pages on `main`        |
 
 ## 🚀 Getting started
 
@@ -79,8 +81,10 @@ src/
   components/
     ui/               # Section, SectionHeading, Reveal, TiltCard, SocialLinks
     effects/          # AnimatedBackground, ScrollProgress, Preloader
+    command/          # CommandPalette (⌘K)
     …                 # hero / projects / skills / timeline / …
-  sections/           # Navbar, Hero, About, Experience, Projects, Skills, …
+  sections/           # Navbar, Hero, About, Experience, EarlierExperience,
+                      # Projects, Skills, Education, Achievements, Hobbies, Contact, Footer
   App.tsx             # composition root
 tests/
   setup.ts            # Vitest setup (jsdom globals, jest-dom)
