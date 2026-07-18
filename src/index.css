@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Guard against tiny horizontal overflow from decorative/offset elements. */
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-ink-950 text-ink-200 font-sans antialiased;
+    overflow-x: clip;
+    max-width: 100vw;
+  }
+
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  ::selection {
+    @apply bg-accent-500/30 text-white;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /* Gradient text used for headings / brand */
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent-400 via-accent-300 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  /* Frosted glass card */
+  .glass {
+    @apply border border-white/10 bg-white/[0.03] backdrop-blur-xl;
+  }
+
+  .glass-hover {
+    @apply transition-all duration-300 hover:border-accent-400/40 hover:bg-white/[0.06];
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#4f46e5, #06b6d4);
+  border-radius: 999px;
+  border: 2px solid #020617;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(#6366f1, #22d3ee);
+}
