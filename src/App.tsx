@@ -3,6 +3,7 @@ import { AnimatedBackground } from "@/components/effects/AnimatedBackground";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { Preloader } from "@/components/effects/Preloader";
 import { CommandPalette } from "@/components/command/CommandPalette";
+import { AiAssistant } from "@/components/ai/AiAssistant";
 import { Navbar } from "@/sections/Navbar";
 import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
@@ -21,6 +22,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <Preloader />
       <CommandPalette />
+      <AiAssistant />
       <AnimatedBackground />
       <ScrollProgress />
       <Navbar />

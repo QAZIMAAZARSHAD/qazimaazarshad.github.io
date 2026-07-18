@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-38_unit_·_40_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-38_unit_·_42_e2e-16a34a)
 
 <br/>
 
@@ -33,6 +33,7 @@ responsiveness test suite.
 
 ## ✨ Highlights
 
+- **🤖 In-browser AI assistant** — "Ask my portfolio" runs a real LLM **100% client-side** (WebLLM + WebGPU), grounded on my content — no backend, no API keys, private to the visitor
 - **⌘K command palette** — Spotlight-style launcher to jump to any section, open projects, copy email, or download the résumé (keyboard-driven)
 - **Animated canvas** particle constellation + aurora backdrop that reacts to the cursor
 - **Interactive projects gallery** — searchable, category-filterable, with detail modals (focus-trapped & accessible)
@@ -49,6 +50,7 @@ responsiveness test suite.
 | Build     | **Vite**                                                                      |
 | Styling   | **Tailwind CSS** (custom design tokens)                                       |
 | Animation | **Framer Motion**                                                             |
+| AI        | **WebLLM** — in-browser LLM (WebGPU) powering the "Ask my portfolio" chat     |
 | Icons     | lucide-react + react-icons                                                    |
 | Testing   | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
 | CI/CD     | **GitHub Actions** — verify on push/PR, auto-deploy to Pages on `main`        |
@@ -76,12 +78,13 @@ npm run test:e2e:update  # regenerate visual baselines
 ```
 src/
   data/content.ts     # single source of truth for all content (typed)
-  lib/                # utils (cn, asset), motion variants
+  lib/                # utils (cn, asset), motion variants, aiContext (AI grounding)
   hooks/              # useActiveSection
   components/
     ui/               # Section, SectionHeading, Reveal, TiltCard, SocialLinks
     effects/          # AnimatedBackground, ScrollProgress, Preloader
     command/          # CommandPalette (⌘K)
+    ai/               # AiAssistant — in-browser "Ask my portfolio" chat
     …                 # hero / projects / skills / timeline / …
   sections/           # Navbar, Hero, About, Experience, EarlierExperience,
                       # Projects, Skills, Education, Achievements, Hobbies, Contact, Footer

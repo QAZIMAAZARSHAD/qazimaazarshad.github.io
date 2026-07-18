@@ -122,6 +122,17 @@ export function CommandPalette() {
 
     const actions: Command[] = [
       {
+        id: "ai",
+        title: "Ask the AI assistant",
+        group: "Actions",
+        icon: Sparkles,
+        keywords: "ai chat ask question bot assistant",
+        perform: () => {
+          setOpen(false);
+          window.dispatchEvent(new CustomEvent("open-ai-assistant"));
+        },
+      },
+      {
         id: "resume",
         title: "Download résumé",
         group: "Actions",

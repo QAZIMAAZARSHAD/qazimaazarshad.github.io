@@ -41,6 +41,11 @@ test.beforeEach(async ({ page }) => {
     .locator('[data-testid="preloader"]')
     .waitFor({ state: "detached" })
     .catch(() => {});
+  // Hide always-on floating widgets so they don't leak into section snapshots.
+  await page.addStyleTag({
+    content:
+      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"]{display:none !important}',
+  });
 });
 
 test("navbar", async ({ page }) => {
