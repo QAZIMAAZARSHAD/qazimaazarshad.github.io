@@ -66,7 +66,10 @@ export function Footer() {
             <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-accent-300">
               Connect
             </h3>
-            <SocialLinks className="mt-5" only={["linkedin", "instagram", "twitter", "email"]} />
+            <SocialLinks
+              className="mt-5"
+              only={["linkedin", "instagram", "twitter", "email"]}
+            />
             <a
               href={`mailto:${profile.email}`}
               className="mt-5 block font-mono text-xs text-ink-500 underline-offset-4 transition-colors hover:text-accent-300 hover:underline"

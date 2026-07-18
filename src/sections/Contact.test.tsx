@@ -36,9 +36,7 @@ describe("Contact", () => {
     // shadow our navigator.clipboard.writeText mock.
     fireEvent.click(copyButton);
 
-    await waitFor(() =>
-      expect(writeText).toHaveBeenCalledWith(profile.email),
-    );
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(profile.email));
     expect(writeText).toHaveBeenCalledTimes(1);
     expect(await screen.findByText("Copied!")).toBeInTheDocument();
   });

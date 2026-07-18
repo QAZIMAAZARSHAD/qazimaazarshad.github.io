@@ -31,11 +31,7 @@ export function Projects() {
 
       if (!normalizedQuery) return true;
 
-      const haystack = [
-        project.title,
-        project.blurb,
-        ...project.tech,
-      ]
+      const haystack = [project.title, project.blurb, ...project.tech]
         .join(" ")
         .toLowerCase();
 
@@ -63,7 +59,11 @@ export function Projects() {
       {/* Control bar */}
       <div className="mb-10 flex flex-col gap-5">
         {/* Category pills */}
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter projects by category">
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-label="Filter projects by category"
+        >
           {projectCategories.map((category) => {
             const isActive = category === activeCategory;
             return (

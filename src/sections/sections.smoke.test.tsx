@@ -19,7 +19,9 @@ describe("About", () => {
     render(<About />);
 
     expect(
-      screen.getByRole("heading", { name: /full-stack engineering, amplified by ai/i }),
+      screen.getByRole("heading", {
+        name: /full-stack engineering, amplified by ai/i,
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText(profile.intro)).toBeInTheDocument();
     expect(screen.getByText(stats[0].label)).toBeInTheDocument();

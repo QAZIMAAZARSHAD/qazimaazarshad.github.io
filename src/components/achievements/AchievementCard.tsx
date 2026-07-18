@@ -1,5 +1,12 @@
 import { motion } from "framer-motion";
-import { Trophy, Medal, Award, Star, Crown, type LucideIcon } from "lucide-react";
+import {
+  Trophy,
+  Medal,
+  Award,
+  Star,
+  Crown,
+  type LucideIcon,
+} from "lucide-react";
 import { fadeUp } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 

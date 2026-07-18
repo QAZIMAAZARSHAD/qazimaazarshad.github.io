@@ -26,14 +26,19 @@ describe("content: projects", () => {
       expect(project.date.trim(), `date for ${project.title}`).not.toBe("");
       // link is optional; when present it must be a non-empty http(s) URL
       if (project.link !== undefined) {
-        expect(project.link, `link for ${project.title}`).toMatch(/^https?:\/\//);
+        expect(project.link, `link for ${project.title}`).toMatch(
+          /^https?:\/\//,
+        );
       }
     }
   });
 
   it("every project lists at least one tech, all non-empty", () => {
     for (const project of projects) {
-      expect(project.tech.length, `tech count for ${project.title}`).toBeGreaterThanOrEqual(1);
+      expect(
+        project.tech.length,
+        `tech count for ${project.title}`,
+      ).toBeGreaterThanOrEqual(1);
       for (const tech of project.tech) {
         expect(tech.trim(), `tech entry for ${project.title}`).not.toBe("");
       }
@@ -91,7 +96,10 @@ describe("content: education", () => {
     expect(education.length).toBeGreaterThan(0);
     for (const item of education) {
       expect(item.degree.trim(), "degree").not.toBe("");
-      expect(item.institution.trim(), `institution for ${item.degree}`).not.toBe("");
+      expect(
+        item.institution.trim(),
+        `institution for ${item.degree}`,
+      ).not.toBe("");
       expect(item.score.trim(), `score for ${item.degree}`).not.toBe("");
       expect(item.period.trim(), `period for ${item.degree}`).not.toBe("");
       expect(item.image.trim(), `image for ${item.degree}`).not.toBe("");
@@ -104,10 +112,15 @@ describe("content: experience", () => {
     expect(experience.length).toBeGreaterThan(0);
     for (const item of experience) {
       expect(item.role.trim(), "role").not.toBe("");
-      expect(item.organization.trim(), `organization for ${item.role}`).not.toBe("");
+      expect(
+        item.organization.trim(),
+        `organization for ${item.role}`,
+      ).not.toBe("");
       expect(item.type.trim(), `type for ${item.role}`).not.toBe("");
       expect(item.period.trim(), `period for ${item.role}`).not.toBe("");
-      expect(item.description.trim(), `description for ${item.role}`).not.toBe("");
+      expect(item.description.trim(), `description for ${item.role}`).not.toBe(
+        "",
+      );
       expect(item.image.trim(), `image for ${item.role}`).not.toBe("");
     }
   });

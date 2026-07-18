@@ -13,10 +13,7 @@ interface SectionProps {
  */
 export function Section({ id, className, children }: SectionProps) {
   return (
-    <section
-      id={id}
-      className={cn("scroll-mt-24 py-20 sm:py-28", className)}
-    >
+    <section id={id} className={cn("scroll-mt-24 py-20 sm:py-28", className)}>
       <div className="container-page">{children}</div>
     </section>
   );

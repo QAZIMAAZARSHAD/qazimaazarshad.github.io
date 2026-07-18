@@ -50,12 +50,7 @@ export interface ExperienceItem {
 }
 
 export type ProjectCategory =
-  | "Web"
-  | "Data"
-  | "Machine Learning"
-  | "Game"
-  | "Mobile"
-  | "App";
+  "Web" | "Data" | "Machine Learning" | "Game" | "Mobile" | "App";
 
 export interface ProjectItem {
   title: string;
@@ -99,19 +94,47 @@ export const profile = {
 } as const;
 
 export const socials: SocialLink[] = [
-  { id: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/qazimaazarshad/" },
+  {
+    id: "linkedin",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/qazimaazarshad/",
+  },
   { id: "github", label: "GitHub", href: "https://github.com/qazimaazarshad" },
-  { id: "leetcode", label: "LeetCode", href: "https://leetcode.com/qazimaazarshad/" },
-  { id: "hackerrank", label: "HackerRank", href: "https://www.hackerrank.com/qazimaazarshad" },
+  {
+    id: "leetcode",
+    label: "LeetCode",
+    href: "https://leetcode.com/qazimaazarshad/",
+  },
+  {
+    id: "hackerrank",
+    label: "HackerRank",
+    href: "https://www.hackerrank.com/qazimaazarshad",
+  },
   {
     id: "geeksforgeeks",
     label: "GeeksforGeeks",
     href: "https://www.geeksforgeeks.org/profile/qazimaazarshad",
   },
-  { id: "twitter", label: "X / Twitter", href: "https://twitter.com/qazimaazarshad" },
-  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/qazimaazarshad/" },
-  { id: "facebook", label: "Facebook", href: "https://www.facebook.com/qazimaaz.arshad.3" },
-  { id: "linktree", label: "Linktree", href: "https://linktr.ee/qazimaazarshad" },
+  {
+    id: "twitter",
+    label: "X / Twitter",
+    href: "https://twitter.com/qazimaazarshad",
+  },
+  {
+    id: "instagram",
+    label: "Instagram",
+    href: "https://www.instagram.com/qazimaazarshad/",
+  },
+  {
+    id: "facebook",
+    label: "Facebook",
+    href: "https://www.facebook.com/qazimaaz.arshad.3",
+  },
+  {
+    id: "linktree",
+    label: "Linktree",
+    href: "https://linktr.ee/qazimaazarshad",
+  },
   { id: "email", label: "Email", href: "mailto:qazimaazarshad@gmail.com" },
 ];
 
@@ -368,7 +391,8 @@ export const earlierExperience: ExperienceItem[] = [
 export const projects: ProjectItem[] = [
   {
     title: "Wedding Invitation",
-    blurb: "An elegant animated wedding invitation with a live countdown & RSVP.",
+    blurb:
+      "An elegant animated wedding invitation with a live countdown & RSVP.",
     description:
       "An elegant, animated wedding invitation site featuring a live countdown, RSVP, add-to-calendar, and WhatsApp sharing.",
     image: "images/projects/wedding.jpg",
@@ -390,7 +414,8 @@ export const projects: ProjectItem[] = [
   },
   {
     title: "Informatica Internship Showcase",
-    blurb: "A glimpse of my internship contributions at Informatica, built with React.",
+    blurb:
+      "A glimpse of my internship contributions at Informatica, built with React.",
     description:
       "A React application showcasing the UI work and contributions I made during my internship at Informatica.",
     image: "images/projects/infa-work.png",
@@ -423,7 +448,8 @@ export const projects: ProjectItem[] = [
   },
   {
     title: "Olympics Excel Dashboard",
-    blurb: "Interactive dashboard highlighting facts, records, and trends in Olympic history.",
+    blurb:
+      "Interactive dashboard highlighting facts, records, and trends in Olympic history.",
     description:
       "An Excel dashboard that explains and highlights key facts, records, and trends across the history of the Olympics.",
     image: "images/projects/dashboard.jpg",
@@ -478,7 +504,8 @@ export const projects: ProjectItem[] = [
   },
   {
     title: "Inventory Management System",
-    blurb: "A NoSQL inventory system for a general store using a JSON file store.",
+    blurb:
+      "A NoSQL inventory system for a general store using a JSON file store.",
     description:
       "An inventory management system for a general store, backed by a NoSQL-style JSON file system.",
     image: "images/projects/inventory.jpg",
@@ -555,7 +582,8 @@ export const projects: ProjectItem[] = [
   {
     title: "Blackjack Game",
     blurb: "A fun Blackjack card game built with JavaScript.",
-    description: "A fun browser-based Blackjack card game created using JavaScript.",
+    description:
+      "A fun browser-based Blackjack card game created using JavaScript.",
     image: "images/projects/cards.jpg",
     link: "https://qazimaazarshad.github.io/Blackjack-Game/",
     date: "Apr 2022",
@@ -596,7 +624,8 @@ export const projects: ProjectItem[] = [
   {
     title: "Counter App",
     blurb: "A mini JavaScript app that counts clicks.",
-    description: "A mini JavaScript application that counts the number of clicks.",
+    description:
+      "A mini JavaScript application that counts the number of clicks.",
     image: "images/projects/count.png",
     link: "https://qazimaazarshad.github.io/Counter-App/",
     date: "Apr 2022",
@@ -637,7 +666,14 @@ export const skillGroups: SkillGroup[] = [
   {
     name: "Backend",
     icon: "Server",
-    skills: ["Spring Boot", "Microservices", "REST APIs", "BFF Layers", "MySQL", "DBMS"],
+    skills: [
+      "Spring Boot",
+      "Microservices",
+      "REST APIs",
+      "BFF Layers",
+      "MySQL",
+      "DBMS",
+    ],
   },
   {
     name: "Frontend",

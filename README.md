@@ -42,14 +42,14 @@ responsiveness test suite.
 
 ## 🛠 Tech stack
 
-| Area | Tools |
-|---|---|
-| Framework | **React 19** + **TypeScript** (strict) |
-| Build | **Vite** |
-| Styling | **Tailwind CSS** (custom design tokens) |
-| Animation | **Framer Motion** |
-| Icons | lucide-react + react-icons |
-| Testing | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
+| Area      | Tools                                                                         |
+| --------- | ----------------------------------------------------------------------------- |
+| Framework | **React 19** + **TypeScript** (strict)                                        |
+| Build     | **Vite**                                                                      |
+| Styling   | **Tailwind CSS** (custom design tokens)                                       |
+| Animation | **Framer Motion**                                                             |
+| Icons     | lucide-react + react-icons                                                    |
+| Testing   | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
 
 ## 🚀 Getting started
 

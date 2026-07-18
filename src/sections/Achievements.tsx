@@ -8,11 +8,11 @@ import { AchievementCard } from "@/components/achievements/AchievementCard";
 
 /** Playful emoji + one-liner per hobby (presentation only). */
 const HOBBY_META: Record<string, { emoji: string; quip: string }> = {
-  Movies: { emoji: "🎬", quip: "Popcorn optional, always in." },
-  "Web Series": { emoji: "📺", quip: "Just one more episode…" },
-  Anime: { emoji: "🍥", quip: "Subs over dubs." },
+  Movies: { emoji: "🎬", quip: "Jai Mahishmati!" },
+  "Web Series": { emoji: "📺", quip: "Valar Morghulis" },
+  Anime: { emoji: "🍥", quip: "Tatakae! Tatakae!" },
   Music: { emoji: "🎧", quip: "Every commit has a soundtrack." },
-  "Pro Wrestling (WWE)": { emoji: "🤼", quip: "Ringside energy." },
+  "Pro Wrestling (WWE)": { emoji: "🤼", quip: "Hustle, Loyalty, Respect" },
   Cricket: { emoji: "🏏", quip: "Cover drives & run chases." },
   Badminton: { emoji: "🏸", quip: "Smash first, ask later." },
   Chess: { emoji: "♟️", quip: "Three moves ahead." },
@@ -52,7 +52,11 @@ export function Achievements() {
             <span>Off the clock</span>
           </span>
           <h3 className="flex items-center gap-2.5 font-display text-2xl font-bold text-white sm:text-3xl">
-            <Sparkles className="h-6 w-6 text-cyan-400" strokeWidth={1.75} aria-hidden />
+            <Sparkles
+              className="h-6 w-6 text-cyan-400"
+              strokeWidth={1.75}
+              aria-hidden
+            />
             Beyond the code
           </h3>
         </motion.div>

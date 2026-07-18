@@ -36,7 +36,11 @@ interface SocialLinksProps {
   only?: SocialId[];
 }
 
-export function SocialLinks({ className, iconClassName, only }: SocialLinksProps) {
+export function SocialLinks({
+  className,
+  iconClassName,
+  only,
+}: SocialLinksProps) {
   const items = only
     ? only
         .map((id) => socials.find((s) => s.id === id))

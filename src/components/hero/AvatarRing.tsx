@@ -62,7 +62,10 @@ export function AvatarRing() {
       className="relative mx-auto aspect-square w-64 sm:w-80 lg:w-[24rem]"
     >
       {/* soft glow behind the ring */}
-      <div className="absolute inset-0 rounded-full bg-accent-500/20 blur-3xl" aria-hidden />
+      <div
+        className="absolute inset-0 rounded-full bg-accent-500/20 blur-3xl"
+        aria-hidden
+      />
 
       {/* rotating conic gradient ring */}
       <motion.div
@@ -81,7 +84,10 @@ export function AvatarRing() {
       />
 
       {/* inner mask so only a thin ring shows */}
-      <div className="absolute inset-[6px] rounded-full bg-ink-950" aria-hidden />
+      <div
+        className="absolute inset-[6px] rounded-full bg-ink-950"
+        aria-hidden
+      />
       <div className="absolute inset-[10px] overflow-hidden rounded-full border border-white/10">
         <img
           src={asset(profile.avatar)}
@@ -112,7 +118,9 @@ export function AvatarRing() {
             style={{ animationDelay: `${badge.delay}s` }}
           >
             <badge.Icon className={cn("h-4 w-4", badge.color)} aria-hidden />
-            <span className="font-mono text-xs text-ink-200">{badge.label}</span>
+            <span className="font-mono text-xs text-ink-200">
+              {badge.label}
+            </span>
           </div>
         </motion.div>
       ))}

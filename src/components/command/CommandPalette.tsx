@@ -96,7 +96,9 @@ export function CommandPalette() {
     setOpen(false);
     document.body.style.overflow = "";
     requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
       history.replaceState(null, "", `#${id}`);
     });
   }, []);
@@ -237,7 +239,9 @@ export function CommandPalette() {
   // Keep the active row scrolled into view.
   useEffect(() => {
     if (!open) return;
-    const el = listRef.current?.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`);
+    const el = listRef.current?.querySelector<HTMLElement>(
+      `[data-index="${activeIndex}"]`,
+    );
     el?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, open]);
 
@@ -323,14 +327,19 @@ export function CommandPalette() {
                             <span
                               className={cn(
                                 "grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10",
-                                isActive ? "bg-accent-500/20 text-accent-200" : "bg-white/[0.03] text-ink-400",
+                                isActive
+                                  ? "bg-accent-500/20 text-accent-200"
+                                  : "bg-white/[0.03] text-ink-400",
                               )}
                             >
                               <Icon className="h-4 w-4" aria-hidden />
                             </span>
                             <span className="flex-1 truncate">{cmd.title}</span>
                             {isActive && (
-                              <CornerDownLeft className="h-3.5 w-3.5 text-ink-500" aria-hidden />
+                              <CornerDownLeft
+                                className="h-3.5 w-3.5 text-ink-500"
+                                aria-hidden
+                              />
                             )}
                           </button>
                         );

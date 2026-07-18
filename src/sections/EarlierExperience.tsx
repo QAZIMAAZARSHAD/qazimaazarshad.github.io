@@ -34,7 +34,9 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
         <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-accent-200">
           {item.type}
         </span>
-        <span className="font-mono text-[11px] text-ink-400">{item.period}</span>
+        <span className="font-mono text-[11px] text-ink-400">
+          {item.period}
+        </span>
       </div>
 
       <p className="line-clamp-3 text-sm leading-relaxed text-ink-400">

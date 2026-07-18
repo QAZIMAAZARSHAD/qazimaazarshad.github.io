@@ -17,8 +17,16 @@ interface TimelineEntryProps {
  * (`top-12`), keeping them locked to the rail regardless of viewport.
  */
 export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
-  const { role, organization, type, period, description, image, link, current } =
-    item;
+  const {
+    role,
+    organization,
+    type,
+    period,
+    description,
+    image,
+    link,
+    current,
+  } = item;
 
   return (
     <div className="group relative pl-14 sm:pl-20">
@@ -86,7 +94,9 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
           </div>
         </div>
 
-        <p className="mt-4 text-sm leading-relaxed text-ink-400">{description}</p>
+        <p className="mt-4 text-sm leading-relaxed text-ink-400">
+          {description}
+        </p>
 
         {link && (
           <a

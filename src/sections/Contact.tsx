@@ -71,10 +71,7 @@ export function Contact() {
               <CopyEmailButton email={profile.email} />
             </motion.div>
 
-            <motion.p
-              variants={fadeUp}
-              className="mt-6 text-sm text-ink-500"
-            >
+            <motion.p variants={fadeUp} className="mt-6 text-sm text-ink-500">
               or write directly to{" "}
               <a
                 href={`mailto:${profile.email}`}

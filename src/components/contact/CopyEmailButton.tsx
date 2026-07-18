@@ -12,7 +12,10 @@ interface CopyEmailButtonProps {
  * transient "Copied!" state for ~2s. Gracefully no-ops if the Clipboard API
  * is unavailable, while still acknowledging the interaction.
  */
-export function CopyEmailButton({ email, className }: Readonly<CopyEmailButtonProps>) {
+export function CopyEmailButton({
+  email,
+  className,
+}: Readonly<CopyEmailButtonProps>) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -37,7 +40,9 @@ export function CopyEmailButton({ email, className }: Readonly<CopyEmailButtonPr
     <button
       type="button"
       onClick={handleCopy}
-      aria-label={copied ? "Email address copied" : `Copy email address ${email}`}
+      aria-label={
+        copied ? "Email address copied" : `Copy email address ${email}`
+      }
       className={cn(
         "group inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-6 py-3 font-medium text-ink-200 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-400/40 hover:bg-white/[0.06] hover:text-white hover:shadow-lg hover:shadow-accent-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
         className,

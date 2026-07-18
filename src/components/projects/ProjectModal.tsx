@@ -196,7 +196,10 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 className="group mt-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-accent-500 to-cyan-500 px-6 py-3 font-mono text-sm font-medium text-white shadow-lg shadow-accent-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-accent-500/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
               >
                 Open project
-                <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                <ExternalLink
+                  className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
               </a>
             )}
           </div>

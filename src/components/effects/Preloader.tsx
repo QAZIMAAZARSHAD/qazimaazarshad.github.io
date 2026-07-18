@@ -82,7 +82,9 @@ export function Preloader() {
             <div className="relative h-1 w-44 overflow-hidden rounded-full bg-white/10">
               <motion.span
                 className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-gradient-to-r from-accent-500 to-cyan-400"
-                animate={reduceMotion ? { x: "120%" } : { x: ["-120%", "360%"] }}
+                animate={
+                  reduceMotion ? { x: "120%" } : { x: ["-120%", "360%"] }
+                }
                 transition={
                   reduceMotion
                     ? undefined

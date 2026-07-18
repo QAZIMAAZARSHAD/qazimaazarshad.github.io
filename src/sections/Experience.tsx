@@ -6,7 +6,8 @@ import { experience } from "@/data/content";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 export function Experience() {
-  const keyOf = (role: string, organization: string) => `${role}__${organization}`;
+  const keyOf = (role: string, organization: string) =>
+    `${role}__${organization}`;
 
   return (
     <Section id="experience">
@@ -32,7 +33,10 @@ export function Experience() {
           className="space-y-5 sm:space-y-6"
         >
           {experience.map((item) => (
-            <motion.li key={keyOf(item.role, item.organization)} variants={fadeUp}>
+            <motion.li
+              key={keyOf(item.role, item.organization)}
+              variants={fadeUp}
+            >
               <TimelineEntry item={item} />
             </motion.li>
           ))}

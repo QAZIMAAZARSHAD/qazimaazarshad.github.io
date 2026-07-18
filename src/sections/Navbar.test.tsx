@@ -32,7 +32,9 @@ describe("Navbar", () => {
     expect(drawer).not.toBeNull();
     for (const section of navSections) {
       expect(
-        within(drawer as HTMLElement).getByRole("link", { name: section.label }),
+        within(drawer as HTMLElement).getByRole("link", {
+          name: section.label,
+        }),
       ).toHaveAttribute("href", `#${section.id}`);
     }
 

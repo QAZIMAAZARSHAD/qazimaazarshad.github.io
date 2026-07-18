@@ -38,7 +38,9 @@ export function Navbar() {
       document.body.style.overflow = "";
       toggleRef.current?.focus({ preventScroll: true });
       requestAnimationFrame(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document
+          .getElementById(id)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
         history.replaceState(null, "", `#${id}`);
       });
     },
@@ -148,9 +150,7 @@ export function Navbar() {
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "group relative rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
-                    isActive
-                      ? "text-white"
-                      : "text-ink-400 hover:text-white",
+                    isActive ? "text-white" : "text-ink-400 hover:text-white",
                   )}
                 >
                   <span className="inline-flex items-center gap-1.5">

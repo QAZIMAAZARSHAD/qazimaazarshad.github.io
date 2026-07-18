@@ -24,7 +24,9 @@ test.describe("Contact section", () => {
 
     // The button switches to its confirmed state regardless of whether the
     // Clipboard API is permitted (the component flashes state either way).
-    await expect(contact.getByRole("button", { name: /copied/i })).toBeVisible();
+    await expect(
+      contact.getByRole("button", { name: /copied/i }),
+    ).toBeVisible();
     await expect(contact.getByText("Copied!")).toBeVisible();
   });
 

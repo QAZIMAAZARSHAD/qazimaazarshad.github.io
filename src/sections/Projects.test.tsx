@@ -48,13 +48,18 @@ describe("Projects", () => {
     const user = userEvent.setup();
     render(<Projects />);
 
-    await user.type(screen.getByRole("textbox", { name: "Search projects" }), "Blackjack");
+    await user.type(
+      screen.getByRole("textbox", { name: "Search projects" }),
+      "Blackjack",
+    );
 
     expect(
       screen.getByRole("button", { name: cardName("Blackjack Game") }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: cardName("Movie Streaming Website") }),
+      screen.queryByRole("button", {
+        name: cardName("Movie Streaming Website"),
+      }),
     ).not.toBeInTheDocument();
   });
 
@@ -68,7 +73,9 @@ describe("Projects", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: cardName("YouTube Ad-view Prediction") }),
+      screen.getByRole("button", {
+        name: cardName("YouTube Ad-view Prediction"),
+      }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: cardName("Blackjack Game") }),
@@ -103,7 +110,9 @@ describe("Projects", () => {
       within(dialog).getByRole("heading", { name: gameProject.title }),
     ).toBeInTheDocument();
 
-    const openLink = within(dialog).getByRole("link", { name: /Open project/i });
+    const openLink = within(dialog).getByRole("link", {
+      name: /Open project/i,
+    });
     expect(openLink).toHaveAttribute("href", gameProject.link);
     expect(openLink).toHaveAttribute("target", "_blank");
 
