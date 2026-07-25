@@ -4,10 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { Projects } from "@/sections/Projects";
 import { projects } from "@/data/content";
 
-/** Reads the live "N project(s)" result-count text. */
+/** Reads the live "N project(s)" result-count text (the sr-only status node). */
 function resultCount(container: HTMLElement): string {
-  const el = container.querySelector('[aria-live="polite"]');
-  return el?.textContent?.trim() ?? "";
+  const el = container.querySelector('[role="status"]');
+  return el?.textContent?.trim().replace(/\s+/g, " ") ?? "";
 }
 
 const cardName = (title: string) => `View details for ${title}`;
