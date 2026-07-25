@@ -31,7 +31,7 @@ export function CountUp({
 }: CountUpProps) {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true });
   const [display, setDisplay] = useState(() => (reduceMotion ? value : 0));
   const displayRef = useRef(0);
 
