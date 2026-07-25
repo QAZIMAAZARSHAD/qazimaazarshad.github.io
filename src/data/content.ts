@@ -242,7 +242,7 @@ export const education: EducationItem[] = [
     score: "83.80%",
     period: "2018",
     image: "images/education/barrows.jpg",
-    link: "https://barrowsschool.in/",
+    link: "https://www.facebook.com/p/Barrows-Blue-Bells-Inter-College-Bahraich-100077404032685/",
   },
   {
     degree: "High School (Class X)",
@@ -250,7 +250,7 @@ export const education: EducationItem[] = [
     score: "86.33%",
     period: "2016",
     image: "images/education/bbb.jpg",
-    link: "https://barrowsschool.in/",
+    link: "https://www.facebook.com/p/Barrows-Blue-Bells-Inter-College-Bahraich-100077404032685/",
   },
 ];
 
