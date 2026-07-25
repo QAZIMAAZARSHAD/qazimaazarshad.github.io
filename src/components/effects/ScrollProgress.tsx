@@ -1,6 +1,5 @@
 import { motion, useScroll, useSpring } from "framer-motion";
 
-/** Thin gradient progress bar pinned to the top of the viewport. */
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {

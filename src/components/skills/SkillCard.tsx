@@ -9,11 +9,6 @@ interface SkillCardProps {
   className?: string;
 }
 
-/**
- * A single skill-group card: gradient-tinted icon tile + group name header,
- * followed by the group's skills rendered as staggered chips. Inherits its
- * reveal animation from the parent grid's stagger container.
- */
 export function SkillCard({ group, className }: Readonly<SkillCardProps>) {
   const Icon = resolveSkillIcon(group.icon);
 

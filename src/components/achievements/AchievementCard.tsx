@@ -19,10 +19,6 @@ interface AchievementCardProps {
   className?: string;
 }
 
-/**
- * A single achievement row: an award-style gradient icon tile beside the
- * achievement text. Inherits its reveal from the parent stagger container.
- */
 export function AchievementCard({
   text,
   index,

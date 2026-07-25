@@ -10,7 +10,6 @@ interface SectionHeadingProps {
   className?: string;
 }
 
-/** Standard section header: small kicker, gradient title, optional blurb. */
 export function SectionHeading({
   kicker,
   title,

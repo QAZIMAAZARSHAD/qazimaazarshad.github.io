@@ -27,11 +27,11 @@ function cleanReply(text: string): string {
   return text
     .replace(/\[([^\]]*)\]\(([^)]+)\)/g, (_, label: string, url: string) =>
       !label || label === url ? url : `${label} (${url})`,
-    ) // markdown links → plain URL (no duplication)
-    .replace(/[*_`>#]/g, "") // emphasis / heading / quote / code marks
-    .replace(/^\s*[-+]\s+/gm, "") // bullet markers
-    .replace(/^\s*\d+\.\s+/gm, "") // numbered-list markers
-    .replace(/\n{3,}/g, "\n\n") // collapse blank lines
+    )
+    .replace(/[*_`>#]/g, "")
+    .replace(/^\s*[-+]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
@@ -55,7 +55,6 @@ export function AiAssistant() {
     return () => window.removeEventListener("open-ai-assistant", onOpen);
   }, []);
 
-  // Close on Escape from anywhere while the panel is open.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -159,7 +158,6 @@ export function AiAssistant() {
 
   return (
     <>
-      {/* Floating launcher */}
       <motion.button
         type="button"
         onClick={() => setOpen(true)}
@@ -186,7 +184,6 @@ export function AiAssistant() {
             transition={{ duration: 0.22, ease: [0.21, 0.47, 0.32, 0.98] }}
             className="glass fixed inset-x-3 bottom-3 z-[80] flex h-[70vh] max-h-[600px] flex-col overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-black/50 sm:inset-x-auto sm:left-6 sm:bottom-6 sm:h-[560px] sm:w-[400px]"
           >
-            {/* Header */}
             <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
               <div className="flex items-center gap-2.5">
                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-accent-500 to-cyan-400 text-white">
@@ -211,7 +208,6 @@ export function AiAssistant() {
               </button>
             </div>
 
-            {/* Body */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4">
               {status === "unsupported" ? (
                 <FallbackNotice />
@@ -228,7 +224,6 @@ export function AiAssistant() {
               )}
             </div>
 
-            {/* Composer */}
             {status === "ready" && (
               <div className="border-t border-white/10 p-3">
                 {messages.length === 0 && (

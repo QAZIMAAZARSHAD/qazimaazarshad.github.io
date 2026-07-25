@@ -4,7 +4,6 @@ interface LogoTileProps {
   /** Raw content path, e.g. "images/experience/infa.png". Wrapped with asset(). */
   src: string;
   alt: string;
-  /** Sizing utilities, e.g. "h-14 w-14". */
   className?: string;
 }
 

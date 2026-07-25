@@ -7,11 +7,6 @@ interface CopyEmailButtonProps {
   className?: string;
 }
 
-/**
- * Secondary glass button that copies an email to the clipboard and flashes a
- * transient "Copied!" state for ~2s. Gracefully no-ops if the Clipboard API
- * is unavailable, while still acknowledging the interaction.
- */
 export function CopyEmailButton({
   email,
   className,

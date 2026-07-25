@@ -6,11 +6,6 @@ const MIN_DISPLAY_MS = 600;
 /** Safety net so we never trap the user behind the loader. */
 const MAX_DISPLAY_MS = 3000;
 
-/**
- * Fancy first-paint loader: an animated QMA monogram with a spinning gradient
- * ring and an indeterminate progress bar. Fades out once the window has loaded
- * (or after a hard timeout), then unmounts.
- */
 export function Preloader() {
   const [visible, setVisible] = useState(true);
   const reduceMotion = useReducedMotion();
@@ -40,7 +35,6 @@ export function Preloader() {
     };
   }, []);
 
-  // Lock scroll while the loader covers the page.
   useEffect(() => {
     if (!visible) return;
     const prev = document.body.style.overflow;

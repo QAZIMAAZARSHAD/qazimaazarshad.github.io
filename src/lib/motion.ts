@@ -1,9 +1,7 @@
 import type { Variants } from "framer-motion";
 
-/** Standard viewport config for scroll-triggered reveals. */
 export const viewportOnce = { once: true, amount: 0.2 } as const;
 
-/** Fade + rise, used by most section content. */
 export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
   show: {
@@ -13,7 +11,6 @@ export const fadeUp: Variants = {
   },
 };
 
-/** Container that staggers its children on reveal. */
 export const staggerContainer: Variants = {
   hidden: {},
   show: {
@@ -21,7 +18,6 @@ export const staggerContainer: Variants = {
   },
 };
 
-/** Scale-in used for cards / media. */
 export const scaleIn: Variants = {
   hidden: { opacity: 0, scale: 0.94 },
   show: {

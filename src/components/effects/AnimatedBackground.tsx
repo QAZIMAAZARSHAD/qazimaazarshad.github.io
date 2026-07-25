@@ -61,7 +61,6 @@ export function AnimatedBackground() {
         p.x += p.vx;
         p.y += p.vy;
 
-        // subtle attraction toward the pointer
         const dxp = pointer.x - p.x;
         const dyp = pointer.y - p.y;
         const dp = Math.hypot(dxp, dyp);
@@ -70,7 +69,6 @@ export function AnimatedBackground() {
           p.vy += (dyp / dp) * 0.006;
         }
 
-        // gentle speed clamp
         p.vx = Math.max(-0.6, Math.min(0.6, p.vx));
         p.vy = Math.max(-0.6, Math.min(0.6, p.vy));
 

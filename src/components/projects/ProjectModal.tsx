@@ -10,22 +10,14 @@ interface ProjectModalProps {
   readonly onClose: () => void;
 }
 
-/** Selector for elements that can receive keyboard focus inside the dialog. */
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
-/**
- * Accessible, centered detail dialog for a single project. Rendered through a
- * portal into document.body so the modal lives outside the (inert) app root.
- * Handles Escape-to-close, backdrop click, body-scroll lock, a Tab focus trap,
- * and restoring focus to the element that opened it.
- */
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
 
-  // Lock body scroll while open.
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -46,8 +38,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, []);
 
-  // Store the previously focused element, focus the close button, and restore
-  // focus to the opener on close.
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
     closeButtonRef.current?.focus();
@@ -56,7 +46,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, []);
 
-  // Escape-to-close + Tab focus trap.
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {

@@ -71,7 +71,6 @@ Rules:
 PROFILE:
 ${buildProfileContext()}`;
 
-/** Starter questions shown as clickable chips. */
 export const SUGGESTED_PROMPTS = [
   "What does Maaz do at Salesforce?",
   "What's his tech stack?",

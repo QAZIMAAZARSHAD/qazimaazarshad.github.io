@@ -54,7 +54,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll while the mobile drawer is open.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -62,7 +61,6 @@ export function Navbar() {
     };
   }, [menuOpen]);
 
-  // Focus management + focus trap for the mobile drawer.
   useEffect(() => {
     if (!menuOpen) return;
     const drawer = drawerRef.current;
@@ -75,7 +73,6 @@ export function Navbar() {
         ),
       );
 
-    // Move focus to the first link when the drawer opens.
     getFocusable()[0]?.focus();
 
     const onKeyDown = (e: KeyboardEvent) => {

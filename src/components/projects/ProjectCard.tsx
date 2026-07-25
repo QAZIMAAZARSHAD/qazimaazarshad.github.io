@@ -12,7 +12,6 @@ interface ProjectCardProps {
 
 const MAX_VISIBLE_TECH = 3;
 
-/** A single project tile: cover image, meta, and tech chips. Opens the detail modal. */
 export function ProjectCard({ project, onSelect }: ProjectCardProps) {
   const visibleTech = project.tech.slice(0, MAX_VISIBLE_TECH);
   const remainingTech = project.tech.length - visibleTech.length;
@@ -38,7 +37,6 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
         />
-        {/* Persistent bottom fade for legibility + hover darkening */}
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
         <div className="absolute inset-0 bg-ink-950/0 transition-colors duration-300 group-hover:bg-ink-950/30" />
 

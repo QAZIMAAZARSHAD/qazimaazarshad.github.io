@@ -9,7 +9,6 @@ interface RevealProps {
   delay?: number;
 }
 
-/** Fade-and-rise on scroll into view. Wrap any block to animate it in. */
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
   return (
     <motion.div

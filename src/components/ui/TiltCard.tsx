@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 interface TiltCardProps {
   children: ReactNode;
   className?: string;
-  /** Max rotation in degrees. */
   max?: number;
 }
 

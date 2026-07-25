@@ -8,9 +8,7 @@ import { asset, cn } from "@/lib/utils";
 interface TechBadge {
   label: string;
   Icon: IconType;
-  /** Absolute placement around the avatar ring. */
   position: string;
-  /** Icon tint. */
   color: string;
   /** Individual float delay so chips bob out of sync. */
   delay: number;
@@ -47,10 +45,6 @@ const BADGES: TechBadge[] = [
   },
 ];
 
-/**
- * Decorative hero visual: the avatar centered inside a slowly rotating
- * conic-gradient ring, with floating tech chips orbiting the frame.
- */
 export function AvatarRing() {
   const reduceMotion = useReducedMotion();
 
@@ -81,7 +75,6 @@ export function AvatarRing() {
         }
       />
 
-      {/* inner mask so only a thin ring shows */}
       <div
         className="absolute inset-[6px] rounded-full bg-ink-950"
         aria-hidden

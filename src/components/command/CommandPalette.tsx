@@ -188,12 +188,10 @@ export function CommandPalette() {
     );
   }, [commands, query]);
 
-  // Reset active row when the result set changes.
   useEffect(() => {
     setActiveIndex(0);
   }, [query]);
 
-  // Global open shortcut (⌘K / Ctrl+K) + custom event trigger.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -210,7 +208,6 @@ export function CommandPalette() {
     };
   }, []);
 
-  // On open: lock scroll, focus input, remember previous focus. Restore on close.
   useEffect(() => {
     if (open) {
       previouslyFocused.current = document.activeElement as HTMLElement | null;
@@ -251,7 +248,6 @@ export function CommandPalette() {
     }
   };
 
-  // Keep the active row scrolled into view.
   useEffect(() => {
     if (!open) return;
     const el = listRef.current?.querySelector<HTMLElement>(

@@ -2,11 +2,6 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 
-/**
- * Floating "back to top" control. Appears once the user has scrolled past a
- * threshold and smoothly returns them to the top of the page. Fixed to the
- * bottom-right, above most content, with enter/exit animation.
- */
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
 

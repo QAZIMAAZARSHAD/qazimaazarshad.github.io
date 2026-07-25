@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-/** Animated "scroll down" affordance anchored to the bottom of the hero. */
 export function ScrollCue() {
   const reduceMotion = useReducedMotion();
 
