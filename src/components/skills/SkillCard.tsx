@@ -16,7 +16,7 @@ export function SkillCard({ group, className }: Readonly<SkillCardProps>) {
     <motion.article
       variants={scaleIn}
       className={cn(
-        "glass glass-hover group relative flex flex-col overflow-hidden rounded-3xl p-6",
+        "glass glass-hover spotlight group relative flex flex-col overflow-hidden rounded-3xl p-6",
         "hover:shadow-2xl hover:shadow-accent-500/20",
         className,
       )}

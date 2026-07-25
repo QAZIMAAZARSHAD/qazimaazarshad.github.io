@@ -142,6 +142,17 @@ export const profile = {
 } as const;
 
 /**
+ * Hero taglines cycled with a scramble/decode effect (first is the default).
+ * Kept short so they stay on one line and don't reflow the layout.
+ */
+export const heroTaglines = [
+  "Full-stack, AI-first.",
+  "Orchestrating AI agents.",
+  "Backend · BFF · UI.",
+  "Enterprise-scale, e2e.",
+];
+
+/**
  * Footer visit counter via CounterAPI.dev — a generic counter API (NOT an
  * analytics/tracking domain), so ad-blockers don't block it and no account is
  * needed. Value is "<namespace>/<key>"; each load increments and returns the

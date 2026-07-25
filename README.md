@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-46_unit_·_47_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-46_unit_·_49_e2e-16a34a)
 
 <br/>
 
@@ -34,6 +34,7 @@ responsiveness test suite.
 ## ✨ Highlights
 
 - **🤖 In-browser AI assistant** — "Ask my portfolio" runs a real LLM 100% client-side (WebLLM + WebGPU), grounded on my content — no backend, no keys
+- **Rich micro-interactions** — scramble-decode hero tagline, magnetic buttons, cursor spotlight on cards, scroll-drawn timeline, animated count-ups, section-heading underlines, tech marquee, side scroll-dots, subtle parallax & confetti — all `prefers-reduced-motion` aware
 - **📜 Certificates gallery** & **interactive projects** — filterable, searchable, with focus-trapped lightboxes/modals
 - **⌘K command palette** for keyboard-driven navigation
 - **Career-progression timeline** with live-computed tenure, plus a cursor-reactive animated canvas and polished dark theme

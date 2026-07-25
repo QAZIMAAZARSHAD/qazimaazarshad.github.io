@@ -4,6 +4,7 @@ import { FileText, Menu, Search, X } from "lucide-react";
 import { navSections, profile } from "@/data/content";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { SocialLinks } from "@/components/ui/SocialLinks";
+import { celebrate } from "@/lib/confetti";
 import { asset, cn } from "@/lib/utils";
 
 const NAV_IDS = navSections.map((s) => s.id);
@@ -178,6 +179,7 @@ export function Navbar() {
             target="_blank"
             rel="noreferrer"
             download
+            onClick={() => celebrate().catch(() => {})}
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-accent-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-accent-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
           >
             <FileText className="h-4 w-4" aria-hidden />
@@ -261,7 +263,10 @@ export function Navbar() {
                 target="_blank"
                 rel="noreferrer"
                 download
-                onClick={closeMenu}
+                onClick={() => {
+                  closeMenu();
+                  celebrate().catch(() => {});
+                }}
                 className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-accent-500/25 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
               >
                 <FileText className="h-4 w-4" aria-hidden />

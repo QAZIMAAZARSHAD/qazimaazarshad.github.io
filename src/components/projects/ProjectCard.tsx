@@ -23,7 +23,7 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
       onClick={() => onSelect(project)}
       aria-label={`View details for ${project.title}`}
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-3xl text-left",
+        "group spotlight relative flex h-full flex-col overflow-hidden rounded-3xl text-left",
         "glass glass-hover",
         "transition-all duration-300 hover:-translate-y-1.5",
         "hover:shadow-2xl hover:shadow-accent-500/20",

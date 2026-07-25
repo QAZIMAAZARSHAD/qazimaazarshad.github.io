@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { fadeUp, viewportOnce } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ export function SectionHeading({
   align = "left",
   className,
 }: SectionHeadingProps) {
+  const prefersReducedMotion = useReducedMotion();
   return (
     <motion.div
       variants={fadeUp}
@@ -38,6 +39,17 @@ export function SectionHeading({
       <h2 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl">
         {title}
       </h2>
+      <motion.span
+        aria-hidden
+        className={cn(
+          "h-[3px] w-16 origin-left rounded-full bg-gradient-to-r from-accent-400 to-cyan-400",
+          align === "center" && "mx-auto",
+        )}
+        initial={prefersReducedMotion ? false : { scaleX: 0 }}
+        whileInView={prefersReducedMotion ? undefined : { scaleX: 1 }}
+        viewport={viewportOnce}
+        transition={{ duration: 1.1, ease: [0.21, 0.47, 0.32, 0.98] }}
+      />
       {description && (
         <p className="max-w-2xl text-base leading-relaxed text-ink-400">
           {description}

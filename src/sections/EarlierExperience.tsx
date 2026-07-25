@@ -16,7 +16,7 @@ const easeOut: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
 
 function EarlierCard({ item }: { readonly item: ExperienceItem }) {
   return (
-    <article className="glass glass-hover flex h-full flex-col gap-4 rounded-2xl p-5">
+    <article className="glass glass-hover spotlight flex h-full flex-col gap-4 rounded-2xl p-5">
       <div className="flex items-start gap-4">
         <LogoTile
           src={item.image}

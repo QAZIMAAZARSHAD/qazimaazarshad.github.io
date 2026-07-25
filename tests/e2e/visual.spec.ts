@@ -81,12 +81,14 @@ test.beforeEach(async ({ page }) => {
   // Hide always-on floating widgets so they don't leak into section snapshots.
   await page.addStyleTag({
     content:
-      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"],[data-testid="visit-counter"]{display:none !important}',
+      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"],[data-testid="visit-counter"],[aria-label="Section navigation"]{display:none !important}',
   });
 });
 
 test("navbar", async ({ page }) => {
-  await expect(page.locator("nav").first()).toHaveScreenshot("navbar.png");
+  await expect(
+    page.getByRole("navigation", { name: "Primary" }),
+  ).toHaveScreenshot("navbar.png");
 });
 
 for (const id of SECTION_IDS) {

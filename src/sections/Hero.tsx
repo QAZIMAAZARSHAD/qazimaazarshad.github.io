@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Download, Mail } from "lucide-react";
-import { profile } from "@/data/content";
+import { profile, heroTaglines } from "@/data/content";
 import { fadeUp, staggerContainer } from "@/lib/motion";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { AvatarRing } from "@/components/hero/AvatarRing";
 import { ScrollCue } from "@/components/hero/ScrollCue";
+import { ScrambleText } from "@/components/hero/ScrambleText";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { celebrate } from "@/lib/confetti";
 import { asset } from "@/lib/utils";
 
 const nameWords = profile.name.split(" ");
@@ -62,37 +65,42 @@ export function Hero() {
 
           <motion.p
             variants={fadeUp}
-            className="max-w-xl text-base leading-relaxed text-ink-400 sm:text-lg"
+            className="min-h-[1.9em] max-w-xl break-words text-base leading-relaxed text-ink-400 sm:text-lg"
           >
-            {profile.tagline}
+            <ScrambleText phrases={heroTaglines} />
           </motion.p>
 
           <motion.div
             variants={fadeUp}
             className="flex flex-wrap items-center gap-3"
           >
-            <a
-              href="#projects"
-              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-accent-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-accent-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-            >
-              View Projects
-              <ArrowRight
-                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                aria-hidden
-              />
-            </a>
-            <a
-              href="#contact"
-              className="glass glass-hover inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-ink-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-            >
-              <Mail className="h-4 w-4" aria-hidden />
-              Get in touch
-            </a>
+            <Magnetic className="inline-flex">
+              <a
+                href="#projects"
+                className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-accent-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-accent-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              >
+                View Projects
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden
+                />
+              </a>
+            </Magnetic>
+            <Magnetic className="inline-flex">
+              <a
+                href="#contact"
+                className="glass glass-hover inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-ink-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              >
+                <Mail className="h-4 w-4" aria-hidden />
+                Get in touch
+              </a>
+            </Magnetic>
             <a
               href={asset(profile.resume)}
               target="_blank"
               rel="noreferrer"
               download
+              onClick={() => celebrate().catch(() => {})}
               className="inline-flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-ink-400 transition-colors duration-300 hover:text-accent-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
             >
               <Download className="h-4 w-4" aria-hidden />

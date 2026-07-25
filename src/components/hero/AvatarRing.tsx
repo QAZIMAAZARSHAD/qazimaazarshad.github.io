@@ -1,5 +1,11 @@
+import { useEffect } from "react";
 import type { IconType } from "react-icons";
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "framer-motion";
 import { FaJava } from "react-icons/fa6";
 import { SiReact, SiSpringboot, SiTypescript } from "react-icons/si";
 import { profile } from "@/data/content";
@@ -48,11 +54,29 @@ const BADGES: TechBadge[] = [
 export function AvatarRing() {
   const reduceMotion = useReducedMotion();
 
+  // Subtle pointer parallax: the avatar drifts a few px toward the cursor.
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const x = useSpring(pointerX, { stiffness: 50, damping: 18, mass: 0.5 });
+  const y = useSpring(pointerY, { stiffness: 50, damping: 18, mass: 0.5 });
+
+  useEffect(() => {
+    if (reduceMotion) return;
+    const MAX = 8;
+    const onMove = (e: PointerEvent) => {
+      pointerX.set((e.clientX / window.innerWidth - 0.5) * 2 * MAX);
+      pointerY.set((e.clientY / window.innerHeight - 0.5) * 2 * MAX);
+    };
+    window.addEventListener("pointermove", onMove);
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [reduceMotion, pointerX, pointerY]);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98], delay: 0.2 }}
+      style={reduceMotion ? undefined : { x, y }}
       className="relative mx-auto aspect-square w-64 sm:w-80 lg:w-[24rem]"
     >
       <div

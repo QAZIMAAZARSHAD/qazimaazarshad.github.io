@@ -5,10 +5,21 @@ import { profile, stats } from "@/data/content";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { CountUp } from "@/components/ui/CountUp";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 /** One accent icon per "about" bullet, cycled if the list grows. */
 const BULLET_ICONS: LucideIcon[] = [Sparkles, Check, Users, Zap];
+
+/**
+ * Renders a stat value, counting up any leading integer (e.g. "4+" → 4 + "+")
+ * while leaving purely non-numeric values ("Full-stack") untouched.
+ */
+function StatValue({ value }: { readonly value: string }) {
+  const digits = /^\d+/.exec(value)?.[0];
+  if (!digits) return <>{value}</>;
+  return <CountUp value={Number(digits)} suffix={value.slice(digits.length)} />;
+}
 
 export function About() {
   return (
@@ -68,7 +79,7 @@ export function About() {
               className="glass glass-hover flex flex-col justify-center gap-2 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg hover:shadow-accent-500/20 sm:p-6"
             >
               <span className="text-gradient font-display text-2xl font-bold leading-tight sm:text-3xl">
-                {stat.value}
+                <StatValue value={stat.value} />
               </span>
               <span className="text-sm leading-snug text-ink-400">
                 {stat.label}

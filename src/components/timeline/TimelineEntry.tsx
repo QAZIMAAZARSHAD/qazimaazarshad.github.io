@@ -1,4 +1,10 @@
 import { ExternalLink } from "lucide-react";
+import {
+  type MotionValue,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import type { CompanyExperience, ExperienceRole } from "@/data/content";
 import { cn, durationSince } from "@/lib/utils";
 import { LogoTile } from "./LogoTile";
@@ -13,6 +19,10 @@ function roleDuration(role: ExperienceRole): string | undefined {
 
 interface TimelineEntryProps {
   item: CompanyExperience;
+  /** Scroll-driven rail fill progress (0–1). Omitted under reduced motion. */
+  fillProgress?: MotionValue<number>;
+  /** This entry's approximate position along the rail (0–1). */
+  position?: number;
 }
 
 /**
@@ -22,7 +32,11 @@ interface TimelineEntryProps {
  * promotion path reads as a single card. The rail line lives in the parent so
  * it can span all companies continuously.
  */
-export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
+export function TimelineEntry({
+  item,
+  fillProgress,
+  position = 0,
+}: Readonly<TimelineEntryProps>) {
   const {
     organization,
     image,
@@ -34,6 +48,15 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
     current,
     roles,
   } = item;
+
+  // Brighten this node's glow once the scroll fill passes it. When
+  // `fillProgress` is absent (reduced motion), the fallback stays fully lit.
+  const fallback = useMotionValue(1);
+  const nodeGlow = useTransform(
+    fillProgress ?? fallback,
+    [position - 0.08, position],
+    [0, 1],
+  );
 
   const meta = [totalDuration, location, locationType]
     .filter(Boolean)
@@ -50,6 +73,11 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
           {current && (
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400/70" />
           )}
+          <motion.span
+            aria-hidden
+            style={{ opacity: nodeGlow }}
+            className="absolute inset-0 rounded-full bg-accent-400/70 blur-[3px]"
+          />
           <span
             className={cn(
               "relative h-3 w-3 rounded-full ring-4 ring-ink-950",
@@ -66,7 +94,7 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
         className="absolute left-8 top-12 h-px w-6 -translate-y-1/2 bg-gradient-to-r from-accent-400/50 to-transparent sm:left-10 sm:w-10"
       />
 
-      <article className="glass glass-hover rounded-2xl p-5 shadow-lg shadow-black/20 hover:shadow-accent-500/20 sm:p-6">
+      <article className="glass glass-hover spotlight rounded-2xl p-5 shadow-lg shadow-black/20 hover:shadow-accent-500/20 sm:p-6">
         <div className="flex items-start gap-4">
           <LogoTile
             src={image}

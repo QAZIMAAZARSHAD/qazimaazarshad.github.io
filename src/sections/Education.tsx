@@ -10,7 +10,7 @@ import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 function EducationCard({ item }: Readonly<{ item: EducationItem }>) {
   const body = (
-    <div className="glass glass-hover flex h-full flex-col rounded-3xl p-6 shadow-lg shadow-black/20 hover:shadow-accent-500/20">
+    <div className="glass glass-hover spotlight flex h-full flex-col rounded-3xl p-6 shadow-lg shadow-black/20 hover:shadow-accent-500/20">
       <div className="flex items-start justify-between gap-4">
         <LogoTile
           src={item.image}

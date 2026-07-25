@@ -56,6 +56,38 @@
   .glass-hover {
     @apply transition-all duration-300 hover:border-accent-400/40 hover:bg-white/[0.06];
   }
+
+  /* Cursor-following radial glow on cards (position driven by SpotlightEffect) */
+  .spotlight {
+    position: relative;
+  }
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+      260px circle at var(--spot-x, -1000px) var(--spot-y, -1000px),
+      rgba(129, 140, 248, 0.16),
+      transparent 60%
+    );
+  }
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Tech marquee loop (used via [animation:qma-marquee_...] in TechMarquee) */
+@keyframes qma-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Custom scrollbar */

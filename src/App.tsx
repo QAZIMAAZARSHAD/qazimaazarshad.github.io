@@ -4,6 +4,8 @@ import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { Preloader } from "@/components/effects/Preloader";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { AiAssistant } from "@/components/ai/AiAssistant";
+import { SpotlightEffect } from "@/components/effects/SpotlightEffect";
+import { SideNav } from "@/components/effects/SideNav";
 import { Navbar } from "@/sections/Navbar";
 import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
@@ -24,6 +26,8 @@ export default function App() {
       <Preloader />
       <CommandPalette />
       <AiAssistant />
+      <SpotlightEffect />
+      <SideNav />
       <AnimatedBackground />
       <ScrollProgress />
       <Navbar />

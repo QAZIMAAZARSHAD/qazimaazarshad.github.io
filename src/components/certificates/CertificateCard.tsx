@@ -43,7 +43,7 @@ export function CertificateCard({
       onClick={() => onSelect(certificate)}
       aria-label={`View certificate: ${title}`}
       className={cn(
-        "group glass glass-hover flex h-full flex-col overflow-hidden rounded-2xl text-left",
+        "group spotlight glass glass-hover flex h-full flex-col overflow-hidden rounded-2xl text-left",
         "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-accent-500/15",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
       )}

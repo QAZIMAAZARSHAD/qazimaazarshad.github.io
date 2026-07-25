@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 /** The live result count paragraph inside the Projects section. */
-const count = (page: Page) => page.locator('#projects p[aria-live="polite"]');
+const count = (page: Page) => page.getByTestId("projects-count");
 
 /** A project card is a button labelled "View details for <title>". */
 const card = (page: Page, title: string) =>

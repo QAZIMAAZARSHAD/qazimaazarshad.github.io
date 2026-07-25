@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CertificateCard } from "@/components/certificates/CertificateCard";
 import { CertificateLightbox } from "@/components/certificates/CertificateLightbox";
+import { CountUp } from "@/components/ui/CountUp";
 import {
   certificateCategories,
   type CertificateCategory,
@@ -126,9 +127,19 @@ export function Certifications() {
             )}
           </div>
 
-          <p className="font-mono text-xs text-ink-400" aria-live="polite">
-            <span className="text-accent-300">{filtered.length}</span>{" "}
-            {filtered.length === 1 ? "certificate" : "certificates"}
+          <p className="font-mono text-xs text-ink-400">
+            <span data-testid="certificates-count" aria-hidden="true">
+              <CountUp
+                value={filtered.length}
+                durationMs={500}
+                className="text-accent-300"
+              />{" "}
+              {filtered.length === 1 ? "certificate" : "certificates"}
+            </span>
+            <span className="sr-only" role="status">
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "certificate" : "certificates"}
+            </span>
           </p>
         </div>
       </div>

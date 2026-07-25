@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, SearchX, X } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { CountUp } from "@/components/ui/CountUp";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { ProjectModal } from "@/components/projects/ProjectModal";
 import {
@@ -47,6 +48,28 @@ export function Projects() {
     setActiveCategory("All");
     setQuery("");
   };
+
+  // Listen for skill chips in the Skills section requesting a project filter.
+  // Decoupled via a window CustomEvent so the two sections stay independent.
+  useEffect(() => {
+    const handleFilter = (event: Event) => {
+      const skill = (event as CustomEvent<string>).detail;
+      if (typeof skill !== "string" || !skill) return;
+
+      setActiveCategory("All");
+      setQuery(skill);
+
+      const projectsSection = document.getElementById("projects");
+      projectsSection?.scrollIntoView?.({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+
+    window.addEventListener("qma:filter-projects", handleFilter);
+    return () =>
+      window.removeEventListener("qma:filter-projects", handleFilter);
+  }, []);
 
   return (
     <Section id="projects">
@@ -110,9 +133,18 @@ export function Projects() {
             )}
           </div>
 
-          <p className="font-mono text-xs text-ink-400" aria-live="polite">
-            <span className="text-accent-300">{filtered.length}</span>{" "}
-            {filtered.length === 1 ? "project" : "projects"}
+          <p className="font-mono text-xs text-ink-400">
+            <span data-testid="projects-count" aria-hidden="true">
+              <CountUp
+                value={filtered.length}
+                durationMs={500}
+                className="text-accent-300"
+              />{" "}
+              {filtered.length === 1 ? "project" : "projects"}
+            </span>
+            <span className="sr-only" role="status">
+              {filtered.length} {filtered.length === 1 ? "project" : "projects"}
+            </span>
           </p>
         </div>
       </div>
