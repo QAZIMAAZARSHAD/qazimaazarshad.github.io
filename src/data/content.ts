@@ -45,6 +45,31 @@ export interface ExperienceItem {
   image: string;
   link?: string;
   current?: boolean;
+  /** Optional path to the credential shown in the Certificates section. */
+  certificate?: string;
+}
+
+/** A single role held within a company (used to show career progression). */
+export interface ExperienceRole {
+  title: string;
+  type: string;
+  period: string;
+  duration?: string;
+  current?: boolean;
+}
+
+/** A company card in the main timeline, holding one or more roles. */
+export interface CompanyExperience {
+  organization: string;
+  image: string;
+  link?: string;
+  location?: string;
+  locationType?: string;
+  /** Total tenure across all roles; shown when a company has multiple roles. */
+  totalDuration?: string;
+  description?: string;
+  current?: boolean;
+  roles: ExperienceRole[];
 }
 
 export type ProjectCategory =
@@ -68,6 +93,33 @@ export interface SkillGroup {
   skills: string[];
 }
 
+export type CertificateCategory =
+  "course" | "externship" | "achievement" | "participation" | "other";
+
+export interface CertificateItem {
+  id: string;
+  title: string;
+  issuer?: string;
+  category: CertificateCategory;
+  /** Compact JPG shown on the card and in the lightbox. */
+  preview?: string;
+  /** Original file for download — only kept for real credentials. */
+  file?: string;
+  fileType: "pdf" | "image";
+}
+
+export const certificateCategories: {
+  id: CertificateCategory | "all";
+  label: string;
+}[] = [
+  { id: "all", label: "All" },
+  { id: "course", label: "Courses & MOOCs" },
+  { id: "externship", label: "Externships" },
+  { id: "achievement", label: "Achievements" },
+  { id: "participation", label: "Participation" },
+  { id: "other", label: "Other" },
+];
+
 export const profile = {
   name: "Qazi Maaz Arshad",
   firstName: "Maaz",
@@ -87,6 +139,18 @@ export const profile = {
   email: "qazimaazarshad@gmail.com",
   resume: "resume/Qazi_Maaz_Arshad_Resume.pdf",
   avatar: "images/instagram/maaz.jpg",
+} as const;
+
+/**
+ * Visitor analytics via GoatCounter (privacy-first, no cookies, GDPR-friendly).
+ * 1. Sign up free at https://www.goatcounter.com and choose a code.
+ * 2. Paste that code here — pageview tracking + the footer visit counter turn on.
+ * 3. In GoatCounter → Settings, enable "Allow adding visitor counts to pages"
+ *    so the public /counter/TOTAL.json total can be read.
+ * Leave empty to keep everything disabled (nothing renders, nothing loads).
+ */
+export const analytics = {
+  goatCounterCode: "qazimaazarshad",
 } as const;
 
 export const socials: SocialLink[] = [
@@ -149,6 +213,7 @@ export const navSections = [
   { id: "skills", label: "Skills" },
   { id: "education", label: "Education" },
   { id: "achievements", label: "Achievements" },
+  { id: "certifications", label: "Certificates" },
   { id: "hobbies", label: "Hobbies" },
   { id: "contact", label: "Contact" },
 ] as const;
@@ -189,27 +254,60 @@ export const education: EducationItem[] = [
   },
 ];
 
-export const experience: ExperienceItem[] = [
+export const experience: CompanyExperience[] = [
   {
-    role: "Associate Member of Technical Staff",
     organization: "Salesforce",
-    type: "Full-time",
-    period: "Mar 2026 — Present",
+    image: "images/experience/salesforce.png",
+    link: "https://www.salesforce.com/",
+    location: "Bengaluru, India",
+    locationType: "On-site",
     current: true,
     description:
       "Full-stack engineer on the R&D MDM Informatica team, building enterprise-scale master data management. I work AI-first — orchestrating coding agents to ship epics and refactors end-to-end across APIs, metadata flows, and UI with Java, Spring Boot, React & TypeScript — and I'm the go-to for cross-layer debugging and unblocking time-sensitive releases.",
-    image: "images/experience/salesforce.png",
-    link: "https://www.salesforce.com/",
+    roles: [
+      {
+        title: "Associate Member of Technical Staff",
+        type: "Full-time",
+        period: "Mar 2026 — Present",
+        current: true,
+      },
+    ],
   },
   {
-    role: "Software Engineer",
     organization: "Informatica",
-    type: "Full-time",
-    period: "Aug 2022 — Mar 2026",
-    description:
-      "Built UI features and components with React on Informatica MDM.next and streamlined backend services with Java & Spring Boot — delivering features, bug fixes, and user stories across the stack. Informatica joined Salesforce via acquisition.",
     image: "images/experience/infa.png",
     link: "https://www.informatica.com/",
+    location: "Bengaluru, India",
+    locationType: "On-site",
+    totalDuration: "3 yrs 8 mos",
+    description:
+      "Grew from intern to Software Engineer, building UI features and components with React on Informatica MDM.next and streamlining backend services with Java & Spring Boot — delivering features, bug fixes, and user stories across the stack. Informatica joined Salesforce via acquisition.",
+    roles: [
+      {
+        title: "Software Engineer",
+        type: "Full-time",
+        period: "Mar 2025 — Mar 2026",
+        duration: "1 yr 1 mo",
+      },
+      {
+        title: "Associate Software Engineer",
+        type: "Full-time",
+        period: "Feb 2024 — Mar 2025",
+        duration: "1 yr 2 mos",
+      },
+      {
+        title: "R&D Apprentice",
+        type: "Full-time",
+        period: "Aug 2023 — Feb 2024",
+        duration: "7 mos",
+      },
+      {
+        title: "Software Development Intern",
+        type: "Internship",
+        period: "Aug 2022 — Jul 2023",
+        duration: "1 yr",
+      },
+    ],
   },
 ];
 
@@ -221,12 +319,13 @@ export const earlierExperience: ExperienceItem[] = [
   {
     role: "Future Ready Talent Intern",
     organization: "Microsoft (Future Ready Talent)",
-    type: "Internship",
+    type: "Externship",
     period: "Oct 2021 — Dec 2021",
     description:
       "Completed Microsoft's Future Ready Talent program (with GitHub, Future Skills Prime, Quess, EY). Learned in-demand Azure cloud & security skills and built a Voters Registration Portal using Azure services like QnA Maker and Storage Accounts.",
     image: "images/experience/future.png",
-    link: "https://futurereadytalent.in/",
+    link: "https://github.com/github/india/discussions/125",
+    certificate: "certificates/files/externship-future-ready.pdf",
   },
   {
     role: "Project Admin & Mentor",
@@ -236,16 +335,19 @@ export const earlierExperience: ExperienceItem[] = [
     description:
       "Introduced newcomers to open source and trained them on Git, GitHub, and web development. Open-sourced 4 projects — 150+ issues resolved and 300+ pull requests merged in two months.",
     image: "images/experience/lgm.png",
+    link: "https://letsgrowmore.in/soc/",
+    certificate: "certificates/files/externship-lgm-project-admin.pdf",
   },
   {
     role: "Machine Learning Intern",
     organization: "Elite Techno Groups",
-    type: "Internship",
+    type: "Externship",
     period: "Aug 2021 — Sep 2021",
     description:
       "Earned a spot among 25,000 applicants for the Skill India Internship. Worked with Python and its data libraries on projects including an Inventory Management System and data analysis on the Summer Olympics dataset.",
     image: "images/experience/ETG.jpg",
-    link: "https://www.elitetechnogroups.com/",
+    link: "https://unstop.com/college-fests/summer-internship-elite-techno-groups-4541",
+    certificate: "certificates/files/externship-elite-techno-internship.pdf",
   },
   {
     role: "Campus Ambassador",
@@ -265,16 +367,18 @@ export const earlierExperience: ExperienceItem[] = [
     description:
       "Pioneer on the Web Development team of GDSC-LPU, a university community for students interested in Google developer technologies — a platform to build, showcase skills, and grow.",
     image: "images/experience/GDSC.png",
+    link: "https://www.linkedin.com/company/gdsclpu/",
   },
   {
     role: "Machine Learning Intern",
     organization: "Internship Studio",
-    type: "Internship",
+    type: "Externship",
     period: "Jun 2021 — Jul 2021",
     description:
       "Built ML regression models to predict YouTube ad-view counts from other metrics. Used multiple Python libraries to clean, visualize, and normalize the dataset.",
     image: "images/experience/internstudio.png",
     link: "https://internshipstudio.com/",
+    certificate: "certificates/files/externship-intern-studio-ml-intern.pdf",
   },
   {
     role: "Program Admin & Mentor",
@@ -284,16 +388,19 @@ export const earlierExperience: ExperienceItem[] = [
     description:
       "Program admin and mentor for 4 projects — Apna Theatre, Apni Dukaan, Voters Registration Portal, and Income Tax Calculator — during a 30-day contribution program, onboarding hundreds of contributors to open source.",
     image: "images/experience/devincept.jpg",
+    link: "https://www.linkedin.com/company/devincept/",
+    certificate: "certificates/files/externship-devincept-program-admin.png",
   },
   {
     role: "Frontend Developer Intern",
     organization: "Suven Consultants & Technology",
-    type: "Internship",
+    type: "Externship",
     period: "Dec 2020",
     description:
       "Designed and developed 4 responsive, user-friendly websites using HTML, CSS, JavaScript, and Bootstrap over a one-month internship.",
     image: "images/experience/suven.jpg",
     link: "https://suvenconsultants.com/",
+    certificate: "certificates/files/externship-suven-web-internship.pdf",
   },
   {
     role: "Open Source Contributor",
@@ -303,27 +410,30 @@ export const earlierExperience: ExperienceItem[] = [
     description:
       "Ranked among the top 30 contributors. Fixed bugs and shipped enhancements across several open-source projects while learning from mentors and fellow contributors.",
     image: "images/experience/cross.jpg",
-    link: "https://crosswoc.ieeedtu.in/#",
+    link: "https://www.linkedin.com/company/crosswoc-cross-winter-of-code/",
   },
   {
     role: "Android App Development Intern",
     organization: "The Sparks Foundation",
-    type: "Internship",
+    type: "Externship",
     period: "Mar 2021",
     description:
       "Built a demo bank-payments Android app allowing users to manage account details and make payments, while grasping core app-development skills.",
     image: "images/experience/spark.png",
-    link: "https://www.thesparksfoundationsingapore.org/",
+    link: "https://www.linkedin.com/company/the-sparks-foundation/",
+    certificate: "certificates/files/externship-sparksintern.png",
   },
   {
     role: "Web Designing Intern",
     organization: "Internship Studio",
-    type: "Internship",
+    type: "Externship",
     period: "Jun 2020 — Jul 2020",
     description:
       "Created 5–6 mini website designs with HTML, CSS, and JavaScript, including an e-commerce site with improved structure, navigation, and responsiveness.",
     image: "images/experience/studio.png",
     link: "https://internshipstudio.com/",
+    certificate:
+      "certificates/files/externship-internship-studio-web-intern.pdf",
   },
   {
     role: "Campus Ambassador",
@@ -334,11 +444,12 @@ export const earlierExperience: ExperienceItem[] = [
       "Among the top 10 campus ambassadors of the batch. Spread awareness of NEO 4.0 & 5.0, guided peers through registration, and drove engagement through social media.",
     image: "images/experience/NEO.png",
     link: "https://nationalolympiad.org/?refid=1792601",
+    certificate: "certificates/files/externship-neo-ambassador.pdf",
   },
   {
     role: "Community Influencer",
     organization: "UnSchool",
-    type: "Internship",
+    type: "Ambassador",
     period: "Jul 2020 — Aug 2020",
     description:
       "Ran social media strategies for brand promotion and sales, contributing to a ~10% increase in product sales while learning digital marketing.",
@@ -348,7 +459,7 @@ export const earlierExperience: ExperienceItem[] = [
   {
     role: "Event Coordinator",
     organization: "MegaMinds Student Organization",
-    type: "Leadership",
+    type: "Community",
     period: "Aug 2019 — Present",
     description:
       "Planned and organized tech workshops, seminars, and social events — serving as event manager, anchor, and marketing head, leading teams of 25+ on multiple occasions.",
@@ -358,22 +469,22 @@ export const earlierExperience: ExperienceItem[] = [
   {
     role: "Event Manager",
     organization: "ClubTwenty Student Organization",
-    type: "Leadership",
+    type: "Community",
     period: "Aug 2019 — Aug 2021",
     description:
       "Organized marathons, sports fests, and charity events. As sales-team lead, drove a 35% sales contribution to the flagship event GlowRun Electrica 2k19.",
     image: "images/experience/club.jpg",
-    link: "https://www.instagram.com/clubtwenty.in/?hl=en",
+    link: "https://www.linkedin.com/company/clubtwentyorg/",
   },
   {
     role: "Marketing Coordinator",
     organization: "Spade Student Organization",
-    type: "Leadership",
+    type: "Community",
     period: "Aug 2019 — Mar 2020",
     description:
       "Coordinated events across education, technology, art, culture, and recreation. Led event promotions and closed several sponsorship deals.",
     image: "images/experience/spade.png",
-    link: "https://www.spadelpu.com/",
+    link: "https://www.linkedin.com/company/spadelpu/",
   },
 ];
 
@@ -703,7 +814,6 @@ export const skillGroups: SkillGroup[] = [
 export const achievements: string[] = [
   "Gold Medal — International Humanity Olympiad",
   "All India Rank 49 — National Engineering Olympiad",
-  "Rank 82 — Red Hat IT Aptitude Test, India 2021",
   "5-Star Problem Solver on HackerRank",
   "Solved 300+ coding problems on LeetCode",
   "1st Prize — Inter-School Quiz",
@@ -728,4 +838,7 @@ export const hobbies: string[] = [
   "Chess",
   "Video Games",
   "Quizzing",
+  "Gym",
+  "Food",
+  "Swimming",
 ];

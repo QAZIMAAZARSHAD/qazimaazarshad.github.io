@@ -1,4 +1,5 @@
 import { test, expect, devices } from "@playwright/test";
+import { navSections } from "../../src/data/content";
 
 test.use({ ...devices["Pixel 7"] });
 
@@ -47,7 +48,9 @@ test.describe("Mobile behavior (regression guards)", () => {
 
     const drawer = page.locator("#mobile-menu");
     await expect(drawer).toBeVisible();
-    await expect(drawer.locator('a[href^="#"]')).toHaveCount(9);
+    await expect(drawer.locator('a[href^="#"]')).toHaveCount(
+      navSections.length,
+    );
 
     await page.getByRole("button", { name: "Close menu" }).click();
     await expect(drawer).toBeHidden();

@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { About } from "@/sections/About";
 import { Skills } from "@/sections/Skills";
 import { Achievements } from "@/sections/Achievements";
+import { Certifications } from "@/sections/Certifications";
 import { Hobbies } from "@/sections/Hobbies";
 import { Experience } from "@/sections/Experience";
 import { Education } from "@/sections/Education";
@@ -79,7 +80,10 @@ describe("Experience", () => {
 
     const current = experience.find((e) => e.current)!;
     expect(
-      screen.getByRole("heading", { name: current.role }),
+      screen.getByRole("heading", { name: current.organization }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: current.roles[0].title }),
     ).toBeInTheDocument();
     expect(screen.getByText("Current")).toBeInTheDocument();
   });
@@ -95,5 +99,18 @@ describe("Education", () => {
     expect(
       screen.getByRole("heading", { name: education[0].degree }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("Certifications", () => {
+  it("renders its heading and certificate cards", () => {
+    render(<Certifications />);
+
+    expect(
+      screen.getByRole("heading", { name: /certificates & credentials/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole("button", { name: /view certificate/i }).length,
+    ).toBeGreaterThan(0);
   });
 });

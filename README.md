@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-38_unit_·_42_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-46_unit_·_47_e2e-16a34a)
 
 <br/>
 
@@ -34,7 +34,10 @@ responsiveness test suite.
 ## ✨ Highlights
 
 - **🤖 In-browser AI assistant** — "Ask my portfolio" runs a real LLM **100% client-side** (WebLLM + WebGPU), grounded on my content — no backend, no API keys, private to the visitor
+- **📜 Certificates gallery** — 150+ credentials (courses, externships, achievements, participation), filterable & searchable, with generated previews and a focus-trapped lightbox; assets + data produced by a re-runnable script
 - **⌘K command palette** — Spotlight-style launcher to jump to any section, open projects, copy email, or download the résumé (keyboard-driven)
+- **👁 Live visit counter** — privacy-first **GoatCounter** total in the footer (no cookies, no PII), self-hiding on failure
+- **Career-progression timeline** — one card per company with every role nested inside; the current role's tenure is computed live
 - **Animated canvas** particle constellation + aurora backdrop that reacts to the cursor
 - **Interactive projects gallery** — searchable, category-filterable, with detail modals (focus-trapped & accessible)
 - **Scroll-reveal** animations, scroll progress bar, active-section nav tracking, 3D tilt cards, glassmorphism UI
@@ -51,6 +54,7 @@ responsiveness test suite.
 | Styling   | **Tailwind CSS** (custom design tokens)                                       |
 | Animation | **Framer Motion**                                                             |
 | AI        | **WebLLM** — in-browser LLM (WebGPU) powering the "Ask my portfolio" chat     |
+| Analytics | **GoatCounter** — privacy-first visit counter (no cookies)                    |
 | Icons     | lucide-react + react-icons                                                    |
 | Testing   | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
 | CI/CD     | **GitHub Actions** — verify on push/PR, auto-deploy to Pages on `main`        |
@@ -77,23 +81,29 @@ npm run test:e2e:update  # regenerate visual baselines
 
 ```
 src/
-  data/content.ts     # single source of truth for all content (typed)
-  lib/                # utils (cn, asset), motion variants, aiContext (AI grounding)
+  data/
+    content.ts        # single source of truth for all content (typed)
+    certificates.ts   # AUTO-GENERATED certificate data (see scripts/)
+  lib/                # utils (cn, asset, durationSince), motion, aiContext (AI grounding)
   hooks/              # useActiveSection
   components/
     ui/               # Section, SectionHeading, Reveal, TiltCard, SocialLinks
     effects/          # AnimatedBackground, ScrollProgress, Preloader
     command/          # CommandPalette (⌘K)
     ai/               # AiAssistant — in-browser "Ask my portfolio" chat
+    certificates/     # CertificateCard, CertificateLightbox
+    analytics/        # VisitCounter (GoatCounter)
     …                 # hero / projects / skills / timeline / …
-  sections/           # Navbar, Hero, About, Experience, EarlierExperience,
-                      # Projects, Skills, Education, Achievements, Hobbies, Contact, Footer
+  sections/           # Navbar, Hero, About, Experience, EarlierExperience, Projects,
+                      # Skills, Education, Achievements, Certifications, Hobbies, Contact, Footer
   App.tsx             # composition root
+scripts/
+  generate-certificates.mjs  # builds certificate previews + certificates.ts
 tests/
   setup.ts            # Vitest setup (jsdom globals, jest-dom)
   unit/               # Vitest + RTL unit/component tests (mirrors src/)
   e2e/                # Playwright specs + visual baselines
-public/               # images, resume, static assets
+public/               # images, resume, certificates, static assets
 .github/workflows/    # ci.yml (verify) + deploy.yml (Pages)
 ```
 
@@ -101,6 +111,13 @@ public/               # images, resume, static assets
 
 Everything — profile, experience, projects, skills, education, achievements — lives in
 `src/data/content.ts`. Update the data and the UI updates automatically; no markup changes needed.
+
+**Certificates** are generated: drop files into the source folder and run
+`node scripts/generate-certificates.mjs`, which renders compact previews, keeps
+originals for real credentials, and rewrites `src/data/certificates.ts`.
+
+**Visit counter**: set `analytics.goatCounterCode` in `content.ts` to your
+GoatCounter code (empty disables it entirely).
 
 ## 🔄 CI/CD
 

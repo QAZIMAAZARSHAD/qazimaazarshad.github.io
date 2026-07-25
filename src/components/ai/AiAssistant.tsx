@@ -299,7 +299,10 @@ function LoadPanel({
               style={{ width: `${Math.round(progress * 100)}%` }}
             />
           </div>
-          <p className="mt-2 line-clamp-2 font-mono text-[11px] text-ink-500">
+          <p
+            className="mt-2 line-clamp-2 font-mono text-[11px] text-ink-500"
+            title={progressText || "Preparing…"}
+          >
             {progressText || "Preparing…"}
           </p>
         </div>

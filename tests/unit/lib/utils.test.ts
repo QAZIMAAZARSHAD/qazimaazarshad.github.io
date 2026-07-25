@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { asset, cn } from "@/lib/utils";
+import { asset, cn, durationSince } from "@/lib/utils";
 
 describe("cn", () => {
   it("merges multiple class names", () => {
@@ -32,5 +32,21 @@ describe("asset", () => {
 
   it("result always begins with BASE_URL", () => {
     expect(asset("resume/cv.pdf").startsWith(base)).toBe(true);
+  });
+});
+
+describe("durationSince", () => {
+  it("counts months inclusively like LinkedIn", () => {
+    expect(durationSince("Mar 2026", new Date(2026, 6, 15))).toBe("5 mos");
+  });
+
+  it("uses singular units and combines years + months", () => {
+    expect(durationSince("Mar 2026", new Date(2026, 2, 1))).toBe("1 mo");
+    expect(durationSince("Mar 2025", new Date(2026, 2, 1))).toBe("1 yr 1 mo");
+    expect(durationSince("Jan 2024", new Date(2026, 0, 1))).toBe("2 yrs 1 mo");
+  });
+
+  it("returns empty for an unparseable label", () => {
+    expect(durationSince("whenever")).toBe("");
   });
 });

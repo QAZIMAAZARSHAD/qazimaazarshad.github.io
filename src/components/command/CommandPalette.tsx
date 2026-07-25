@@ -19,6 +19,7 @@ import {
   Wrench,
   GraduationCap,
   Award,
+  BadgeCheck,
   Gamepad2,
   Mail,
   FileText,
@@ -65,6 +66,7 @@ const NAV_ICONS: Record<string, IconComp> = {
   skills: Wrench,
   education: GraduationCap,
   achievements: Award,
+  certifications: BadgeCheck,
   hobbies: Gamepad2,
   contact: Mail,
 };
@@ -343,7 +345,9 @@ export function CommandPalette() {
                             >
                               <Icon className="h-4 w-4" aria-hidden />
                             </span>
-                            <span className="flex-1 truncate">{cmd.title}</span>
+                            <span className="flex-1 truncate" title={cmd.title}>
+                              {cmd.title}
+                            </span>
                             {isActive && (
                               <CornerDownLeft
                                 className="h-3.5 w-3.5 text-ink-500"

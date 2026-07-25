@@ -15,3 +15,43 @@ export function asset(path: string): string {
   const base = import.meta.env.BASE_URL;
   return `${base}${path.replace(/^\//, "")}`;
 }
+
+const MONTH_ABBR = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
+/**
+ * Live tenure label from a "Mon YYYY" start (e.g. "Mar 2026") to now, counted
+ * inclusively the way LinkedIn does — so an ongoing role stays current without
+ * a hardcoded duration. Returns e.g. "5 mos", "1 yr", "2 yrs 3 mos".
+ */
+export function durationSince(
+  startLabel: string,
+  now: Date = new Date(),
+): string {
+  const [mon, yearStr] = startLabel.trim().split(/\s+/);
+  const m = MONTH_ABBR.indexOf((mon ?? "").slice(0, 3).toLowerCase());
+  const year = Number.parseInt(yearStr ?? "", 10);
+  if (m < 0 || Number.isNaN(year)) return "";
+
+  const months =
+    Math.max(0, (now.getFullYear() - year) * 12 + (now.getMonth() - m)) + 1;
+  const yrs = Math.floor(months / 12);
+  const mos = months % 12;
+
+  const parts: string[] = [];
+  if (yrs) parts.push(`${yrs} yr${yrs > 1 ? "s" : ""}`);
+  if (mos) parts.push(`${mos} mo${mos > 1 ? "s" : ""}`);
+  return parts.join(" ") || "1 mo";
+}

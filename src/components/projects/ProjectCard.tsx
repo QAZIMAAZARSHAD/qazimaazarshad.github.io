@@ -67,7 +67,10 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
         <h3 className="font-display text-lg font-semibold leading-snug text-white transition-colors duration-300 group-hover:text-accent-200">
           {project.title}
         </h3>
-        <p className="line-clamp-2 text-sm leading-relaxed text-ink-400">
+        <p
+          className="line-clamp-2 text-sm leading-relaxed text-ink-400"
+          title={project.blurb}
+        >
           {project.blurb}
         </p>
 

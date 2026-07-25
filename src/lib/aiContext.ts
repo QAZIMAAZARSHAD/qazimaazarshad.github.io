@@ -15,10 +15,22 @@ import {
  * in-browser model can answer grounded questions without any backend.
  */
 function buildProfileContext(): string {
-  const exp = [...experience, ...earlierExperience]
+  const exp = experience
+    .map((c) => {
+      const roles = c.roles
+        .map(
+          (r) =>
+            `  - ${r.title} (${r.type}, ${r.period}${r.duration ? `, ${r.duration}` : ""})`,
+        )
+        .join("\n");
+      const head = `- ${c.organization}${c.totalDuration ? ` (${c.totalDuration})` : ""}${c.current ? ", current" : ""}: ${c.description ?? ""}`;
+      return `${head}\n${roles}`;
+    })
+    .join("\n");
+
+  const earlierExp = earlierExperience
     .map(
-      (e) =>
-        `- ${e.role} at ${e.organization} (${e.period}${e.current ? ", current" : ""}): ${e.description}`,
+      (e) => `- ${e.role} at ${e.organization} (${e.period}): ${e.description}`,
     )
     .join("\n");
 
@@ -44,6 +56,7 @@ function buildProfileContext(): string {
     `Summary: ${profile.intro}`,
     `About:\n${profile.about.map((a) => `- ${a}`).join("\n")}`,
     `Experience:\n${exp}`,
+    `Earlier experience:\n${earlierExp}`,
     `Skills:\n${skills}`,
     `Projects:\n${proj}`,
     `Education:\n${edu}`,

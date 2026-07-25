@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ExternalLink } from "lucide-react";
+import { BadgeCheck, ChevronDown, ExternalLink } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LogoTile } from "@/components/timeline/LogoTile";
 import { earlierExperience, type ExperienceItem } from "@/data/content";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { asset, cn } from "@/lib/utils";
 
 /** How many cards to show before the visitor expands the rest. */
 const INITIAL_COUNT = 6;
@@ -26,7 +26,12 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
           <h3 className="font-display text-base font-semibold leading-snug text-white">
             {item.role}
           </h3>
-          <p className="truncate text-sm text-ink-300">{item.organization}</p>
+          <p
+            className="truncate text-sm text-ink-300"
+            title={item.organization}
+          >
+            {item.organization}
+          </p>
         </div>
       </div>
 
@@ -39,21 +44,40 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
         </span>
       </div>
 
-      <p className="line-clamp-3 text-sm leading-relaxed text-ink-400">
+      <p
+        className="line-clamp-3 text-sm leading-relaxed text-ink-400"
+        title={item.description}
+      >
         {item.description}
       </p>
 
-      {item.link && (
-        <a
-          href={item.link}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`Visit ${item.organization}`}
-          className="mt-auto inline-flex items-center gap-1.5 font-mono text-xs font-medium text-accent-300 transition-colors duration-300 hover:text-accent-200"
-        >
-          Visit
-          <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-        </a>
+      {(item.link || item.certificate) && (
+        <div className="mt-auto flex flex-wrap items-center gap-4">
+          {item.link && (
+            <a
+              href={item.link}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Visit ${item.organization}`}
+              className="inline-flex items-center gap-1.5 font-mono text-xs font-medium text-accent-300 transition-colors duration-300 hover:text-accent-200"
+            >
+              Visit
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          )}
+          {item.certificate && (
+            <a
+              href={asset(item.certificate)}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`View ${item.organization} certificate`}
+              className="inline-flex items-center gap-1.5 font-mono text-xs font-medium text-ink-300 transition-colors duration-300 hover:text-white"
+            >
+              Certificate
+              <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
+            </a>
+          )}
+        </div>
       )}
     </article>
   );

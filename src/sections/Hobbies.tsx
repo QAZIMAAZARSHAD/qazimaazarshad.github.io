@@ -15,6 +15,9 @@ const HOBBY_META: Record<string, { emoji: string; quip: string }> = {
   Chess: { emoji: "♟️", quip: "Three moves ahead." },
   "Video Games": { emoji: "🎮", quip: "One more run, promise." },
   Quizzing: { emoji: "🧠", quip: "Trivia? Bring it on." },
+  Gym: { emoji: "🏋️", quip: "No days off." },
+  Food: { emoji: "🍜", quip: "Will code for food." },
+  Swimming: { emoji: "🏊", quip: "Making waves." },
 };
 const DEFAULT_HOBBY = { emoji: "✨", quip: "Good vibes only." };
 

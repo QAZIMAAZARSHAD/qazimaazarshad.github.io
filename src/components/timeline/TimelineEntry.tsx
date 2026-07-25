@@ -1,32 +1,44 @@
 import { ExternalLink } from "lucide-react";
-import type { ExperienceItem } from "@/data/content";
-import { cn } from "@/lib/utils";
+import type { CompanyExperience, ExperienceRole } from "@/data/content";
+import { cn, durationSince } from "@/lib/utils";
 import { LogoTile } from "./LogoTile";
 
+/** Ongoing roles compute their tenure live; past roles use the stored value. */
+function roleDuration(role: ExperienceRole): string | undefined {
+  if (role.current) {
+    return durationSince(role.period.split("—")[0]) || role.duration;
+  }
+  return role.duration;
+}
+
 interface TimelineEntryProps {
-  item: ExperienceItem;
+  item: CompanyExperience;
 }
 
 /**
- * One node on the vertical experience timeline: a glowing rail dot + connector
- * aligned to a glass card. The rail line itself lives in the parent so it can
- * span every entry continuously.
- *
- * Geometry note: the dot / connector share the rail's x (`left-8 sm:left-10`,
- * centred via -translate-x-1/2) and sit at the vertical centre of the logo tile
- * (`top-12`), keeping them locked to the rail regardless of viewport.
+ * One company node on the vertical experience timeline: a glowing rail dot +
+ * connector aligned to a glass card. The card leads with the company, then
+ * lists every role held there as a nested progression (newest first), so a
+ * promotion path reads as a single card. The rail line lives in the parent so
+ * it can span all companies continuously.
  */
 export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
   const {
-    role,
     organization,
-    type,
-    period,
-    description,
     image,
     link,
+    location,
+    locationType,
+    totalDuration,
+    description,
     current,
+    roles,
   } = item;
+
+  const meta = [totalDuration, location, locationType]
+    .filter(Boolean)
+    .join(" · ");
+  const multiRole = roles.length > 1;
 
   return (
     <div className="group relative pl-14 sm:pl-20">
@@ -65,7 +77,7 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
               <h3 className="font-display text-lg font-semibold leading-tight text-white sm:text-xl">
-                {role}
+                {organization}
               </h3>
               {current && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-gradient-to-r from-accent-500/20 to-cyan-500/20 px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-cyan-200">
@@ -78,22 +90,55 @@ export function TimelineEntry({ item }: Readonly<TimelineEntryProps>) {
               )}
             </div>
 
-            <p className="mt-1 text-sm font-medium text-accent-200/90">
-              {organization}
-            </p>
-
-            <div className="mt-2.5 flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 font-mono text-[11px] uppercase tracking-wide text-ink-300">
-                {type}
-              </span>
-              <span className="font-mono text-xs text-ink-400">{period}</span>
-            </div>
+            {meta && (
+              <p className="mt-1 font-mono text-xs text-ink-400">{meta}</p>
+            )}
           </div>
         </div>
 
-        <p className="mt-4 text-sm leading-relaxed text-ink-400">
-          {description}
-        </p>
+        <ol
+          className={cn("relative mt-5", multiRole ? "space-y-5" : "space-y-0")}
+        >
+          {multiRole && (
+            <span
+              aria-hidden
+              className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-accent-400/40 via-white/10 to-transparent"
+            />
+          )}
+          {roles.map((r, i) => (
+            <li key={`${r.title}__${r.period}`} className="relative pl-6">
+              <span
+                aria-hidden
+                className={cn(
+                  "absolute left-0 top-1.5 h-[11px] w-[11px] rounded-full ring-4 ring-ink-950",
+                  r.current
+                    ? "bg-gradient-to-br from-accent-400 to-cyan-400 shadow-[0_0_10px_2px] shadow-cyan-500/40"
+                    : i === 0
+                      ? "bg-gradient-to-br from-accent-500 to-accent-400"
+                      : "bg-ink-600",
+                )}
+              />
+              <h4 className="font-medium leading-tight text-white">
+                {r.title}
+              </h4>
+              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-300">
+                  {r.type}
+                </span>
+                <span className="font-mono text-xs text-ink-400">
+                  {r.period}
+                  {roleDuration(r) ? ` · ${roleDuration(r)}` : ""}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        {description && (
+          <p className="mt-4 border-t border-white/5 pt-4 text-sm leading-relaxed text-ink-400">
+            {description}
+          </p>
+        )}
 
         {link && (
           <a

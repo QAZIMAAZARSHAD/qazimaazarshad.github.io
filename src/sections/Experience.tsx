@@ -6,15 +6,12 @@ import { experience } from "@/data/content";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
 export function Experience() {
-  const keyOf = (role: string, organization: string) =>
-    `${role}__${organization}`;
-
   return (
     <Section id="experience">
       <SectionHeading
         kicker="Journey"
         title="Where I've made an impact"
-        description="My professional path building enterprise-scale products — at Salesforce (R&D MDM Informatica) and Informatica."
+        description="My professional path building enterprise-scale products — from a Software Development Intern at Informatica to a full-stack engineer at Salesforce."
       />
 
       <div className="relative">
@@ -31,10 +28,7 @@ export function Experience() {
           className="space-y-5 sm:space-y-6"
         >
           {experience.map((item) => (
-            <motion.li
-              key={keyOf(item.role, item.organization)}
-              variants={fadeUp}
-            >
+            <motion.li key={item.organization} variants={fadeUp}>
               <TimelineEntry item={item} />
             </motion.li>
           ))}

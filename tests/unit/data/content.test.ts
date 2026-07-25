@@ -3,10 +3,13 @@ import {
   socials,
   education,
   experience,
+  earlierExperience,
   projects,
   projectCategories,
+  certificateCategories,
   type ProjectCategory,
 } from "@/data/content";
+import { certificates } from "@/data/certificates";
 
 /** Categories that are valid on a ProjectItem (everything except the "All" filter pseudo-value). */
 const validCategories = projectCategories.filter(
@@ -108,25 +111,101 @@ describe("content: education", () => {
 });
 
 describe("content: experience", () => {
-  it("every experience item has the required fields populated", () => {
+  it("every company has required fields and at least one role", () => {
     expect(experience.length).toBeGreaterThan(0);
-    for (const item of experience) {
-      expect(item.role.trim(), "role").not.toBe("");
+    for (const company of experience) {
+      expect(company.organization.trim(), "organization").not.toBe("");
       expect(
-        item.organization.trim(),
-        `organization for ${item.role}`,
+        company.image.trim(),
+        `image for ${company.organization}`,
       ).not.toBe("");
-      expect(item.type.trim(), `type for ${item.role}`).not.toBe("");
-      expect(item.period.trim(), `period for ${item.role}`).not.toBe("");
-      expect(item.description.trim(), `description for ${item.role}`).not.toBe(
-        "",
-      );
-      expect(item.image.trim(), `image for ${item.role}`).not.toBe("");
+      expect(
+        company.roles.length,
+        `roles for ${company.organization}`,
+      ).toBeGreaterThan(0);
+      for (const role of company.roles) {
+        expect(role.title.trim(), `title in ${company.organization}`).not.toBe(
+          "",
+        );
+        expect(role.type.trim(), `type in ${company.organization}`).not.toBe(
+          "",
+        );
+        expect(
+          role.period.trim(),
+          `period in ${company.organization}`,
+        ).not.toBe("");
+      }
     }
   });
 
-  it("exactly one experience entry is marked current", () => {
-    const current = experience.filter((item) => item.current === true);
+  it("exactly one company is marked current", () => {
+    const current = experience.filter((company) => company.current === true);
     expect(current).toHaveLength(1);
+  });
+});
+
+describe("content: earlierExperience", () => {
+  it("every earlier role has required fields; optional links are well-formed", () => {
+    expect(earlierExperience.length).toBeGreaterThan(0);
+    for (const item of earlierExperience) {
+      expect(item.role.trim(), "role").not.toBe("");
+      expect(item.organization.trim(), `org for ${item.role}`).not.toBe("");
+      expect(item.type.trim(), `type for ${item.role}`).not.toBe("");
+      expect(item.period.trim(), `period for ${item.role}`).not.toBe("");
+      expect(item.image.trim(), `image for ${item.role}`).not.toBe("");
+      if (item.link !== undefined) {
+        expect(item.link, `link for ${item.role}`).toMatch(/^https?:\/\//);
+      }
+      if (item.certificate !== undefined) {
+        expect(item.certificate, `certificate for ${item.role}`).toMatch(
+          /^certificates\/files\/.+\.(pdf|png|jpe?g)$/,
+        );
+      }
+    }
+  });
+});
+
+describe("content: certificates", () => {
+  const validCategories = certificateCategories
+    .filter((c) => c.id !== "all")
+    .map((c) => c.id);
+
+  it("every certificate has required fields and a valid category", () => {
+    expect(certificates.length).toBeGreaterThan(0);
+    for (const cert of certificates) {
+      expect(cert.id.trim(), "id").not.toBe("");
+      expect(cert.title.trim(), `title for ${cert.id}`).not.toBe("");
+      expect(validCategories, `category for ${cert.id}`).toContain(
+        cert.category,
+      );
+      expect(["pdf", "image"], `fileType for ${cert.id}`).toContain(
+        cert.fileType,
+      );
+      if (cert.preview) {
+        expect(cert.preview, `preview for ${cert.id}`).toMatch(
+          /^certificates\/previews\/.+\.jpg$/,
+        );
+      }
+      if (cert.file) {
+        expect(cert.file, `file for ${cert.id}`).toMatch(
+          /^certificates\/files\//,
+        );
+      }
+    }
+  });
+
+  it("certificate ids are unique", () => {
+    const ids = certificates.map((c) => c.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("excludes removed/sensitive items (offer letters, professor LOR, Red Hat report)", () => {
+    const blob = certificates
+      .map((c) => `${c.id} ${c.title}`)
+      .join(" ")
+      .toLowerCase();
+    expect(blob).not.toContain("manmohak");
+    expect(blob).not.toContain("offer");
+    expect(blob).not.toContain("red hat report");
   });
 });

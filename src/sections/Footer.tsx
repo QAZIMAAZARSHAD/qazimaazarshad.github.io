@@ -1,6 +1,7 @@
 import { MapPin } from "lucide-react";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { BackToTop } from "@/components/contact/BackToTop";
+import { VisitCounter } from "@/components/analytics/VisitCounter";
 import { navSections, profile } from "@/data/content";
 
 export function Footer() {
@@ -79,6 +80,7 @@ export function Footer() {
           <p className="text-sm text-ink-400">
             &copy; {year} {profile.name}. All rights reserved.
           </p>
+          <VisitCounter />
           <p className="font-mono text-xs text-ink-500">
             Built with React, TypeScript &amp; Tailwind.
           </p>

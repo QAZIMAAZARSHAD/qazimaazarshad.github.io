@@ -19,6 +19,7 @@ const SECTION_IDS = [
   "skills",
   "education",
   "achievements",
+  "certifications",
   "hobbies",
   "contact",
 ] as const;
@@ -27,6 +28,26 @@ async function settleSection(page: Page, section: Locator): Promise<void> {
   await section.scrollIntoViewIfNeeded();
   // Wait for the section's heading so the Framer reveal has settled.
   await expect(section.getByRole("heading").first()).toBeVisible();
+  // Force any lazy images in the section to load so screenshots are complete
+  // and deterministic (e.g. the certificate gallery previews).
+  await section
+    .evaluate((el: HTMLElement) => {
+      const imgs = Array.from(el.querySelectorAll("img"));
+      imgs.forEach((img) => {
+        img.loading = "eager";
+      });
+      return Promise.all(
+        imgs.map((img) =>
+          img.complete
+            ? null
+            : new Promise((resolve) => {
+                img.addEventListener("load", resolve, { once: true });
+                img.addEventListener("error", resolve, { once: true });
+              }),
+        ),
+      );
+    })
+    .catch(() => {});
   // Give scroll-triggered reveals a beat to finish.
   await page.waitForTimeout(500);
 }
@@ -34,6 +55,22 @@ async function settleSection(page: Page, section: Locator): Promise<void> {
 test.beforeEach(async ({ page }) => {
   // Disable canvas particle animation + freeze CSS animations before load.
   await page.emulateMedia({ reducedMotion: "reduce" });
+  // Freeze "now" so the live current-role tenure ("X mos") is deterministic
+  // and doesn't drift the experience snapshot month-to-month in CI.
+  await page.addInitScript(() => {
+    const FIXED = new Date("2026-07-15T00:00:00Z").getTime();
+    const OriginalDate = Date;
+    class FrozenDate extends OriginalDate {
+      constructor(...args: ConstructorParameters<typeof Date>) {
+        if (args.length === 0) super(FIXED);
+        else super(...args);
+      }
+      static now() {
+        return FIXED;
+      }
+    }
+    globalThis.Date = FrozenDate as DateConstructor;
+  });
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
   // Wait for the preloader to fade out so screenshots capture the real page.
@@ -44,7 +81,7 @@ test.beforeEach(async ({ page }) => {
   // Hide always-on floating widgets so they don't leak into section snapshots.
   await page.addStyleTag({
     content:
-      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"]{display:none !important}',
+      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"],[data-testid="visit-counter"]{display:none !important}',
   });
 });
 
