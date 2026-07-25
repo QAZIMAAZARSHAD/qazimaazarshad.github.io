@@ -25,6 +25,9 @@ const webGpuSupported = () =>
 /** Strip stray markdown so replies read as clean, plain prose in the bubble. */
 function cleanReply(text: string): string {
   return text
+    .replace(/\[([^\]]*)\]\(([^)]+)\)/g, (_, label: string, url: string) =>
+      !label || label === url ? url : `${label} (${url})`,
+    ) // markdown links → plain URL (no duplication)
     .replace(/[*_`>#]/g, "") // emphasis / heading / quote / code marks
     .replace(/^\s*[-+]\s+/gm, "") // bullet markers
     .replace(/^\s*\d+\.\s+/gm, "") // numbered-list markers

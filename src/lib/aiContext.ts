@@ -41,14 +41,13 @@ function buildProfileContext(): string {
     .join(", ");
 
   const edu = education[0];
-  const links = socials
-    .filter((s) => ["linkedin", "github", "email"].includes(s.id))
-    .map((s) => `${s.label}: ${s.href}`)
-    .join(" | ");
+  // Include every real link so handles are never invented.
+  const links = socials.map((s) => `${s.label} — ${s.href}`).join("\n");
 
   return [
     `Name: ${profile.name} (goes by "Maaz"). Role: ${profile.role} at ${profile.company}, based in ${profile.location}.`,
     `Summary: ${profile.intro}`,
+    `Key facts (do NOT compute or guess beyond these): Maaz has 4+ years of total professional software-engineering experience. He has worked on the R&D MDM team since Aug 2022 — first at Informatica, which was acquired by Salesforce — and his current title is Associate Member of Technical Staff at Salesforce (title held since Mar 2026). If asked "how long at Salesforce", explain the team joined Salesforce through the Informatica acquisition, so it's ~4 years on the team; never state a made-up number of years.`,
     `Current & recent experience:\n${exp}`,
     `Earlier (college-era internships/externships & community roles): ${earlierOrgs}.`,
     `Skills — ${skills}.`,
@@ -56,7 +55,8 @@ function buildProfileContext(): string {
     `Education: ${edu.degree}, ${edu.institution} (${edu.period}, ${edu.score}).`,
     `Achievements: ${achievements.join("; ")}.`,
     `Hobbies: ${hobbies.join(", ")}.`,
-    `Contact — Email: ${profile.email}. ${links}.`,
+    `Email: ${profile.email}`,
+    `Links & social handles (use these EXACT URLs; never invent a handle. There is no YouTube):\n${links}`,
   ].join("\n\n");
 }
 
@@ -65,7 +65,8 @@ export const SYSTEM_PROMPT = `You are the assistant on ${profile.firstName}'s po
 Rules:
 - Reply in 1-3 short sentences of plain, friendly prose. No markdown, no bullet points, no numbered lists, no headings, no bold.
 - Be specific and use ONLY the profile. If something genuinely isn't in it, say so briefly and point to his email (${profile.email}).
-- Always refer to him as "Maaz". Never invent employers, dates, projects, or skills.
+- Always refer to him as "Maaz". Never invent employers, dates, durations, projects, skills, or social handles.
+- When sharing a link or handle, output the EXACT URL from the profile as plain text (e.g. https://...), never a made-up handle and never markdown link syntax.
 
 PROFILE:
 ${buildProfileContext()}`;
