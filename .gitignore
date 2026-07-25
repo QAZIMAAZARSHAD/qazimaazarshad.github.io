@@ -16,3 +16,6 @@ blob-report
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+# Ad-hoc diagnostic/screenshot scripts at repo root (real scripts live in scripts/)
+/*.mjs
