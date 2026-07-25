@@ -3,6 +3,7 @@ import { ArrowUpRight, Calendar } from "lucide-react";
 import type { ProjectItem } from "@/data/content";
 import { asset, cn } from "@/lib/utils";
 import { scaleIn } from "@/lib/motion";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 
 interface ProjectCardProps {
   readonly project: ProjectItem;
@@ -67,12 +68,11 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
         <h3 className="font-display text-lg font-semibold leading-snug text-white transition-colors duration-300 group-hover:text-accent-200">
           {project.title}
         </h3>
-        <p
+        <TruncatedText
+          as="p"
+          text={project.blurb}
           className="line-clamp-2 text-sm leading-relaxed text-ink-400"
-          title={project.blurb}
-        >
-          {project.blurb}
-        </p>
+        />
 
         <div className="mt-auto flex flex-wrap gap-2 pt-2">
           {visibleTech.map((tech) => (

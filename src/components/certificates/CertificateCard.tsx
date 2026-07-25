@@ -11,6 +11,7 @@ import {
 import type { CertificateCategory, CertificateItem } from "@/data/content";
 import { asset, cn } from "@/lib/utils";
 import { scaleIn } from "@/lib/motion";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 
 const CATEGORY_META: Record<
   CertificateCategory,
@@ -75,16 +76,17 @@ export function CertificateCard({
       </div>
 
       <div className="flex flex-1 flex-col p-3">
-        <h3
+        <TruncatedText
+          as="h3"
+          text={title}
           className="line-clamp-2 text-sm font-semibold leading-snug text-white transition-colors duration-300 group-hover:text-accent-200"
-          title={title}
-        >
-          {title}
-        </h3>
+        />
         {issuer && (
-          <p className="mt-0.5 truncate text-xs text-ink-400" title={issuer}>
-            {issuer}
-          </p>
+          <TruncatedText
+            as="p"
+            text={issuer}
+            className="mt-0.5 truncate text-xs text-ink-400"
+          />
         )}
       </div>
     </motion.button>

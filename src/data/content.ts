@@ -322,7 +322,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Externship",
     period: "Oct 2021 — Dec 2021",
     description:
-      "Completed Microsoft's Future Ready Talent program (with GitHub, Future Skills Prime, Quess, EY). Learned in-demand Azure cloud & security skills and built a Voters Registration Portal using Azure services like QnA Maker and Storage Accounts.",
+      "Microsoft's Future Ready Talent program (with GitHub, EY & more) — learned Azure cloud & security, and shipped a Voters Registration Portal using QnA Maker and Storage Accounts.",
     image: "images/experience/future.png",
     link: "https://github.com/github/india/discussions/125",
     certificate: "certificates/files/externship-future-ready.pdf",
@@ -333,7 +333,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Open Source",
     period: "Jun 2021 — Aug 2021",
     description:
-      "Introduced newcomers to open source and trained them on Git, GitHub, and web development. Open-sourced 4 projects — 150+ issues resolved and 300+ pull requests merged in two months.",
+      "Mentored newcomers in Git, GitHub, and web development across 4 open-sourced projects — 150+ issues resolved and 300+ PRs merged in two months.",
     image: "images/experience/lgm.png",
     link: "https://letsgrowmore.in/soc/",
     certificate: "certificates/files/externship-lgm-project-admin.pdf",
@@ -344,7 +344,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Externship",
     period: "Aug 2021 — Sep 2021",
     description:
-      "Earned a spot among 25,000 applicants for the Skill India Internship. Worked with Python and its data libraries on projects including an Inventory Management System and data analysis on the Summer Olympics dataset.",
+      "Selected from 25,000 applicants (Skill India). Built a Python Inventory Management System and analyzed the Summer Olympics dataset with Python's data libraries.",
     image: "images/experience/ETG.jpg",
     link: "https://unstop.com/college-fests/summer-internship-elite-techno-groups-4541",
     certificate: "certificates/files/externship-elite-techno-internship.pdf",
@@ -355,7 +355,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Ambassador",
     period: "Jul 2021 — Present",
     description:
-      "Represented Bosch Global Software Technologies — a wholly owned subsidiary of Robert Bosch GmbH and a leading global supplier of end-to-end engineering, IT, and business solutions.",
+      "Campus representative for Bosch Global Software Technologies — a Robert Bosch subsidiary and leading global provider of engineering, IT & business solutions.",
     image: "images/experience/bosch.jpg",
     link: "https://www.bosch-india-software.com/en/",
   },
@@ -365,7 +365,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Community",
     period: "Aug 2021 — Present",
     description:
-      "Pioneer on the Web Development team of GDSC-LPU, a university community for students interested in Google developer technologies — a platform to build, showcase skills, and grow.",
+      "Web Development pioneer at GDSC-LPU, a Google-backed student developer community — built projects and drove peer-to-peer learning.",
     image: "images/experience/GDSC.png",
     link: "https://www.linkedin.com/company/gdsclpu/",
   },
@@ -375,7 +375,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Externship",
     period: "Jun 2021 — Jul 2021",
     description:
-      "Built ML regression models to predict YouTube ad-view counts from other metrics. Used multiple Python libraries to clean, visualize, and normalize the dataset.",
+      "Built ML regression models to predict YouTube ad-view counts, using Python libraries to clean, visualize, and normalize the data.",
     image: "images/experience/internstudio.png",
     link: "https://internshipstudio.com/",
     certificate: "certificates/files/externship-intern-studio-ml-intern.pdf",
@@ -386,7 +386,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Open Source",
     period: "Jul 2021 — Aug 2021",
     description:
-      "Program admin and mentor for 4 projects — Apna Theatre, Apni Dukaan, Voters Registration Portal, and Income Tax Calculator — during a 30-day contribution program, onboarding hundreds of contributors to open source.",
+      "Program admin & mentor across 4 projects in a 30-day contribution drive, onboarding hundreds of new contributors to open source.",
     image: "images/experience/devincept.jpg",
     link: "https://www.linkedin.com/company/devincept/",
     certificate: "certificates/files/externship-devincept-program-admin.png",
@@ -397,7 +397,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Externship",
     period: "Dec 2020",
     description:
-      "Designed and developed 4 responsive, user-friendly websites using HTML, CSS, JavaScript, and Bootstrap over a one-month internship.",
+      "Designed and built 4 responsive, user-friendly websites with HTML, CSS, JavaScript & Bootstrap in a one-month program.",
     image: "images/experience/suven.jpg",
     link: "https://suvenconsultants.com/",
     certificate: "certificates/files/externship-suven-web-internship.pdf",
@@ -408,7 +408,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Open Source",
     period: "Feb 2021 — Mar 2021",
     description:
-      "Ranked among the top 30 contributors. Fixed bugs and shipped enhancements across several open-source projects while learning from mentors and fellow contributors.",
+      "Top-30 contributor — fixed bugs and shipped enhancements across several open-source projects with mentor guidance.",
     image: "images/experience/cross.jpg",
     link: "https://www.linkedin.com/company/crosswoc-cross-winter-of-code/",
   },
@@ -418,7 +418,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Externship",
     period: "Mar 2021",
     description:
-      "Built a demo bank-payments Android app allowing users to manage account details and make payments, while grasping core app-development skills.",
+      "Built a demo bank-payments Android app for managing accounts and making payments, learning core app-development skills.",
     image: "images/experience/spark.png",
     link: "https://www.linkedin.com/company/the-sparks-foundation/",
     certificate: "certificates/files/externship-sparksintern.png",
@@ -429,7 +429,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Externship",
     period: "Jun 2020 — Jul 2020",
     description:
-      "Created 5–6 mini website designs with HTML, CSS, and JavaScript, including an e-commerce site with improved structure, navigation, and responsiveness.",
+      "Designed 5–6 mini websites with HTML, CSS & JavaScript, including a responsive e-commerce concept with clean structure and navigation.",
     image: "images/experience/studio.png",
     link: "https://internshipstudio.com/",
     certificate:
@@ -441,7 +441,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Ambassador",
     period: "Jan 2021 — May 2021",
     description:
-      "Among the top 10 campus ambassadors of the batch. Spread awareness of NEO 4.0 & 5.0, guided peers through registration, and drove engagement through social media.",
+      "Top-10 campus ambassador — drove NEO 4.0 & 5.0 awareness, guided registrations, and ran social-media outreach.",
     image: "images/experience/NEO.png",
     link: "https://nationalolympiad.org/?refid=1792601",
     certificate: "certificates/files/externship-neo-ambassador.pdf",
@@ -452,7 +452,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Ambassador",
     period: "Jul 2020 — Aug 2020",
     description:
-      "Ran social media strategies for brand promotion and sales, contributing to a ~10% increase in product sales while learning digital marketing.",
+      "Ran social-media brand campaigns that lifted product sales ~10% while learning digital marketing.",
     image: "images/experience/unschool.png",
     link: "https://www.unschool.in/",
   },
@@ -462,7 +462,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Community",
     period: "Aug 2019 — Present",
     description:
-      "Planned and organized tech workshops, seminars, and social events — serving as event manager, anchor, and marketing head, leading teams of 25+ on multiple occasions.",
+      "Planned tech workshops, seminars & social events as event manager, anchor, and marketing head — leading teams of 25+.",
     image: "images/experience/mega.jpg",
     link: "https://www.instagram.com/megaminds_org/",
   },
@@ -472,7 +472,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Community",
     period: "Aug 2019 — Aug 2021",
     description:
-      "Organized marathons, sports fests, and charity events. As sales-team lead, drove a 35% sales contribution to the flagship event GlowRun Electrica 2k19.",
+      "Organized marathons, sports fests & charity events; as sales lead, drove 35% of sales for the flagship GlowRun Electrica 2k19.",
     image: "images/experience/club.jpg",
     link: "https://www.linkedin.com/company/clubtwentyorg/",
   },
@@ -482,7 +482,7 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Community",
     period: "Aug 2019 — Mar 2020",
     description:
-      "Coordinated events across education, technology, art, culture, and recreation. Led event promotions and closed several sponsorship deals.",
+      "Coordinated multi-domain events (tech, art, culture) and led promotions, closing several sponsorship deals.",
     image: "images/experience/spade.png",
     link: "https://www.linkedin.com/company/spadelpu/",
   },

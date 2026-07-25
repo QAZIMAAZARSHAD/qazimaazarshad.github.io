@@ -4,6 +4,7 @@ import { BadgeCheck, ChevronDown, ExternalLink } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LogoTile } from "@/components/timeline/LogoTile";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 import { earlierExperience, type ExperienceItem } from "@/data/content";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 import { asset, cn } from "@/lib/utils";
@@ -26,12 +27,11 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
           <h3 className="font-display text-base font-semibold leading-snug text-white">
             {item.role}
           </h3>
-          <p
+          <TruncatedText
+            as="p"
+            text={item.organization}
             className="truncate text-sm text-ink-300"
-            title={item.organization}
-          >
-            {item.organization}
-          </p>
+          />
         </div>
       </div>
 
@@ -44,12 +44,11 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
         </span>
       </div>
 
-      <p
+      <TruncatedText
+        as="p"
+        text={item.description}
         className="line-clamp-3 text-sm leading-relaxed text-ink-400"
-        title={item.description}
-      >
-        {item.description}
-      </p>
+      />
 
       {(item.link || item.certificate) && (
         <div className="mt-auto flex flex-wrap items-center gap-4">
