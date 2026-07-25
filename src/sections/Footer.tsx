@@ -31,7 +31,7 @@ export function Footer() {
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink-400">
               {profile.tagline}
             </p>
-            <p className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-ink-500">
+            <p className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-ink-400">
               <MapPin className="h-3.5 w-3.5" aria-hidden />
               {profile.location}
             </p>
@@ -69,7 +69,7 @@ export function Footer() {
             />
             <a
               href={`mailto:${profile.email}`}
-              className="mt-5 block font-mono text-xs text-ink-500 underline-offset-4 transition-colors hover:text-accent-300 hover:underline"
+              className="mt-5 block font-mono text-xs text-ink-400 underline-offset-4 transition-colors hover:text-accent-300 hover:underline"
             >
               {profile.email}
             </a>
@@ -81,7 +81,7 @@ export function Footer() {
             &copy; {year} {profile.name}. All rights reserved.
           </p>
           <VisitCounter />
-          <p className="font-mono text-xs text-ink-500">
+          <p className="font-mono text-xs text-ink-400">
             Built with React, TypeScript &amp; Tailwind.
           </p>
         </div>
