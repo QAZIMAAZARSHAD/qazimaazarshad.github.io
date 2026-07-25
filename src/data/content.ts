@@ -142,15 +142,13 @@ export const profile = {
 } as const;
 
 /**
- * Visitor analytics via GoatCounter (privacy-first, no cookies, GDPR-friendly).
- * 1. Sign up free at https://www.goatcounter.com and choose a code.
- * 2. Paste that code here — pageview tracking + the footer visit counter turn on.
- * 3. In GoatCounter → Settings, enable "Allow adding visitor counts to pages"
- *    so the public /counter/TOTAL.json total can be read.
- * Leave empty to keep everything disabled (nothing renders, nothing loads).
+ * Footer visit counter via CounterAPI.dev — a generic counter API (NOT an
+ * analytics/tracking domain), so ad-blockers don't block it and no account is
+ * needed. Value is "<namespace>/<key>"; each load increments and returns the
+ * running total. Empty disables the counter entirely.
  */
 export const analytics = {
-  goatCounterCode: "qazimaazarshad",
+  visitCounter: "qazimaazarshad-portfolio/visits",
 } as const;
 
 export const socials: SocialLink[] = [
@@ -835,7 +833,7 @@ export const hobbies: string[] = [
   "Pro Wrestling (WWE)",
   "Cricket",
   "Badminton",
-  "Chess",
+  "Cards",
   "Video Games",
   "Quizzing",
   "Gym",

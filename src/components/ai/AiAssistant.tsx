@@ -7,11 +7,11 @@ import { profile } from "@/data/content";
 import { cn } from "@/lib/utils";
 
 /**
- * A small instruct model that balances answer quality against download size.
- * WebLLM caches it in the browser after the first load.
+ * Instruct model that follows the grounding prompt well while staying a
+ * reasonable download. WebLLM caches it in the browser after the first load.
  */
-const MODEL_ID = "Llama-3.2-1B-Instruct-q4f16_1-MLC";
-const MODEL_SIZE_LABEL = "~0.9 GB, one-time · cached after";
+const MODEL_ID = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
+const MODEL_SIZE_LABEL = "~1.1 GB, one-time · cached after";
 
 type Status = "idle" | "loading" | "ready" | "unsupported" | "error";
 interface ChatMessage {
@@ -21,6 +21,16 @@ interface ChatMessage {
 
 const webGpuSupported = () =>
   typeof navigator !== "undefined" && "gpu" in navigator;
+
+/** Strip stray markdown so replies read as clean, plain prose in the bubble. */
+function cleanReply(text: string): string {
+  return text
+    .replace(/[*_`>#]/g, "") // emphasis / heading / quote / code marks
+    .replace(/^\s*[-+]\s+/gm, "") // bullet markers
+    .replace(/^\s*\d+\.\s+/gm, "") // numbered-list markers
+    .replace(/\n{3,}/g, "\n\n") // collapse blank lines
+    .trim();
+}
 
 export function AiAssistant() {
   const [open, setOpen] = useState(false);
@@ -102,8 +112,8 @@ export function AiAssistant() {
       try {
         const stream = await engine.chat.completions.create({
           stream: true,
-          temperature: 0.5,
-          max_tokens: 512,
+          temperature: 0.3,
+          max_tokens: 260,
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
             ...history.slice(-6).map((m) => ({
@@ -372,24 +382,36 @@ function Conversation({
 
   return (
     <div className="flex flex-col gap-3">
-      {messages.map((m, i) => (
-        <div
-          key={i}
-          className={cn(
-            "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
-            m.role === "user"
-              ? "self-end bg-gradient-to-r from-accent-500 to-cyan-500 text-white"
-              : "self-start border border-white/10 bg-white/[0.03] text-ink-200",
-          )}
-        >
-          {m.content || (
+      {messages.map((m, i) => {
+        let body;
+        if (!m.content) {
+          body = (
             <span className="inline-flex items-center gap-1 text-ink-400">
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
               thinking…
             </span>
-          )}
-        </div>
-      ))}
+          );
+        } else if (m.role === "assistant") {
+          body = (
+            <span className="whitespace-pre-wrap">{cleanReply(m.content)}</span>
+          );
+        } else {
+          body = m.content;
+        }
+        return (
+          <div
+            key={i}
+            className={cn(
+              "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
+              m.role === "user"
+                ? "self-end bg-gradient-to-r from-accent-500 to-cyan-500 text-white"
+                : "self-start border border-white/10 bg-white/[0.03] text-ink-200",
+            )}
+          >
+            {body}
+          </div>
+        );
+      })}
       {generating && messages[messages.length - 1]?.content !== "" && (
         <span className="self-start px-1 text-[11px] text-ink-500">
           generating…

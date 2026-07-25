@@ -49,7 +49,7 @@ responsiveness test suite.
 | Styling   | **Tailwind CSS** (custom design tokens)                                       |
 | Animation | **Framer Motion**                                                             |
 | AI        | **WebLLM** — in-browser LLM (WebGPU) powering the "Ask my portfolio" chat     |
-| Analytics | **GoatCounter** — privacy-first visit counter (no cookies)                    |
+| Counter   | **CounterAPI.dev** — footer visit counter (no account, ad-blocker-safe)       |
 | Icons     | lucide-react + react-icons                                                    |
 | Testing   | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
 | CI/CD     | **GitHub Actions** — verify on push/PR, auto-deploy to Pages on `main`        |
@@ -87,7 +87,7 @@ src/
     command/          # CommandPalette (⌘K)
     ai/               # AiAssistant — in-browser "Ask my portfolio" chat
     certificates/     # CertificateCard, CertificateLightbox
-    analytics/        # VisitCounter (GoatCounter)
+    analytics/        # VisitCounter (CounterAPI.dev)
     …                 # hero / projects / skills / timeline / …
   sections/           # Navbar, Hero, About, Experience, EarlierExperience, Projects,
                       # Skills, Education, Achievements, Certifications, Hobbies, Contact, Footer
@@ -111,8 +111,9 @@ Everything — profile, experience, projects, skills, education, achievements �
 `node scripts/generate-certificates.mjs`, which renders compact previews, keeps
 originals for real credentials, and rewrites `src/data/certificates.ts`.
 
-**Visit counter**: set `analytics.goatCounterCode` in `content.ts` to your
-GoatCounter code (empty disables it entirely).
+**Visit counter**: set `analytics.visitCounter` in `content.ts` to a
+CounterAPI.dev `"<namespace>/<key>"` path (empty disables it). It's skipped on
+`localhost` so local/CI runs never inflate the real total.
 
 ## 🔄 CI/CD
 

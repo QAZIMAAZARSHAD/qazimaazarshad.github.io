@@ -12,7 +12,7 @@ const HOBBY_META: Record<string, { emoji: string; quip: string }> = {
   "Pro Wrestling (WWE)": { emoji: "🤼", quip: "Hustle, Loyalty, Respect" },
   Cricket: { emoji: "🏏", quip: "Cover drives & run chases." },
   Badminton: { emoji: "🏸", quip: "Smash first, ask later." },
-  Chess: { emoji: "♟️", quip: "Three moves ahead." },
+  Cards: { emoji: "🃏", quip: "Teen Patti, anyone?" },
   "Video Games": { emoji: "🎮", quip: "One more run, promise." },
   Quizzing: { emoji: "🧠", quip: "Trivia? Bring it on." },
   Gym: { emoji: "🏋️", quip: "No days off." },

@@ -1,18 +1,26 @@
 import { test, expect } from "@playwright/test";
 
-// The counter is backed by GoatCounter; we mock its endpoint so the test never
-// depends on live traffic. reduced-motion makes the count-up settle instantly.
+// The counter is backed by CounterAPI.dev; we mock it so the test never touches
+// the live counter. The init flag opts localhost into counting (the component
+// otherwise skips local hosts so dev/CI never inflate the real total).
+// reduced-motion makes the count-up settle instantly.
 test.describe("Visit counter", () => {
   test.beforeEach(async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.route("**/gc.zgo.at/**", (route) => route.abort());
+    await page.addInitScript(() => {
+      (
+        window as unknown as { __VISIT_COUNTER_TEST__: boolean }
+      ).__VISIT_COUNTER_TEST__ = true;
+    });
   });
 
-  test("shows the total from GoatCounter in the footer", async ({ page }) => {
-    await page.route("**/counter/TOTAL.json", (route) =>
+  test("shows the running total from CounterAPI in the footer", async ({
+    page,
+  }) => {
+    await page.route("**/api.counterapi.dev/**", (route) =>
       route.fulfill({
         contentType: "application/json",
-        body: JSON.stringify({ count: "12,431", count_unique: "9,210" }),
+        body: JSON.stringify({ count: 12431, name: "visits" }),
       }),
     );
 
@@ -29,9 +37,9 @@ test.describe("Visit counter", () => {
     await expect(counter).toContainText("visits");
   });
 
-  test("stays hidden when the counter endpoint fails", async ({ page }) => {
-    await page.route("**/counter/TOTAL.json", (route) =>
-      route.fulfill({ status: 403, body: "" }),
+  test("stays hidden when the counter request fails", async ({ page }) => {
+    await page.route("**/api.counterapi.dev/**", (route) =>
+      route.fulfill({ status: 500, body: "" }),
     );
 
     await page.goto("/");
@@ -39,24 +47,6 @@ test.describe("Visit counter", () => {
       .locator('[data-testid="preloader"]')
       .waitFor({ state: "detached" })
       .catch(() => {});
-
-    await expect(page.getByTestId("visit-counter")).toHaveCount(0);
-  });
-
-  test("stays hidden while the count is still zero", async ({ page }) => {
-    await page.route("**/counter/TOTAL.json", (route) =>
-      route.fulfill({
-        contentType: "application/json",
-        body: JSON.stringify({ count: "0", count_unique: "0" }),
-      }),
-    );
-
-    await page.goto("/");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
-    await page.locator("footer").scrollIntoViewIfNeeded();
 
     await expect(page.getByTestId("visit-counter")).toHaveCount(0);
   });

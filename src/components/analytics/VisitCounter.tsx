@@ -1,44 +1,42 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Eye } from "lucide-react";
 import { analytics } from "@/data/content";
 
-const CODE = analytics.goatCounterCode;
+const PATH = analytics.visitCounter;
 const COUNT_UP_MS = 1200;
 
-/** GoatCounter returns counts like "12,345"; keep only the digits. */
+/** CounterAPI returns { count: number }; keep only the digits defensively. */
 function parseCount(raw: unknown): number | null {
   if (typeof raw !== "string" && typeof raw !== "number") return null;
   const digits = String(raw).replace(/\D/g, "");
   return digits ? Number.parseInt(digits, 10) : null;
 }
 
+/** Skip counting on local dev so it never inflates the real total (tests opt in). */
+function shouldCount(): boolean {
+  if (!PATH) return false;
+  const w = window as unknown as { __VISIT_COUNTER_TEST__?: boolean };
+  if (w.__VISIT_COUNTER_TEST__) return true;
+  const host = window.location.hostname;
+  return host !== "localhost" && host !== "127.0.0.1" && host !== "::1";
+}
+
 /**
- * Footer visit counter backed by GoatCounter (no backend). Injects the
- * pageview tracker once, then fetches the public site total and animates it in.
- * Renders nothing until a code is configured or if the fetch fails — so it can
- * never show a broken widget.
+ * Footer visit counter backed by CounterAPI.dev — no account, no backend, and
+ * not on ad-blocker lists (unlike analytics domains). Each real load bumps the
+ * total and animates the number in. Renders nothing until it resolves or if the
+ * request fails, so it can never show a broken widget.
  */
 export function VisitCounter() {
   const [count, setCount] = useState<number | null>(null);
   const [display, setDisplay] = useState(0);
   const reduceMotion = useReducedMotion();
-  const injected = useRef(false);
 
   useEffect(() => {
-    if (!CODE || injected.current) return;
-    injected.current = true;
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = "//gc.zgo.at/count.js";
-    script.dataset.goatcounter = `https://${CODE}.goatcounter.com/count`;
-    document.body.appendChild(script);
-  }, []);
-
-  useEffect(() => {
-    if (!CODE) return;
+    if (!shouldCount()) return;
     let alive = true;
-    fetch(`https://${CODE}.goatcounter.com/counter/TOTAL.json`)
+    fetch(`https://api.counterapi.dev/v1/${PATH}/up`)
       .then((r) =>
         r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
       )
@@ -70,10 +68,7 @@ export function VisitCounter() {
     return () => cancelAnimationFrame(raf);
   }, [count, reduceMotion]);
 
-  // Hide until there is at least one real visit — a lonely "0 visits" (which is
-  // all localhost testing ever shows, since GoatCounter ignores localhost) reads
-  // as broken; the pill appears once the live count is ≥ 1.
-  if (!CODE || !count) return null;
+  if (!count) return null;
 
   return (
     <motion.p

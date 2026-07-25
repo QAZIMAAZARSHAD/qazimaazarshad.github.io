@@ -11,69 +11,64 @@ import {
 } from "@/data/content";
 
 /**
- * Builds a compact, factual profile of Qazi from the site's content so the
- * in-browser model can answer grounded questions without any backend.
+ * Builds a compact, factual profile of Maaz from the site's content. Kept tight
+ * (no exhaustive dumps) so a small in-browser model can actually use it well.
  */
 function buildProfileContext(): string {
   const exp = experience
     .map((c) => {
-      const roles = c.roles
-        .map(
-          (r) =>
-            `  - ${r.title} (${r.type}, ${r.period}${r.duration ? `, ${r.duration}` : ""})`,
-        )
-        .join("\n");
-      const head = `- ${c.organization}${c.totalDuration ? ` (${c.totalDuration})` : ""}${c.current ? ", current" : ""}: ${c.description ?? ""}`;
-      return `${head}\n${roles}`;
+      const roles = c.roles.map((r) => `${r.title} (${r.period})`).join(", ");
+      const tenure = c.totalDuration ? `, ${c.totalDuration}` : "";
+      const current = c.current ? " (current)" : "";
+      return `- ${c.organization}${tenure}${current}: ${c.description ?? ""} Roles: ${roles}.`;
     })
     .join("\n");
 
-  const earlierExp = earlierExperience
-    .map(
-      (e) => `- ${e.role} at ${e.organization} (${e.period}): ${e.description}`,
-    )
-    .join("\n");
-
-  const proj = projects
-    .map(
-      (p) => `- ${p.title} [${p.category}; ${p.tech.join(", ")}]: ${p.blurb}`,
-    )
-    .join("\n");
+  // Summarise earlier roles rather than listing all of them.
+  const earlierOrgs = [
+    ...new Set(earlierExperience.map((e) => e.organization.split(" — ")[0])),
+  ]
+    .slice(0, 8)
+    .join(", ");
 
   const skills = skillGroups
-    .map((g) => `- ${g.name}: ${g.skills.join(", ")}`)
-    .join("\n");
+    .map((g) => `${g.name}: ${g.skills.join(", ")}`)
+    .join("; ");
 
-  const edu = education
-    .map((e) => `- ${e.degree}, ${e.institution} (${e.period}, ${e.score})`)
-    .join("\n");
+  const sampleProjects = projects
+    .slice(0, 6)
+    .map((p) => p.title)
+    .join(", ");
 
-  const links = socials.map((s) => `${s.label}: ${s.href}`).join(" | ");
+  const edu = education[0];
+  const links = socials
+    .filter((s) => ["linkedin", "github", "email"].includes(s.id))
+    .map((s) => `${s.label}: ${s.href}`)
+    .join(" | ");
 
   return [
-    `Name: ${profile.name}`,
-    `Role: ${profile.role} at ${profile.company} (${profile.location})`,
+    `Name: ${profile.name} (goes by "Maaz"). Role: ${profile.role} at ${profile.company}, based in ${profile.location}.`,
     `Summary: ${profile.intro}`,
-    `About:\n${profile.about.map((a) => `- ${a}`).join("\n")}`,
-    `Experience:\n${exp}`,
-    `Earlier experience:\n${earlierExp}`,
-    `Skills:\n${skills}`,
-    `Projects:\n${proj}`,
-    `Education:\n${edu}`,
-    `Achievements: ${achievements.join("; ")}`,
-    `Hobbies: ${hobbies.join(", ")}`,
-    `Links: ${links}`,
-    `Email: ${profile.email}`,
+    `Current & recent experience:\n${exp}`,
+    `Earlier (college-era internships/externships & community roles): ${earlierOrgs}.`,
+    `Skills — ${skills}.`,
+    `Projects: ${projects.length}+ built, including ${sampleProjects} (full list in the Projects section).`,
+    `Education: ${edu.degree}, ${edu.institution} (${edu.period}, ${edu.score}).`,
+    `Achievements: ${achievements.join("; ")}.`,
+    `Hobbies: ${hobbies.join(", ")}.`,
+    `Contact — Email: ${profile.email}. ${links}.`,
   ].join("\n\n");
 }
 
-export const SYSTEM_PROMPT = `You are "${profile.firstName}'s portfolio assistant" — a friendly, concise assistant that answers questions about ${profile.name}, a ${profile.role} at ${profile.company}.
+export const SYSTEM_PROMPT = `You are the assistant on ${profile.firstName}'s portfolio website. The PROFILE below is your COMPLETE and AUTHORITATIVE knowledge about ${profile.name} — treat it as facts you already know, and answer questions directly and confidently from it. You DO have his profile; never say you lack access to it or to his information.
 
-Use ONLY the profile below as your source of truth. If a question isn't covered by it, say you don't have that info and suggest reaching out at ${profile.email}. Keep answers short (1-4 sentences), specific, and in a warm professional tone. Refer to him as "Maaz" or "Qazi". Never invent facts, employers, dates, or projects.
+Rules:
+- Reply in 1-3 short sentences of plain, friendly prose. No markdown, no bullet points, no numbered lists, no headings, no bold.
+- Be specific and use ONLY the profile. If something genuinely isn't in it, say so briefly and point to his email (${profile.email}).
+- Always refer to him as "Maaz". Never invent employers, dates, projects, or skills.
 
---- PROFILE ---
-${buildProfileContext()}
---- END PROFILE ---`;
+PROFILE:
+${buildProfileContext()}`;
 
 /** Starter questions shown as clickable chips. */
 export const SUGGESTED_PROMPTS = [
