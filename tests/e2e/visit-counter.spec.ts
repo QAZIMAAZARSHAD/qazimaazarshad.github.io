@@ -42,4 +42,22 @@ test.describe("Visit counter", () => {
 
     await expect(page.getByTestId("visit-counter")).toHaveCount(0);
   });
+
+  test("stays hidden while the count is still zero", async ({ page }) => {
+    await page.route("**/counter/TOTAL.json", (route) =>
+      route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({ count: "0", count_unique: "0" }),
+      }),
+    );
+
+    await page.goto("/");
+    await page
+      .locator('[data-testid="preloader"]')
+      .waitFor({ state: "detached" })
+      .catch(() => {});
+    await page.locator("footer").scrollIntoViewIfNeeded();
+
+    await expect(page.getByTestId("visit-counter")).toHaveCount(0);
+  });
 });

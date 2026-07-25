@@ -70,7 +70,10 @@ export function VisitCounter() {
     return () => cancelAnimationFrame(raf);
   }, [count, reduceMotion]);
 
-  if (!CODE || count == null) return null;
+  // Hide until there is at least one real visit — a lonely "0 visits" (which is
+  // all localhost testing ever shows, since GoatCounter ignores localhost) reads
+  // as broken; the pill appears once the live count is ≥ 1.
+  if (!CODE || !count) return null;
 
   return (
     <motion.p

@@ -53,7 +53,7 @@ export function Projects() {
       <SectionHeading
         kicker="Projects"
         title="Things I've built"
-        description="A selection of things I've built — from recent side projects to my college and learning years. (My work at Salesforce is proprietary.) Filter by category or search to explore."
+        description="A selection of things I've built — from recent side projects to my college and learning years. Filter by category or search to explore."
       />
 
       <div className="mb-10 flex flex-col gap-5">
