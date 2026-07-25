@@ -60,9 +60,9 @@ export function Certifications() {
   return (
     <Section id="certifications">
       <SectionHeading
-        kicker="Credentials"
-        title="Certificates & credentials"
-        description="A running archive of what I've learned and earned — courses & MOOCs, virtual experience programs, internships, competition wins, recommendations, and community participation. Filter or search to explore."
+        kicker="The learning years"
+        title="Certificates & learning"
+        description="A big archive from my college and self-learning years — courses & MOOCs, externships, competition wins, and community participation. Filter or search to explore."
       />
 
       <div className="mb-8 flex flex-col gap-5">

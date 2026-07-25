@@ -17,7 +17,7 @@ test.describe("Certifications", () => {
   }) => {
     const sec = section(page);
     await expect(
-      sec.getByRole("heading", { name: /certificates & credentials/i }),
+      sec.getByRole("heading", { name: /certificates & learning/i }),
     ).toBeVisible();
 
     const cards = sec.locator("button[aria-label^='View certificate']");

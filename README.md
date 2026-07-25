@@ -33,17 +33,12 @@ responsiveness test suite.
 
 ## ✨ Highlights
 
-- **🤖 In-browser AI assistant** — "Ask my portfolio" runs a real LLM **100% client-side** (WebLLM + WebGPU), grounded on my content — no backend, no API keys, private to the visitor
-- **📜 Certificates gallery** — 150+ credentials (courses, externships, achievements, participation), filterable & searchable, with generated previews and a focus-trapped lightbox; assets + data produced by a re-runnable script
-- **⌘K command palette** — Spotlight-style launcher to jump to any section, open projects, copy email, or download the résumé (keyboard-driven)
-- **👁 Live visit counter** — privacy-first **GoatCounter** total in the footer (no cookies, no PII), self-hiding on failure
-- **Career-progression timeline** — one card per company with every role nested inside; the current role's tenure is computed live
-- **Animated canvas** particle constellation + aurora backdrop that reacts to the cursor
-- **Interactive projects gallery** — searchable, category-filterable, with detail modals (focus-trapped & accessible)
-- **Scroll-reveal** animations, scroll progress bar, active-section nav tracking, 3D tilt cards, glassmorphism UI
-- **Fancy preloader**, custom QMA favicon, and a polished dark theme (violet → cyan)
-- **Fully responsive** (verified across 7 viewports) and **accessible** — keyboard-navigable, `prefers-reduced-motion` aware
-- **100% data-driven** — all content lives in one typed source (`src/data/content.ts`)
+- **🤖 In-browser AI assistant** — "Ask my portfolio" runs a real LLM 100% client-side (WebLLM + WebGPU), grounded on my content — no backend, no keys
+- **📜 Certificates gallery** & **interactive projects** — filterable, searchable, with focus-trapped lightboxes/modals
+- **⌘K command palette** for keyboard-driven navigation
+- **Career-progression timeline** with live-computed tenure, plus a cursor-reactive animated canvas and polished dark theme
+- **Fully responsive & accessible** — keyboard-navigable, `prefers-reduced-motion` aware
+- **100% data-driven** and thoroughly tested (unit · e2e · visual)
 
 ## 🛠 Tech stack
 

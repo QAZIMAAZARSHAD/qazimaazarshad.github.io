@@ -107,7 +107,7 @@ describe("Certifications", () => {
     render(<Certifications />);
 
     expect(
-      screen.getByRole("heading", { name: /certificates & credentials/i }),
+      screen.getByRole("heading", { name: /certificates & learning/i }),
     ).toBeInTheDocument();
     expect(
       screen.getAllByRole("button", { name: /view certificate/i }).length,
