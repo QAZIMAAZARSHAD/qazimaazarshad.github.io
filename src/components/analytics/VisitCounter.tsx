@@ -83,7 +83,7 @@ export function VisitCounter() {
       <span className="tabular-nums text-ink-300">
         {display.toLocaleString()}
       </span>{" "}
-      visits
+      {count === 1 ? "visit" : "visits"}
     </motion.p>
   );
 }
