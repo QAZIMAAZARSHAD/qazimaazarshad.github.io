@@ -32,14 +32,14 @@ test.describe("Hobbies — cinematic click effects", () => {
   test.describe("tooltip clamping on a narrow screen", () => {
     test.use({ viewport: { width: 360, height: 720 } });
 
-    test("an edge chip's tooltip stays fully within the viewport", async ({
+    test("an edge chip's tooltip appears on hover and stays within the viewport", async ({
       page,
     }) => {
       // Movies is the first (left-edge) chip — its quip used to clip.
-      await page
+      const movies = page
         .locator("#hobbies")
-        .getByRole("button", { name: /^movies —/i })
-        .focus();
+        .getByRole("button", { name: /^movies —/i });
+      await movies.hover();
 
       const tip = page.locator('div[role="tooltip"]');
       await expect(tip).toBeVisible();
@@ -49,6 +49,10 @@ test.describe("Hobbies — cinematic click effects", () => {
       expect(box).not.toBeNull();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(360);
+
+      // Clicking the chip dismisses the tooltip immediately.
+      await movies.click();
+      await expect(tip).toBeHidden();
     });
   });
 

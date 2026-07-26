@@ -221,10 +221,12 @@ export function Hobbies() {
             >
               <button
                 type="button"
-                onClick={(event) => fire(event, meta.effect)}
+                onClick={(event) => {
+                  hideTip();
+                  fire(event, meta.effect);
+                }}
                 onMouseEnter={(event) => showTip(event, meta.quip)}
                 onMouseLeave={hideTip}
-                onFocus={(event) => showTip(event, meta.quip)}
                 onBlur={hideTip}
                 aria-label={`${hobby} — ${meta.quip}`}
                 className="glass inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2.5 text-sm text-ink-200 outline-none transition-colors duration-300 hover:border-accent-400/50 hover:text-white hover:shadow-lg hover:shadow-accent-500/20 focus-visible:border-accent-400/60 focus-visible:text-white"
