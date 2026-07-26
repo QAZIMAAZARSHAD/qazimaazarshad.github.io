@@ -60,9 +60,15 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
 
-  // Longer catchphrases wrap and scale down so they stay on screen.
-  const wordSizeClass =
-    effect.word.length > 16 ? "text-4xl sm:text-6xl" : "text-6xl sm:text-8xl";
+  // Longer catchphrases — or ones with a long single word that can't wrap
+  // small (e.g. "Mahishmati") — scale down so they stay on screen.
+  const longestWord = Math.max(
+    ...effect.word.split(/\s+/).map((w) => w.length),
+  );
+  const isLongWord = effect.word.length > 16 || longestWord > 8;
+  const wordSizeClass = isLongWord
+    ? "text-4xl sm:text-6xl"
+    : "text-6xl sm:text-8xl";
 
   const shake = effect.shake;
 
@@ -105,7 +111,7 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
           animate={{ opacity: [0, 1, 1, 0], scale: 1 }}
           transition={{ duration: 1.9, times: [0, 0.12, 0.84, 1] }}
           className={cn(
-            "max-w-[min(90vw,40rem)] text-balance text-center font-display font-black uppercase leading-[1.08]",
+            "max-w-[min(90vw,40rem)] text-balance break-words text-center font-display font-black uppercase leading-[1.08]",
             wordSizeClass,
           )}
           style={{ color: effect.color }}
@@ -189,7 +195,7 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
       <div className="absolute left-1/2 top-1/2 w-full max-w-[min(90vw,40rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-center">
         <motion.span
           className={cn(
-            "inline-block text-balance font-display font-black uppercase leading-[1.08] tracking-tight",
+            "inline-block text-balance break-words font-display font-black uppercase leading-[1.08] tracking-tight",
             wordSizeClass,
           )}
           initial={{ opacity: 0, scale: 0.2, rotate: -14 }}

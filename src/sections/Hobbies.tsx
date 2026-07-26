@@ -26,7 +26,7 @@ export const HOBBY_META: Record<
     effect: {
       projectile: "👑",
       image: "images/hobbies/bahubali.png",
-      word: "Jai\u00A0\u00A0Mahishmati",
+      word: "Jai Mahishmati",
       color: "#f97316",
     },
   },
