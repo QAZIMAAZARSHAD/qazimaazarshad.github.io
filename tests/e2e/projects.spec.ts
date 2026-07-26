@@ -28,12 +28,16 @@ test.describe("Projects — filtering, search, and detail modal", () => {
     await revealProjects(page);
   });
 
-  test("shows all 23 projects initially with visible cards", async ({
+  test("shows the total count and a first page, then Show all reveals the rest", async ({
     page,
   }) => {
     await expect(count(page)).toHaveText(/^23 projects$/);
 
-    // A couple of representative cards are fully rendered (not just attached).
+    const cards = page.getByRole("button", { name: /^View details for / });
+    // Paginated: only the first page renders up front.
+    await expect(cards).toHaveCount(6);
+
+    // A representative first-page card is fully rendered (not just attached).
     await expect(
       page.getByRole("heading", { name: "Movie Streaming Website" }),
     ).toBeVisible();
@@ -41,6 +45,13 @@ test.describe("Projects — filtering, search, and detail modal", () => {
       "opacity",
       "1",
     );
+
+    // Show all expands to every project; Show less collapses back.
+    await page.getByRole("button", { name: /show all 23 projects/i }).click();
+    await expect(cards).toHaveCount(23);
+
+    await page.getByRole("button", { name: /show less/i }).click();
+    await expect(cards).toHaveCount(6);
   });
 
   test("filtering by Game shows exactly the 4 game cards, fully visible", async ({

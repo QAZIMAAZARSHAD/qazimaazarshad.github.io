@@ -16,17 +16,50 @@ const gameProject = projects.find((p) => p.category === "Game")!;
 const nonGameProject = projects.find((p) => p.category !== "Game")!;
 const gameCount = projects.filter((p) => p.category === "Game").length;
 
+const INITIAL_COUNT = 6;
+
 describe("Projects", () => {
-  it("renders every project initially with the total count", () => {
+  it("shows the first page with the total count, then reveals the rest via Show all", async () => {
+    const user = userEvent.setup();
     const { container } = render(<Projects />);
 
+    // Count reflects the full filtered set even while paginated.
     expect(resultCount(container)).toBe(`${projects.length} projects`);
+
+    // The first project is shown; one beyond the first page is hidden.
+    const firstTitle = projects[0].title;
+    const laterTitle = projects[projects.length - 1].title;
     expect(
-      screen.getByRole("button", { name: cardName("Movie Streaming Website") }),
+      screen.getByRole("button", { name: cardName(firstTitle) }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: cardName("Blackjack Game") }),
+      screen.queryByRole("button", { name: cardName(laterTitle) }),
+    ).not.toBeInTheDocument();
+
+    // Show all reveals it; Show less collapses again.
+    await user.click(
+      screen.getByRole("button", { name: /show all .* projects/i }),
+    );
+    expect(
+      screen.getByRole("button", { name: cardName(laterTitle) }),
     ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /show less/i }));
+    expect(
+      screen.queryByRole("button", { name: cardName(laterTitle) }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a Show all control only when there are more than one page", async () => {
+    const user = userEvent.setup();
+    render(<Projects />);
+
+    // "Game" has fewer than a page of results → no toggle.
+    await user.click(screen.getByRole("button", { name: "Game" }));
+    expect(gameCount).toBeLessThanOrEqual(INITIAL_COUNT);
+    expect(
+      screen.queryByRole("button", { name: /show all|show less/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("filters to a single category when its tab is clicked", async () => {
@@ -101,6 +134,8 @@ describe("Projects", () => {
     const user = userEvent.setup();
     render(<Projects />);
 
+    // Filter to Game (a single, fully-shown page) so the card is on-screen.
+    await user.click(screen.getByRole("button", { name: "Game" }));
     await user.click(
       screen.getByRole("button", { name: cardName(gameProject.title) }),
     );

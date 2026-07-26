@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, SearchX, X } from "lucide-react";
+import { ChevronDown, Search, SearchX, X } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CountUp } from "@/components/ui/CountUp";
@@ -17,9 +17,13 @@ import { cn } from "@/lib/utils";
 
 type Filter = ProjectCategory | "All";
 
+/** How many project cards to show before the visitor expands the rest. */
+const INITIAL_COUNT = 6;
+
 export function Projects() {
   const [activeCategory, setActiveCategory] = useState<Filter>("All");
   const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<ProjectItem | null>(null);
 
   const filtered = useMemo(() => {
@@ -43,6 +47,13 @@ export function Projects() {
   // Re-mount the grid whenever the filter set changes so cards always
   // re-run their entrance animation and never get stuck in the hidden state.
   const gridKey = `${activeCategory}::${query.trim().toLowerCase()}`;
+  const shown = expanded ? filtered : filtered.slice(0, INITIAL_COUNT);
+  const remaining = filtered.length - shown.length;
+
+  // Collapse back to the first page whenever the filter/search changes.
+  useEffect(() => {
+    setExpanded(false);
+  }, [activeCategory, query]);
 
   const clearFilters = () => {
     setActiveCategory("All");
@@ -150,21 +161,50 @@ export function Projects() {
       </div>
 
       {filtered.length > 0 ? (
-        <motion.div
-          key={gridKey}
-          variants={staggerContainer}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {filtered.map((project) => (
-            <ProjectCard
-              key={project.title}
-              project={project}
-              onSelect={setSelected}
-            />
-          ))}
-        </motion.div>
+        <>
+          <motion.div
+            key={gridKey}
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {shown.map((project) => (
+              <ProjectCard
+                key={project.title}
+                project={project}
+                onSelect={setSelected}
+              />
+            ))}
+          </motion.div>
+
+          {filtered.length > INITIAL_COUNT && (
+            <div className="mt-10 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setExpanded((value) => !value)}
+                aria-expanded={expanded}
+                className="glass glass-hover group inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-xs font-medium uppercase tracking-wider text-ink-200 outline-none transition-all hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              >
+                {expanded ? (
+                  "Show less"
+                ) : (
+                  <>
+                    Show all {filtered.length} projects{" "}
+                    <span className="text-accent-300">({remaining} more)</span>
+                  </>
+                )}
+                <ChevronDown
+                  aria-hidden
+                  className={cn(
+                    "h-4 w-4 text-accent-300 transition-transform duration-300",
+                    expanded && "rotate-180",
+                  )}
+                />
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="glass flex flex-col items-center gap-4 rounded-3xl px-6 py-16 text-center">
           <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
