@@ -1,20 +1,32 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BadgeCheck, ChevronDown, ExternalLink } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LogoTile } from "@/components/timeline/LogoTile";
 import { TruncatedText } from "@/components/ui/TruncatedText";
-import { earlierExperience, type ExperienceItem } from "@/data/content";
+import { CertificateLightbox } from "@/components/certificates/CertificateLightbox";
+import {
+  earlierExperience,
+  type CertificateItem,
+  type ExperienceItem,
+} from "@/data/content";
+import { certificates } from "@/data/certificates";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
-import { asset, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 /** How many cards to show before the visitor expands the rest. */
 const INITIAL_COUNT = 6;
 
 const easeOut: [number, number, number, number] = [0.21, 0.47, 0.32, 0.98];
 
-function EarlierCard({ item }: { readonly item: ExperienceItem }) {
+function EarlierCard({
+  item,
+  onViewCertificate,
+}: {
+  readonly item: ExperienceItem;
+  readonly onViewCertificate: () => void;
+}) {
   return (
     <article className="glass glass-hover spotlight flex h-full flex-col gap-4 rounded-2xl p-5">
       <div className="flex items-start gap-4">
@@ -65,16 +77,15 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
             </a>
           )}
           {item.certificate && (
-            <a
-              href={asset(item.certificate)}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={onViewCertificate}
               aria-label={`View ${item.organization} certificate`}
-              className="inline-flex items-center gap-1.5 font-mono text-xs font-medium text-ink-300 transition-colors duration-300 hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded font-mono text-xs font-medium text-ink-300 outline-none transition-colors duration-300 hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60"
             >
               Certificate
               <BadgeCheck className="h-3.5 w-3.5" aria-hidden />
-            </a>
+            </button>
           )}
         </div>
       )}
@@ -82,12 +93,52 @@ function EarlierCard({ item }: { readonly item: ExperienceItem }) {
   );
 }
 
+/**
+ * Resolves an experience item's credential path to a full certificate record
+ * (with a preview thumbnail) so it can open in the shared lightbox. Falls back
+ * to a minimal record derived from the path if it isn't in the archive.
+ */
+function resolveCertificate(
+  item: ExperienceItem,
+  path: string,
+  byFile: Map<string, CertificateItem>,
+): CertificateItem {
+  const match = byFile.get(path);
+  if (match) return match;
+
+  const isImage = /\.(png|jpe?g|webp)$/i.test(path);
+  return {
+    id: path,
+    title: `${item.organization} — ${item.role}`,
+    issuer: item.organization,
+    category: "externship",
+    preview: path.replace("/files/", "/previews/").replace(/\.[^.]+$/, ".jpg"),
+    file: path,
+    fileType: isImage ? "image" : "pdf",
+  };
+}
+
 export function EarlierExperience() {
   const [expanded, setExpanded] = useState(false);
+  const [selected, setSelected] = useState<CertificateItem | null>(null);
+
+  const certByFile = useMemo(
+    () =>
+      new Map(
+        certificates
+          .filter((c) => c.file)
+          .map((c) => [c.file as string, c] as const),
+      ),
+    [],
+  );
 
   const primary = earlierExperience.slice(0, INITIAL_COUNT);
   const rest = earlierExperience.slice(INITIAL_COUNT);
   const keyOf = (item: ExperienceItem) => `${item.role}__${item.organization}`;
+  const viewCertificate = (item: ExperienceItem) => {
+    if (!item.certificate) return;
+    setSelected(resolveCertificate(item, item.certificate, certByFile));
+  };
 
   return (
     <Section id="earlier">
@@ -106,7 +157,10 @@ export function EarlierExperience() {
       >
         {primary.map((item) => (
           <motion.div key={keyOf(item)} variants={fadeUp}>
-            <EarlierCard item={item} />
+            <EarlierCard
+              item={item}
+              onViewCertificate={() => viewCertificate(item)}
+            />
           </motion.div>
         ))}
       </motion.div>
@@ -129,7 +183,10 @@ export function EarlierExperience() {
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.35, delay: i * 0.04, ease: easeOut }}
               >
-                <EarlierCard item={item} />
+                <EarlierCard
+                  item={item}
+                  onViewCertificate={() => viewCertificate(item)}
+                />
               </motion.div>
             ))}
           </motion.div>
@@ -157,6 +214,16 @@ export function EarlierExperience() {
           </button>
         </div>
       )}
+
+      <AnimatePresence>
+        {selected && (
+          <CertificateLightbox
+            key={selected.id}
+            certificate={selected}
+            onClose={() => setSelected(null)}
+          />
+        )}
+      </AnimatePresence>
     </Section>
   );
 }

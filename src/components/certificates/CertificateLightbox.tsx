@@ -1,15 +1,23 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { Download, ExternalLink, FileWarning, X } from "lucide-react";
 import type { CertificateItem } from "@/data/content";
-import { asset } from "@/lib/utils";
+import { asset, cn } from "@/lib/utils";
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
+/** One viewable image, optionally with its own downloadable original. */
+export interface LightboxSlide {
+  image: string;
+  file?: string;
+}
+
 interface CertificateLightboxProps {
   readonly certificate: CertificateItem;
+  /** Optional multi-image gallery; defaults to the certificate's own preview. */
+  readonly slides?: LightboxSlide[];
   readonly onClose: () => void;
 }
 
@@ -21,12 +29,22 @@ interface CertificateLightboxProps {
  */
 export function CertificateLightbox({
   certificate,
+  slides,
   onClose,
 }: CertificateLightboxProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
-  const { title, issuer, preview, file } = certificate;
+  const { title, issuer } = certificate;
+
+  const gallery: LightboxSlide[] =
+    slides && slides.length > 0
+      ? slides
+      : [{ image: certificate.preview ?? "", file: certificate.file }];
+  const [active, setActive] = useState(0);
+  const current = gallery[Math.min(active, gallery.length - 1)];
+  const preview = current.image;
+  const file = current.file;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -137,6 +155,32 @@ export function CertificateLightbox({
             </div>
           )}
         </div>
+
+        {gallery.length > 1 && (
+          <div className="flex justify-center gap-2 border-t border-white/10 bg-ink-950/40 px-4 py-3">
+            {gallery.map((slide, i) => (
+              <button
+                key={`${i}-${slide.image}`}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-label={`View image ${i + 1} of ${gallery.length}`}
+                aria-pressed={i === active}
+                className={cn(
+                  "h-14 w-14 shrink-0 overflow-hidden rounded-lg border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70",
+                  i === active
+                    ? "border-accent-400 ring-2 ring-accent-400/40"
+                    : "border-white/10 opacity-60 hover:opacity-100",
+                )}
+              >
+                <img
+                  src={asset(slide.image)}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-col gap-3 border-t border-white/10 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="min-w-0">

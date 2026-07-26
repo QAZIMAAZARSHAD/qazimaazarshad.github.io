@@ -90,6 +90,37 @@
   }
 }
 
+/* Screen shake on physical hobby impacts (Badminton smash, Gym lift, etc.) */
+@keyframes qma-shake {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  15% {
+    transform: translate3d(-8px, 5px, 0);
+  }
+  30% {
+    transform: translate3d(8px, -6px, 0);
+  }
+  45% {
+    transform: translate3d(-7px, -4px, 0);
+  }
+  60% {
+    transform: translate3d(7px, 5px, 0);
+  }
+  75% {
+    transform: translate3d(-4px, -3px, 0);
+  }
+}
+.qma-shake {
+  animation: qma-shake 0.52s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .qma-shake {
+    animation: none;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

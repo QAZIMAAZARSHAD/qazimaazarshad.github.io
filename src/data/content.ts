@@ -138,7 +138,7 @@ export const profile = {
   ],
   email: "qazimaazarshad@gmail.com",
   resume: "resume/Qazi_Maaz_Arshad_Resume.pdf",
-  avatar: "images/instagram/maaz.jpg",
+  avatar: "images/avatar/maaz.jpg",
 } as const;
 
 /**
@@ -825,16 +825,57 @@ export const achievements: string[] = [
   "All India Rank 49 — National Engineering Olympiad",
   "5-Star Problem Solver on HackerRank",
   "Solved 300+ coding problems on LeetCode",
-  "1st Prize — Inter-School Quiz",
-  "1st Prize — Science Exhibition",
-  "1st Prize — Quizzora Quiz Competition",
+  "1st Prize — Inter-School Quiz (District Level)",
+  "1st Prize — Science Exhibition (School Level)",
+  "1st Prize — Quizzora Quiz Competition (University Level)",
   "2nd Prize — University-Level Quiz",
-  "2nd Prize — Technical Quiz",
-  "3rd Prize — Quiz Competition",
+  "2nd Prize — Technical Quiz (University Level)",
+  "3rd Prize — Quiz Competition (University Level)",
   "3rd Prize — District Talent Search Examination",
-  "3rd Prize — Inter-School Literary Championship Quiz",
-  "Winner — Badminton Championship",
+  "3rd Prize — Literary Championship Quiz (University Level)",
+  "Winner — Badminton Championship (School Level)",
 ];
+
+/**
+ * Optional link attached to an achievement, opened when the card is clicked:
+ * - `image` shows a plain image (no download) in the lightbox,
+ * - `certificateId` adds that certificate (with download) in the lightbox,
+ *   and can be combined with `image` to show both in a small gallery,
+ * - `href` opens an external profile/page in a new tab.
+ */
+export interface AchievementLink {
+  certificateId?: string;
+  image?: string;
+  href?: string;
+}
+
+export const achievementLinks: Record<string, AchievementLink> = {
+  "Gold Medal — International Humanity Olympiad": {
+    image: "images/awards/iho.jpg",
+    certificateId: "achievement-humanity-olympiad",
+  },
+  "All India Rank 49 — National Engineering Olympiad": {
+    certificateId: "achievement-neo-excellence",
+  },
+  "5-Star Problem Solver on HackerRank": {
+    href: "https://www.hackerrank.com/qazimaazarshad",
+  },
+  "Solved 300+ coding problems on LeetCode": {
+    href: "https://leetcode.com/qazimaazarshad/",
+  },
+  "1st Prize — Quizzora Quiz Competition (University Level)": {
+    certificateId: "achievement-quizzora-1st",
+  },
+  "2nd Prize — University-Level Quiz": {
+    certificateId: "achievement-quiz-da-hunt-2nd",
+  },
+  "2nd Prize — Technical Quiz (University Level)": {
+    certificateId: "achievement-tech-quiz-2nd",
+  },
+  "3rd Prize — Literary Championship Quiz (University Level)": {
+    certificateId: "achievement-ojaswi-quiz-3rd",
+  },
+};
 
 export const hobbies: string[] = [
   "Movies",
