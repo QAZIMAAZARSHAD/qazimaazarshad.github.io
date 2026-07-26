@@ -263,7 +263,7 @@ export function Hobbies() {
               top: tip.top,
               transform: `translate(calc(-50% + ${tipShift}px), calc(-100% - 8px))`,
             }}
-            className="pointer-events-none fixed z-[110] max-w-[min(18rem,90vw)] text-balance rounded-lg border border-white/10 bg-ink-900/95 px-2.5 py-1 text-center font-mono text-[11px] leading-relaxed text-cyan-200 shadow-xl backdrop-blur"
+            className="pointer-events-none fixed z-[110] w-max max-w-[90vw] rounded-lg border border-white/10 bg-ink-900/95 px-3 py-1.5 text-center font-mono text-[11px] leading-snug text-cyan-200 shadow-xl backdrop-blur"
           >
             {tip.text}
           </div>,
