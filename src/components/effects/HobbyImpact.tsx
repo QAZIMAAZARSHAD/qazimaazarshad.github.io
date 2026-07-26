@@ -48,6 +48,14 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
   const cx = window.innerWidth / 2;
   const cy = window.innerHeight / 2;
 
+  // Cap how big the projectile grows so it fills the screen dramatically on
+  // desktop but never overflows small screens. Base sizes: ~112px image, ~60px
+  // emoji; target peak ≈ 1.2× the smaller viewport edge, clamped to [3.5, 9].
+  const projectileBase = effect.image ? 112 : 60;
+  const targetPeak = Math.min(window.innerWidth, window.innerHeight) * 1.2;
+  const peakScale = Math.max(3.5, Math.min(9, targetPeak / projectileBase));
+  const midScale = peakScale * 0.66;
+
   // Keep onDone stable so re-renders of the parent can't restart the timeline.
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
@@ -154,7 +162,7 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
           animate={{
             x: cx - origin.x,
             y: cy - origin.y,
-            scale: [0.3, 1, 6, 9],
+            scale: [0.3, 1, midScale, peakScale],
             rotate: [0, 20, 45, 65],
             opacity: [0, 1, 1, 0],
           }}
