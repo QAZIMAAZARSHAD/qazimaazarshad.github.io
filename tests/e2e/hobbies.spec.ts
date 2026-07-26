@@ -29,6 +29,29 @@ test.describe("Hobbies — cinematic click effects", () => {
     await expect(word).toBeHidden({ timeout: 6000 });
   });
 
+  test.describe("tooltip clamping on a narrow screen", () => {
+    test.use({ viewport: { width: 360, height: 720 } });
+
+    test("an edge chip's tooltip stays fully within the viewport", async ({
+      page,
+    }) => {
+      // Movies is the first (left-edge) chip — its quip used to clip.
+      await page
+        .locator("#hobbies")
+        .getByRole("button", { name: /^movies —/i })
+        .focus();
+
+      const tip = page.locator('div[role="tooltip"]');
+      await expect(tip).toBeVisible();
+      await expect(tip).toContainText("Beta, tumse na ho payega.");
+
+      const box = await tip.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box!.x).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(360);
+    });
+  });
+
   test("the Food chip renders a custom image icon", async ({ page }) => {
     const foodIcon = page
       .locator("#hobbies")

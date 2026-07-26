@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -149,8 +150,17 @@ interface ActiveImpact {
 
 let impactSeq = 0;
 
+interface ActiveTip {
+  text: string;
+  cx: number;
+  top: number;
+}
+
 export function Hobbies() {
   const [impact, setImpact] = useState<ActiveImpact | null>(null);
+  const [tip, setTip] = useState<ActiveTip | null>(null);
+  const [tipShift, setTipShift] = useState(0);
+  const tipRef = useRef<HTMLDivElement>(null);
 
   const fire = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -163,6 +173,29 @@ export function Hobbies() {
       origin: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
     });
   };
+
+  const showTip = (
+    event: React.SyntheticEvent<HTMLButtonElement>,
+    text: string,
+  ) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setTipShift(0);
+    setTip({ text, cx: rect.left + rect.width / 2, top: rect.top });
+  };
+  const hideTip = () => setTip(null);
+
+  // Nudge the (portaled) tooltip horizontally so chips near a screen edge
+  // don't get their tooltip clipped by the viewport.
+  useLayoutEffect(() => {
+    if (!tip || !tipRef.current) return;
+    const pad = 8;
+    const r = tipRef.current.getBoundingClientRect();
+    let shift = 0;
+    if (r.left < pad) shift = pad - r.left;
+    else if (r.right > window.innerWidth - pad)
+      shift = window.innerWidth - pad - r.right;
+    if (shift !== 0) setTipShift(shift);
+  }, [tip]);
 
   return (
     <Section id="hobbies">
@@ -184,11 +217,15 @@ export function Hobbies() {
               whileHover={{ y: -4, scale: 1.05 }}
               whileTap={{ scale: 0.94 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              className="group relative"
+              className="group"
             >
               <button
                 type="button"
                 onClick={(event) => fire(event, meta.effect)}
+                onMouseEnter={(event) => showTip(event, meta.quip)}
+                onMouseLeave={hideTip}
+                onFocus={(event) => showTip(event, meta.quip)}
+                onBlur={hideTip}
                 aria-label={`${hobby} — ${meta.quip}`}
                 className="glass inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2.5 text-sm text-ink-200 outline-none transition-colors duration-300 hover:border-accent-400/50 hover:text-white hover:shadow-lg hover:shadow-accent-500/20 focus-visible:border-accent-400/60 focus-visible:text-white"
               >
@@ -209,17 +246,27 @@ export function Hobbies() {
                 )}
                 <span className="font-medium">{hobby}</span>
               </button>
-
-              <span
-                role="tooltip"
-                className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded-lg border border-white/10 bg-ink-900/95 px-2.5 py-1 font-mono text-[11px] text-cyan-200 opacity-0 shadow-xl backdrop-blur transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100"
-              >
-                {meta.quip}
-              </span>
             </motion.li>
           );
         })}
       </motion.ul>
+
+      {tip &&
+        createPortal(
+          <div
+            ref={tipRef}
+            role="tooltip"
+            style={{
+              left: tip.cx,
+              top: tip.top,
+              transform: `translate(calc(-50% + ${tipShift}px), calc(-100% - 8px))`,
+            }}
+            className="pointer-events-none fixed z-[110] max-w-[min(18rem,90vw)] text-balance rounded-lg border border-white/10 bg-ink-900/95 px-2.5 py-1 text-center font-mono text-[11px] leading-relaxed text-cyan-200 shadow-xl backdrop-blur"
+          >
+            {tip.text}
+          </div>,
+          document.body,
+        )}
 
       <AnimatePresence>
         {impact && (
