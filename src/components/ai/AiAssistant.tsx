@@ -2,7 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles, X, Send, Loader2, Bot, Cpu } from "lucide-react";
 import type { MLCEngineInterface, InitProgressReport } from "@mlc-ai/web-llm";
-import { SYSTEM_PROMPT, SUGGESTED_PROMPTS } from "@/lib/aiContext";
+import {
+  SYSTEM_PROMPT,
+  SUGGESTED_PROMPTS,
+  OUT_OF_SCOPE_REPLY,
+  isPersonalQuestion,
+} from "@/lib/aiContext";
 import { profile } from "@/data/content";
 import { cn } from "@/lib/utils";
 
@@ -107,14 +112,25 @@ export function AiAssistant() {
       if (!engine || !text || generating) return;
 
       const history = [...messages, { role: "user" as const, content: text }];
-      setMessages([...history, { role: "assistant", content: "" }]);
       setInput("");
+
+      // The profile is strictly professional; deterministically refuse clearly
+      // personal questions so the model can't invent an answer.
+      if (isPersonalQuestion(text)) {
+        setMessages([
+          ...history,
+          { role: "assistant", content: OUT_OF_SCOPE_REPLY },
+        ]);
+        return;
+      }
+
+      setMessages([...history, { role: "assistant", content: "" }]);
       setGenerating(true);
 
       try {
         const stream = await engine.chat.completions.create({
           stream: true,
-          temperature: 0.3,
+          temperature: 0.2,
           max_tokens: 260,
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
