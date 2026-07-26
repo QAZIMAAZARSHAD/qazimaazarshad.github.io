@@ -136,10 +136,10 @@ export function Certifications() {
               />{" "}
               {filtered.length === 1 ? "certificate" : "certificates"}
             </span>
-            <span className="sr-only" role="status">
+            <output className="sr-only">
               {filtered.length}{" "}
               {filtered.length === 1 ? "certificate" : "certificates"}
-            </span>
+            </output>
           </p>
         </div>
       </div>

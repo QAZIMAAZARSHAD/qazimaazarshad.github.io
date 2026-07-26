@@ -91,11 +91,8 @@ export function Projects() {
       />
 
       <div className="mb-10 flex flex-col gap-5">
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Filter projects by category"
-        >
+        <fieldset className="m-0 flex flex-wrap gap-2 border-0 p-0">
+          <legend className="sr-only">Filter projects by category</legend>
           {projectCategories.map((category) => {
             const isActive = category === activeCategory;
             return (
@@ -116,7 +113,7 @@ export function Projects() {
               </button>
             );
           })}
-        </div>
+        </fieldset>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="glass glass-hover relative flex items-center rounded-2xl sm:max-w-sm sm:flex-1">
@@ -153,9 +150,9 @@ export function Projects() {
               />{" "}
               {filtered.length === 1 ? "project" : "projects"}
             </span>
-            <span className="sr-only" role="status">
+            <output className="sr-only">
               {filtered.length} {filtered.length === 1 ? "project" : "projects"}
-            </span>
+            </output>
           </p>
         </div>
       </div>

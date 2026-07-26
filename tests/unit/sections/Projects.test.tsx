@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { Projects } from "@/sections/Projects";
 import { projects } from "@/data/content";
 
-/** Reads the live "N project(s)" result-count text (the sr-only status node). */
+/** Reads the live "N project(s)" result-count text (the sr-only <output> node). */
 function resultCount(container: HTMLElement): string {
-  const el = container.querySelector('[role="status"]');
+  const el = container.querySelector("output");
   return el?.textContent?.trim().replace(/\s+/g, " ") ?? "";
 }
 
