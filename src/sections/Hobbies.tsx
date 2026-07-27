@@ -45,6 +45,7 @@ export const HOBBY_META: Record<
     quip: "Shinzō wo Sasageyo!",
     effect: {
       projectile: "⚔️",
+      image: "images/hobbies/anime.png",
       word: "Tatakae!",
       color: "#ff4d6d",
       shake: true,
