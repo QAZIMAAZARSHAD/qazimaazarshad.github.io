@@ -197,7 +197,7 @@ export const socials: SocialLink[] = [
   {
     id: "facebook",
     label: "Facebook",
-    href: "https://www.facebook.com/qazimaaz.arshad.3",
+    href: "https://www.facebook.com/qazimaazarshad1",
   },
   {
     id: "linktree",
