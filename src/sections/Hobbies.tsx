@@ -64,7 +64,7 @@ export const HOBBY_META: Record<
     quip: "Hustle, Loyalty, Respect",
     effect: {
       projectile: "🤼",
-      image: "images/hobbies/wwe.jpg",
+      image: "images/hobbies/wwe.png",
       word: "Suplex City!!!",
       color: "#f59e0b",
       shake: true,
@@ -110,7 +110,7 @@ export const HOBBY_META: Record<
     quip: "No days off.",
     effect: {
       projectile: "🏋️",
-      image: "images/hobbies/gym.jpg",
+      image: "images/hobbies/gym.png",
       word: "Chest Day",
       color: "#fb7185",
       shake: true,

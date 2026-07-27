@@ -188,7 +188,7 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
               loading="eager"
               decoding="async"
               onError={() => setImageFailed(true)}
-              className="h-28 w-28 rounded-2xl object-cover shadow-2xl sm:h-32 sm:w-32"
+              className="h-28 w-28 rounded-2xl object-contain drop-shadow-2xl sm:h-32 sm:w-32"
             />
           ) : (
             <span className="block text-6xl">{effect.projectile}</span>
