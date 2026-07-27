@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { asset, cn } from "@/lib/utils";
@@ -17,9 +17,9 @@ const LIFETIME_REDUCED = 2300;
 
 /** A themed, cinematic reaction fired when a hobby chip is clicked. */
 export interface HobbyEffect {
-  /** Emoji that rushes toward the viewer from the clicked chip. */
+  /** Emoji projectile — the fallback when no `image` is set or it fails to load. */
   projectile: string;
-  /** Optional custom image (asset path) used instead of the emoji projectile. */
+  /** Optional custom image (asset path) that rushes in instead of the emoji. */
   image?: string;
   /** Comic-style impact word shown at screen center. */
   word: string;
@@ -55,6 +55,9 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
   const targetPeak = Math.min(window.innerWidth, window.innerHeight) * 1.2;
   const peakScale = Math.max(3.5, Math.min(9, targetPeak / projectileBase));
   const midScale = peakScale * 0.66;
+
+  // Fall back to the emoji projectile if the custom image fails to load.
+  const [imageFailed, setImageFailed] = useState(false);
 
   // Keep onDone stable so re-renders of the parent can't restart the timeline.
   const onDoneRef = useRef(onDone);
@@ -178,12 +181,13 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
             times: [0, 0.25, 0.85, 1],
           }}
         >
-          {effect.image ? (
+          {effect.image && !imageFailed ? (
             <img
               src={asset(effect.image)}
               alt=""
               loading="eager"
               decoding="async"
+              onError={() => setImageFailed(true)}
               className="h-28 w-28 rounded-2xl object-cover shadow-2xl sm:h-32 sm:w-32"
             />
           ) : (

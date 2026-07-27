@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, act, fireEvent } from "@testing-library/react";
 import {
   HobbyImpact,
   type HobbyEffect,
@@ -42,6 +42,23 @@ describe("HobbyImpact", () => {
     );
     expect(screen.getByText("Jai Mahishmati")).toBeInTheDocument();
     expect(baseElement.querySelector('img[src*="bahubali"]')).not.toBeNull();
+  });
+
+  it("falls back to the emoji projectile if the image fails to load", () => {
+    const { baseElement } = render(
+      <HobbyImpact
+        effect={imageEffect}
+        origin={{ x: 0, y: 0 }}
+        onDone={vi.fn()}
+      />,
+    );
+    const img = baseElement.querySelector('img[src*="bahubali"]');
+    expect(img).not.toBeNull();
+
+    fireEvent.error(img!);
+
+    expect(baseElement.querySelector('img[src*="bahubali"]')).toBeNull();
+    expect(screen.getByText(imageEffect.projectile)).toBeInTheDocument();
   });
 
   it("calls onDone after its lifetime elapses", () => {
