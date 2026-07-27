@@ -8,6 +8,7 @@ import {
   achievements,
   hobbies,
   socials,
+  experienceYears,
 } from "@/data/content";
 
 /**
@@ -47,7 +48,7 @@ function buildProfileContext(): string {
   return [
     `Name: ${profile.name} (goes by "Maaz"). Role: ${profile.role} at ${profile.company}, based in ${profile.location}.`,
     `Summary: ${profile.intro}`,
-    `Key facts (do NOT compute or guess beyond these): Maaz has 4+ years of total professional software-engineering experience. He has worked on the R&D MDM team since Aug 2022 — first at Informatica, which was acquired by Salesforce — and his current title is Associate Member of Technical Staff at Salesforce (title held since Mar 2026). If asked "how long at Salesforce", explain the team joined Salesforce through the Informatica acquisition, so it's ~4 years on the team; never state a made-up number of years.`,
+    `Key facts (do NOT compute or guess beyond these): Maaz has ${experienceYears}+ years of total professional software-engineering experience. He has worked on the R&D MDM team since Aug 2022 — first at Informatica, which was acquired by Salesforce — and his current title is Associate Member of Technical Staff at Salesforce (title held since Mar 2026). If asked "how long at Salesforce", explain the team joined Salesforce through the Informatica acquisition, so it's ~${experienceYears}+ years on the team; never state a made-up number of years.`,
     `Current & recent experience:\n${exp}`,
     `Earlier (college-era internships/externships & community roles): ${earlierOrgs}.`,
     `Skills — ${skills}.`,

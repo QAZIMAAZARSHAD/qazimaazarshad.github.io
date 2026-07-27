@@ -4,6 +4,12 @@
  * Every section component reads from here — no content is hard-coded in views.
  */
 
+import { completedYearsSince } from "@/lib/utils";
+
+/** Professional start (R&D MDM team). Drives the dynamic "years of experience". */
+export const CAREER_START = "Aug 2022";
+export const experienceYears = completedYearsSince(CAREER_START);
+
 export type SocialId =
   | "linkedin"
   | "github"
@@ -130,8 +136,7 @@ export const profile = {
   location: "Bengaluru, India",
   tagline: "I build reliable, enterprise-scale software — end to end.",
   headline: "Full-stack engineer shipping enterprise-scale products",
-  intro:
-    "Software Engineer with 4 years of experience building enterprise-scale products — now at Salesforce, working AI-first. I pair deep full-stack ownership with agentic development: orchestrating AI coding agents to plan, build, test, and review in parallel, so large, complex work ships faster without trading away quality.",
+  intro: `Software Engineer with ${experienceYears} years of experience building enterprise-scale products — now at Salesforce, working AI-first. I pair deep full-stack ownership with agentic development: orchestrating AI coding agents to plan, build, test, and review in parallel, so large, complex work ships faster without trading away quality.`,
   about: [
     "AI-first engineer: I orchestrate coding agents (Cursor, Anthropic Claude) as a team — decomposing work, running agents in parallel, and delegating well-scoped tasks while I steer architecture and review.",
     "Turn AI leverage into shipped software — driving epics and refactors end-to-end across backend, BFF, and UI, and hardening them with automated unit, E2E, and visual tests generated alongside the code.",
@@ -216,7 +221,7 @@ export const socials: SocialLink[] = [
 ];
 
 export const stats: Stat[] = [
-  { label: "Years of experience", value: "4+" },
+  { label: "Years of experience", value: `${experienceYears}+` },
   { label: "Backend · BFF · UI ownership", value: "Full-stack" },
   { label: "Agentic development workflows", value: "AI-native" },
   { label: "Orchestrating AI agent teams", value: "Agent teams" },

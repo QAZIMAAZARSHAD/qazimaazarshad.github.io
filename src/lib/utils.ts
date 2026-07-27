@@ -55,3 +55,22 @@ export function durationSince(
   if (mos) parts.push(`${mos} mo${mos > 1 ? "s" : ""}`);
   return parts.join(" ") || "1 mo";
 }
+
+/**
+ * Whole years completed since a "Mon YYYY" start (e.g. "Aug 2022"), floored —
+ * i.e. it only ticks up on the anniversary month. Used to keep "years of
+ * experience" dynamic. Returns 0 for an invalid/future start.
+ */
+export function completedYearsSince(
+  startLabel: string,
+  now: Date = new Date(),
+): number {
+  const [mon, yearStr] = startLabel.trim().split(/\s+/);
+  const m = MONTH_ABBR.indexOf((mon ?? "").slice(0, 3).toLowerCase());
+  const year = Number.parseInt(yearStr ?? "", 10);
+  if (m < 0 || Number.isNaN(year)) return 0;
+
+  let years = now.getFullYear() - year;
+  if (now.getMonth() < m) years -= 1; // anniversary month not reached yet this year
+  return Math.max(0, years);
+}

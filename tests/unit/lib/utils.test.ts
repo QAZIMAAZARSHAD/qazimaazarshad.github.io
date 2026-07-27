@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { asset, cn, durationSince } from "@/lib/utils";
+import { asset, cn, durationSince, completedYearsSince } from "@/lib/utils";
 
 describe("cn", () => {
   it("merges multiple class names", () => {
@@ -48,5 +48,18 @@ describe("durationSince", () => {
 
   it("returns empty for an unparseable label", () => {
     expect(durationSince("whenever")).toBe("");
+  });
+});
+
+describe("completedYearsSince", () => {
+  it("floors to whole years, ticking up only on the anniversary month", () => {
+    // Aug 2022 start:
+    expect(completedYearsSince("Aug 2022", new Date(2026, 6, 27))).toBe(3); // Jul 2026 → not yet 4
+    expect(completedYearsSince("Aug 2022", new Date(2026, 7, 1))).toBe(4); // Aug 2026 → 4
+    expect(completedYearsSince("Aug 2022", new Date(2023, 6, 1))).toBe(0); // Jul 2023 → <1
+  });
+
+  it("returns 0 for an unparseable label", () => {
+    expect(completedYearsSince("whenever")).toBe(0);
   });
 });
