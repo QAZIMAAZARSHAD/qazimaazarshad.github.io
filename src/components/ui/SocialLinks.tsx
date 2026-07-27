@@ -5,6 +5,8 @@ import {
   FaInstagram,
   FaFacebookF,
   FaXTwitter,
+  FaMedium,
+  FaYoutube,
   FaEnvelope,
 } from "react-icons/fa6";
 import {
@@ -26,6 +28,8 @@ const ICONS: Record<SocialId, IconType> = {
   instagram: FaInstagram,
   facebook: FaFacebookF,
   linktree: SiLinktree,
+  medium: FaMedium,
+  youtube: FaYoutube,
   email: FaEnvelope,
 };
 

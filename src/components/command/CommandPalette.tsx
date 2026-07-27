@@ -34,6 +34,8 @@ import {
   FaInstagram,
   FaXTwitter,
   FaFacebookF,
+  FaMedium,
+  FaYoutube,
 } from "react-icons/fa6";
 import {
   SiLeetcode,
@@ -81,6 +83,8 @@ const SOCIAL_ICONS: Record<string, IconComp> = {
   instagram: FaInstagram,
   facebook: FaFacebookF,
   linktree: SiLinktree,
+  medium: FaMedium,
+  youtube: FaYoutube,
 };
 
 export function CommandPalette() {

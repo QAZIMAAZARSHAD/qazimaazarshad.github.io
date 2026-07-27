@@ -14,6 +14,8 @@ export type SocialId =
   | "instagram"
   | "facebook"
   | "linktree"
+  | "medium"
+  | "youtube"
   | "email";
 
 export interface SocialLink {
@@ -203,6 +205,12 @@ export const socials: SocialLink[] = [
     id: "linktree",
     label: "Linktree",
     href: "https://linktr.ee/qazimaazarshad",
+  },
+  { id: "medium", label: "Medium", href: "https://qazimaazarshad.medium.com/" },
+  {
+    id: "youtube",
+    label: "YouTube",
+    href: "https://www.youtube.com/@qazimaazarshad",
   },
   { id: "email", label: "Email", href: "mailto:qazimaazarshad@gmail.com" },
 ];

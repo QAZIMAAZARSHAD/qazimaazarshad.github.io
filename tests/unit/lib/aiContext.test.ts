@@ -20,8 +20,8 @@ describe("aiContext", () => {
     }
   });
 
-  it("explicitly rules out a non-existent YouTube handle", () => {
-    expect(SYSTEM_PROMPT).toMatch(/no youtube/i);
+  it("includes the exact YouTube channel URL", () => {
+    expect(SYSTEM_PROMPT).toContain("https://www.youtube.com/@qazimaazarshad");
   });
 
   it("forbids inventing personal details and gives an out-of-scope reply", () => {

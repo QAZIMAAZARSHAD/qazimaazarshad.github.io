@@ -56,7 +56,7 @@ function buildProfileContext(): string {
     `Achievements: ${achievements.join("; ")}.`,
     `Hobbies: ${hobbies.join(", ")}.`,
     `Email: ${profile.email}`,
-    `Links & social handles (use these EXACT URLs; never invent a handle. There is no YouTube):\n${links}`,
+    `Links & social handles (use these EXACT URLs; never invent a handle):\n${links}`,
   ].join("\n\n");
 }
 
