@@ -85,7 +85,13 @@ export const HOBBY_META: Record<
   Badminton: {
     emoji: "🏸",
     quip: "Smash first, ask later.",
-    effect: { projectile: "🏸", word: "Smash!", color: "#22c55e", shake: true },
+    effect: {
+      projectile: "🏸",
+      image: "images/hobbies/badminton.png",
+      word: "Smash!",
+      color: "#22c55e",
+      shake: true,
+    },
   },
   Cards: {
     emoji: "🃏",
@@ -133,6 +139,7 @@ export const HOBBY_META: Record<
     quip: "Making waves.",
     effect: {
       projectile: "🌊",
+      image: "images/hobbies/swimming.png",
       word: "Water Breathing First Form",
       color: "#38bdf8",
       shake: true,
