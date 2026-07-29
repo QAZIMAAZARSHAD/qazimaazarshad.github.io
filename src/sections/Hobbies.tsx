@@ -96,7 +96,12 @@ export const HOBBY_META: Record<
   Cards: {
     emoji: "🃏",
     quip: "Cards are war, in disguise of a sport.",
-    effect: { projectile: "🃏", word: "Teen Patti!", color: "#f472b6" },
+    effect: {
+      projectile: "🃏",
+      image: "images/hobbies/cards.png",
+      word: "Teen Patti!",
+      color: "#f472b6",
+    },
   },
   "Video Games": {
     emoji: "🎮",
