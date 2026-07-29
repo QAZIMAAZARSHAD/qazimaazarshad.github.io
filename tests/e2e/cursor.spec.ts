@@ -14,9 +14,13 @@ test.describe("Custom cursor", () => {
     await page.goto("/");
     await ready(page);
 
-    await expect(page.locator("html")).toHaveClass(/qma-cursor-active/);
     const ring = page.locator(".qma-cursor-ring");
     await expect(ring).toHaveCount(1);
+
+    // The native cursor is only taken over once the pointer actually moves.
+    await expect(page.locator("html")).not.toHaveClass(/qma-cursor-active/);
+    await page.mouse.move(200, 200, { steps: 2 });
+    await expect(page.locator("html")).toHaveClass(/qma-cursor-active/);
 
     // Over an interactive element → ring enters its "hover" state.
     const button = page.getByRole("link", { name: /view projects/i });

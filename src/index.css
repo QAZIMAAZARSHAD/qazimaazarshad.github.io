@@ -126,6 +126,12 @@ html.qma-cursor-active,
 html.qma-cursor-active * {
   cursor: none !important;
 }
+/* Keep the caret / affordance on text-entry fields. */
+html.qma-cursor-active input,
+html.qma-cursor-active textarea,
+html.qma-cursor-active [contenteditable="true"] {
+  cursor: auto !important;
+}
 .qma-cursor-layer {
   position: fixed;
   inset: 0;
@@ -175,6 +181,10 @@ html.qma-cursor-active * {
 @media (pointer: coarse) {
   .qma-cursor-layer {
     display: none;
+  }
+  html.qma-cursor-active,
+  html.qma-cursor-active * {
+    cursor: auto !important;
   }
 }
 @media (prefers-reduced-motion: reduce) {

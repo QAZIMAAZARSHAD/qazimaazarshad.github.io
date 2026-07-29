@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { render, cleanup, act } from "@testing-library/react";
 import { CustomCursor } from "@/components/effects/CustomCursor";
 
 /** Stub matchMedia so a given query set resolves to `matches: true`. */
@@ -44,5 +44,25 @@ describe("CustomCursor", () => {
     mockMatchMedia([]); // neither fine pointer nor reduced motion
     const { container } = render(<CustomCursor />);
     expect(container.querySelector(".qma-cursor-layer")).toBeNull();
+  });
+
+  it("hides the native cursor only after the pointer moves, and restores it on unmount", () => {
+    mockMatchMedia(["pointer: fine"]);
+    const html = document.documentElement;
+    const { unmount } = render(<CustomCursor />);
+
+    // On mount the native cursor is untouched (avoids a no-cursor flash).
+    expect(html.classList.contains("qma-cursor-active")).toBe(false);
+
+    act(() => {
+      window.dispatchEvent(
+        new MouseEvent("mousemove", { clientX: 40, clientY: 40 }),
+      );
+    });
+    expect(html.classList.contains("qma-cursor-active")).toBe(true);
+
+    // Teardown must never strand the document with `cursor: none`.
+    unmount();
+    expect(html.classList.contains("qma-cursor-active")).toBe(false);
   });
 });
