@@ -10,6 +10,7 @@ import {
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 import { hobbies } from "@/data/content";
 import { asset } from "@/lib/utils";
+import { playStrum } from "@/lib/sound";
 
 /**
  * Per-hobby content: the chip emoji (or custom icon image) + hover quip, and the
@@ -59,6 +60,7 @@ export const HOBBY_META: Record<
       image: "images/hobbies/music.png",
       word: "Mile sur mera tumhara, toh sur bane hamara",
       color: "#22d3ee",
+      sound: true,
     },
   },
   "Pro Wrestling (WWE)": {
@@ -239,6 +241,7 @@ export function Hobbies() {
                 type="button"
                 onClick={(event) => {
                   hideTip();
+                  if (meta.effect.sound) playStrum();
                   fire(event, meta.effect);
                 }}
                 onMouseEnter={(event) => showTip(event, meta.quip)}

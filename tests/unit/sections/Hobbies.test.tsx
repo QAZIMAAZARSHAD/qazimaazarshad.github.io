@@ -1,7 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Hobbies, HOBBY_META } from "@/sections/Hobbies";
 import { hobbies } from "@/data/content";
+import { playStrum } from "@/lib/sound";
+
+vi.mock("@/lib/sound", () => ({ playStrum: vi.fn() }));
 
 describe("Hobbies", () => {
   it("renders its heading and every hobby chip", () => {
@@ -39,5 +42,16 @@ describe("Hobbies", () => {
     render(<Hobbies />);
     fireEvent.click(screen.getByRole("button", { name: /badminton/i }));
     expect(screen.getByText("Smash!")).toBeInTheDocument();
+  });
+
+  it("plays the strum only for the sound-enabled Music chip", () => {
+    expect(HOBBY_META.Music.effect.sound).toBe(true);
+    render(<Hobbies />);
+
+    fireEvent.click(screen.getByRole("button", { name: /badminton/i }));
+    expect(playStrum).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: /^music/i }));
+    expect(playStrum).toHaveBeenCalledTimes(1);
   });
 });

@@ -27,6 +27,8 @@ export interface HobbyEffect {
   color: string;
   /** Whether the whole page briefly shakes on impact. */
   shake?: boolean;
+  /** Play a short synthesized chime on click (used by the Music chip). */
+  sound?: boolean;
 }
 
 interface HobbyImpactProps {
