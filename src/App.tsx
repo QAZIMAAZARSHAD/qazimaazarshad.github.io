@@ -5,6 +5,7 @@ import { Preloader } from "@/components/effects/Preloader";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { AiAssistant } from "@/components/ai/AiAssistant";
 import { SpotlightEffect } from "@/components/effects/SpotlightEffect";
+import { CustomCursor } from "@/components/effects/CustomCursor";
 import { SideNav } from "@/components/effects/SideNav";
 import { Navbar } from "@/sections/Navbar";
 import { Hero } from "@/sections/Hero";
@@ -27,6 +28,7 @@ export default function App() {
       <CommandPalette />
       <AiAssistant />
       <SpotlightEffect />
+      <CustomCursor />
       <SideNav />
       <AnimatedBackground />
       <ScrollProgress />
