@@ -7,6 +7,7 @@ import { AvatarRing } from "@/components/hero/AvatarRing";
 import { ScrollCue } from "@/components/hero/ScrollCue";
 import { ScrambleText } from "@/components/hero/ScrambleText";
 import { Magnetic } from "@/components/ui/Magnetic";
+import { GoogleMe } from "@/components/google/GoogleMe";
 import { celebrate } from "@/lib/confetti";
 import { asset } from "@/lib/utils";
 
@@ -108,8 +109,12 @@ export function Hero() {
             </a>
           </motion.div>
 
-          <motion.div variants={fadeUp}>
+          <motion.div
+            variants={fadeUp}
+            className="flex flex-wrap items-center gap-3"
+          >
             <SocialLinks only={["github", "linkedin", "instagram", "email"]} />
+            <GoogleMe />
           </motion.div>
         </motion.div>
 

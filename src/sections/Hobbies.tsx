@@ -56,6 +56,7 @@ export const HOBBY_META: Record<
     quip: "Every commit has a soundtrack.",
     effect: {
       projectile: "🎵",
+      image: "images/hobbies/music.png",
       word: "Mile sur mera tumhara, toh sur bane hamara",
       color: "#22d3ee",
     },
