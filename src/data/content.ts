@@ -163,10 +163,16 @@ export const heroTaglines = [
 ];
 
 /**
- * Footer visit counter via CounterAPI.dev — a generic counter API (NOT an
- * analytics/tracking domain), so ad-blockers don't block it and no account is
- * needed. Value is "<namespace>/<key>"; each load increments and returns the
- * running total. Empty disables the counter entirely.
+ * Footer visit counter via CounterAPI.dev — no account, no backend. Value is
+ * "<namespace>/<key>"; each load increments and returns the running total.
+ * Empty disables the counter entirely.
+ *
+ * The total undercounts: EasyPrivacy carries `||counterapi.dev^$third-party`,
+ * so uBlock Origin, AdGuard and Brave block it by default, and this audience
+ * runs blockers. Only a first-party endpoint can escape that rule, which needs
+ * a domain and somewhere to run code — neither of which static Pages hosting
+ * gives us. Renaming the path or using an image pixel would not help; the rule
+ * matches the domain.
  */
 export const analytics = {
   visitCounter: "qazimaazarshad-portfolio/visits",

@@ -22,10 +22,13 @@ function shouldCount(): boolean {
 }
 
 /**
- * Footer visit counter backed by CounterAPI.dev — no account, no backend, and
- * not on ad-blocker lists (unlike analytics domains). Each real load bumps the
- * total and animates the number in. Renders nothing until it resolves or if the
- * request fails, so it can never show a broken widget.
+ * Footer visit counter backed by CounterAPI.dev. Each real load bumps the total
+ * and animates the number in.
+ *
+ * Renders nothing until it resolves, or at all if the request fails — which is
+ * the common case rather than the edge case, since blockers list the domain
+ * (see the note on `analytics` in content.ts). Blocked visitors see no counter
+ * instead of a broken one.
  */
 export function VisitCounter() {
   const [count, setCount] = useState<number | null>(null);
