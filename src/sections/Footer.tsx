@@ -23,7 +23,9 @@ export function Footer() {
           <VisitCounter />
         </div>
 
-        <div className="mt-12 sm:mt-16">
+        {/* Deliberately wider than the rails around it, but still capped so the
+            wordmark can't drift off their axis on ultra-wide displays. */}
+        <div className="mx-auto mt-12 max-w-[110rem] sm:mt-16">
           <SignatureName name={profile.name} highlight={profile.firstName} />
         </div>
 

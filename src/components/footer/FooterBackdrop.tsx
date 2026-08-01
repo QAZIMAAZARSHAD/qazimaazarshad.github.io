@@ -20,11 +20,14 @@ const HORIZON =
  */
 export function FooterBackdrop() {
   const reduceMotion = useReducedMotion();
+  // Gated on visibility — the footer is off-screen for most of a visit, so
+  // there's no reason to keep the drift running the whole session.
   const drift = (x: number[], y: number[], duration: number) =>
     reduceMotion
       ? undefined
       : {
-          animate: { x, y },
+          whileInView: { x, y },
+          viewport: { once: false, amount: 0 },
           transition: {
             duration,
             repeat: Infinity,

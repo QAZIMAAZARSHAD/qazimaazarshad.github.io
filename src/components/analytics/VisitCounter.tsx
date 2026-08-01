@@ -70,7 +70,9 @@ export function VisitCounter() {
   if (!count) return null;
 
   return (
-    <motion.p
+    // A span rather than a paragraph: role=paragraph forbids an accessible
+    // name, so the label would be dropped by assistive tech (and flagged by axe).
+    <motion.span
       data-testid="visit-counter"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -86,6 +88,6 @@ export function VisitCounter() {
         {display.toLocaleString()}
       </span>{" "}
       {count === 1 ? "visit" : "visits"}
-    </motion.p>
+    </motion.span>
   );
 }

@@ -59,8 +59,11 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
   const [tracking, setTracking] = useState(false);
 
   useEffect(() => {
-    if (reduceMotion) return;
-    setTracking(window.matchMedia?.("(pointer: fine)").matches ?? false);
+    // Re-evaluated when the OS motion setting flips, so tracking stops too.
+    setTracking(
+      !reduceMotion &&
+        (window.matchMedia?.("(pointer: fine)").matches ?? false),
+    );
   }, [reduceMotion]);
 
   // Park the resting light over the highlighted word. Measured from layout
@@ -71,17 +74,28 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
     const word = wordRef.current;
     if (!el || !word) return;
 
+    let alive = true;
+    let raf = 0;
+
     const measure = () => {
+      if (!alive) return;
+      // Read every layout value up front — writing a custom property on the
+      // wrapper invalidates the whole inherited subtree, so interleaving reads
+      // and writes would force a reflow of the giant type on each one.
+      const { offsetWidth, offsetHeight, offsetLeft, offsetTop } = word;
+
       // Radii from the word box, chosen so the gradient's 67% stop lands on the
       // word's edge: the whole word is at full brightness, then haloes out over
-      // roughly one more character. Vertically it dies inside one line box so a
-      // wrapped name never bleeds onto the line below.
-      el.style.setProperty("--lw", `${word.offsetWidth * 0.75}px`);
-      el.style.setProperty("--lh", `${word.offsetHeight * 0.67}px`);
+      // roughly one more character. Vertically it is kept tight enough that a
+      // wrapped name only catches a faint spill on the line below.
+      el.style.setProperty("--lw", `${offsetWidth * 0.75}px`);
+      el.style.setProperty("--lh", `${offsetHeight * 0.67}px`);
 
+      // Offsets resolve against the inner positioned layer wrapper, which sits
+      // flush with this element — the same origin the pointer path uses below.
       restRef.current = {
-        x: word.offsetLeft + word.offsetWidth / 2,
-        y: word.offsetTop + word.offsetHeight / 2,
+        x: offsetLeft + offsetWidth / 2,
+        y: offsetTop + offsetHeight / 2,
       };
       if (!hoveringRef.current) {
         el.style.setProperty("--sx", `${restRef.current.x}px`);
@@ -89,11 +103,25 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
       }
     };
 
+    // Resize fires at event rate; coalesce to one measurement per frame.
+    const onResize = () => {
+      if (!raf) {
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          measure();
+        });
+      }
+    };
+
     measure();
-    window.addEventListener("resize", measure);
+    window.addEventListener("resize", onResize);
     document.fonts?.ready.then(measure).catch(() => {});
-    return () => window.removeEventListener("resize", measure);
-  }, [highlight]);
+    return () => {
+      alive = false;
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [name, highlight]);
 
   // Pointer → CSS vars, rAF-throttled so tracking never re-renders React.
   useEffect(() => {
@@ -115,11 +143,19 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
       y = event.clientY - rect.top;
       if (!raf) raf = requestAnimationFrame(apply);
     };
-    // Settle back onto the highlighted word when the pointer leaves.
+    // Settle back onto the highlighted word when the pointer leaves. With no
+    // measured word, fall back to the mask's centred defaults rather than
+    // stranding the light wherever the cursor happened to exit.
     const onLeave = () => {
       hoveringRef.current = false;
       const rest = restRef.current;
-      if (!rest) return;
+      if (!rest) {
+        if (raf) cancelAnimationFrame(raf);
+        raf = 0;
+        el.style.removeProperty("--sx");
+        el.style.removeProperty("--sy");
+        return;
+      }
       x = rest.x;
       y = rest.y;
       if (!raf) raf = requestAnimationFrame(apply);
@@ -185,21 +221,30 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
           <span aria-hidden>{renderWords(true)}</span>
         </motion.h2>
 
-        {/* Gradient copy, revealed by the cursor light. */}
+        {/* Gradient copy, revealed by the cursor light. The mask lives on the
+            outer element and the gradient + glow on the inner one: filters are
+            applied before masking, so keeping them apart lets the browser reuse
+            the filtered text while only the mask moves — and avoids stacking
+            background-clip, filter and mask on a single element, which WebKit
+            has historically mishandled. */}
         <motion.span
           aria-hidden
           variants={GROUP}
           style={light}
-          className={`${TYPE} absolute inset-0 bg-gradient-to-r from-accent-400 via-cyan-300 to-accent-400 bg-clip-text text-transparent drop-shadow-[0_0_45px_rgba(99,102,241,0.35)]`}
+          className={`${TYPE} absolute inset-0`}
         >
-          {renderWords(false)}
+          <span
+            className={`${TYPE} block bg-gradient-to-r from-accent-400 via-cyan-300 to-accent-400 bg-clip-text text-transparent drop-shadow-[0_0_45px_rgba(99,102,241,0.35)]`}
+          >
+            {renderWords(false)}
+          </span>
         </motion.span>
       </div>
 
       {/* Mirrored pool beneath the letters — same markup, so it wraps alike. */}
       <div
         aria-hidden
-        className={`${TYPE} pointer-events-none relative h-[0.42em] overflow-hidden`}
+        className={`${TYPE} pointer-events-none h-[0.42em] overflow-hidden`}
         style={{ WebkitMaskImage: POOL_FADE, maskImage: POOL_FADE }}
       >
         <motion.div
