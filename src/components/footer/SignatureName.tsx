@@ -2,9 +2,13 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { viewportOnce } from "@/lib/motion";
 
-/** Shared type metrics — every layer must match exactly so they stay aligned. */
+/**
+ * Shared type metrics — every layer must match exactly so they stay aligned.
+ * The leading has to clear a descending Q on the line above once the name
+ * wraps, which it does on narrow screens.
+ */
 const TYPE =
-  "font-display font-black uppercase leading-[0.82] tracking-tighter text-[clamp(2.75rem,9.5vw,11rem)]";
+  "font-display font-black uppercase leading-none tracking-tighter text-[clamp(2.75rem,9.5vw,11rem)]";
 
 /**
  * The light that paints the gradient onto the outline type. Its radii are
@@ -41,14 +45,13 @@ interface SignatureNameProps {
 }
 
 /**
- * The footer's centrepiece: the name set enormous as ghost outline type, with a
- * vivid gradient copy revealed through a light that tracks the cursor — so
- * moving the mouse "paints" the letters. Letters spring in on scroll and a
- * blurred mirror image pools beneath them.
+ * The footer's centrepiece: the name as giant ghost outline type, with a
+ * gradient copy revealed through a light that tracks the cursor, so moving the
+ * mouse paints the letters. A blurred mirror image pools beneath.
  *
- * The gradient and mirror layers are decorative duplicates (aria-hidden); the
- * heading's accessible name comes from a single visually-hidden span. On touch
- * or under reduced motion the gradient is simply always lit.
+ * Gradient and mirror are decorative duplicates; the heading's accessible name
+ * comes from one visually-hidden span. On touch or reduced motion the gradient
+ * is simply always lit.
  */
 export function SignatureName({ name, highlight }: SignatureNameProps) {
   const reduceMotion = useReducedMotion();
@@ -66,9 +69,8 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
     );
   }, [reduceMotion]);
 
-  // Park the resting light over the highlighted word. Measured from layout
-  // offsets (not bounding rects) so the letters' entrance transforms can't
-  // skew it, and re-measured when the type reflows or the webfont swaps in.
+  // Park the resting light over the highlighted word. Layout offsets, not
+  // bounding rects, so the letters' entrance transforms can't skew it.
   useLayoutEffect(() => {
     const el = wrapRef.current;
     const word = wordRef.current;
@@ -79,15 +81,12 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
 
     const measure = () => {
       if (!alive) return;
-      // Read every layout value up front — writing a custom property on the
-      // wrapper invalidates the whole inherited subtree, so interleaving reads
-      // and writes would force a reflow of the giant type on each one.
+      // Read up front: writing a custom property invalidates the inherited
+      // subtree, so interleaving reads and writes reflows the giant type.
       const { offsetWidth, offsetHeight, offsetLeft, offsetTop } = word;
 
-      // Radii from the word box, chosen so the gradient's 67% stop lands on the
-      // word's edge: the whole word is at full brightness, then haloes out over
-      // roughly one more character. Vertically it is kept tight enough that a
-      // wrapped name only catches a faint spill on the line below.
+      // Sized so the gradient's 67% stop lands on the word's edge: the word at
+      // full brightness, haloing out over about one more character.
       el.style.setProperty("--lw", `${offsetWidth * 0.75}px`);
       el.style.setProperty("--lh", `${offsetHeight * 0.67}px`);
 
@@ -143,9 +142,8 @@ export function SignatureName({ name, highlight }: SignatureNameProps) {
       y = event.clientY - rect.top;
       if (!raf) raf = requestAnimationFrame(apply);
     };
-    // Settle back onto the highlighted word when the pointer leaves. With no
-    // measured word, fall back to the mask's centred defaults rather than
-    // stranding the light wherever the cursor happened to exit.
+    // Settle back onto the highlighted word; with none measured, fall back to
+    // the mask's centred defaults rather than stranding the light.
     const onLeave = () => {
       hoveringRef.current = false;
       const rest = restRef.current;

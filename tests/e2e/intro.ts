@@ -1,16 +1,10 @@
 import type { Page } from "@playwright/test";
 
 /**
- * Get past the entry sequence and onto the page.
+ * Open the door, skip the greeting, and wait for the intro to clear.
  *
- * The intro is a door the visitor opens (which is what lets the browser play
- * the music) followed by a greeting. Tests that aren't about the intro itself
- * open the door, skip the greeting, and wait for the overlay to go — which is
- * also far quicker than sitting through all of it.
- *
- * Every step throws on failure. This runs in the beforeEach of most of the
- * suite, so if entry breaks, it has to say so here rather than let each spec
- * die later on an unrelated assertion.
+ * Every step throws: this runs in the beforeEach of most of the suite, so a
+ * broken entry has to fail here rather than surface as an unrelated assertion.
  */
 export async function enterSite(
   page: Page,
@@ -18,22 +12,20 @@ export async function enterSite(
 ): Promise<void> {
   const intro = page.locator('[data-testid="preloader"]');
   // Attached, not counted: after goto({ waitUntil: "commit" }) React hasn't
-  // mounted yet, so a count would read 0 and skip the whole helper.
+  // mounted, so a count reads 0 and skips the helper.
   await intro.waitFor({ state: "attached", timeout: 15_000 });
 
   const door = page.getByRole("button", { name: /enter the site/i });
   await door.waitFor({ timeout: 15_000 });
 
   if (options.keyboard) {
-    // The door takes focus on arrival, so this never touches the pointer —
-    // which matters for anything asserting on pointer-driven behaviour.
+    // Never touches the pointer, for specs asserting on pointer-driven state.
     await page.keyboard.press("Enter");
   } else {
     await door.click({ timeout: 15_000 });
   }
 
-  // The door plays a brief opening first, and only the greeting can be
-  // skipped — so wait for it to arrive before cutting through.
+  // Only the greeting can be skipped, so wait for it before cutting through.
   await page
     .getByTestId("welcome")
     .waitFor({ state: "visible", timeout: 15_000 });
@@ -41,8 +33,7 @@ export async function enterSite(
 
   await intro.waitFor({ state: "detached", timeout: 15_000 });
 
-  // Park the pointer out of the way. door.click() leaves it at viewport
-  // centre, where it sits over page content and hovers whatever lands there —
-  // which silently baked a hovered project card into a visual baseline.
+  // click() leaves the pointer at viewport centre, hovering whatever page
+  // content lands under it.
   if (!options.keyboard) await page.mouse.move(0, 0);
 }

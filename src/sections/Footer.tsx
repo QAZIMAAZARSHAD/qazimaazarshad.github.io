@@ -15,7 +15,10 @@ export function Footer() {
       />
       <FooterBackdrop />
 
-      <div className="relative z-10 px-5 pb-10 pt-14 sm:px-8 sm:pt-20">
+      {/* The extra bottom padding on narrow screens keeps the copyright clear of
+          the floating Ask AI and back-to-top buttons, which are pinned to the
+          viewport and would otherwise sit on top of it at the end of the page. */}
+      <div className="relative z-10 px-5 pb-28 pt-14 sm:px-8 sm:pb-10 sm:pt-20">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-500">
             EOF — thanks for scrolling

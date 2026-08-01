@@ -30,16 +30,13 @@ function fadeOutAndStop(audio: HTMLAudioElement) {
 }
 
 /**
- * The site's entry sequence: the loader, a door the visitor opens, then a
- * greeting and a curtain split that reveals the page.
+ * The entry sequence: loader, a door the visitor opens, then a greeting and a
+ * curtain split revealing the page. The door exists because browsers refuse
+ * audible playback until the visitor has interacted — that click starts the
+ * music.
  *
- * The door exists for one reason: browsers refuse audible playback until a
- * visitor has interacted with the page, so the greeting can only be scored if
- * something is clicked first. That click is what starts the music.
- *
- * Every phase lives under one overlay that keeps `data-testid="preloader"` for
- * its whole life — that attribute is the "the intro is still up" signal the
- * entire e2e suite waits on.
+ * One overlay spans every phase and keeps `data-testid="preloader"` throughout;
+ * the e2e suite waits on it to know the intro is still up.
  */
 export function Preloader() {
   const [phase, setPhase] = useState<Phase>("loading");
@@ -88,17 +85,14 @@ export function Preloader() {
   // Opening the door is the gesture the browser was waiting for, so the track
   // is started from inside the click handler where the permission applies.
   const enter = useCallback(() => {
-    // The door can be pressed again while it swings — auto-repeat on a held
-    // Enter is enough — and nothing downstream should run twice.
+    // A held Enter auto-repeats; nothing downstream should run twice.
     if (openingRef.current) return;
     const audio = audioRef.current;
     if (audio) {
       audio.muted = false;
       audio.volume = INTRO_VOLUME;
       try {
-        // Started here, inside the click, because that is the gesture the
-        // browser grants permission to. Environments without media support
-        // return undefined rather than a promise.
+        // Environments without media support return undefined, not a promise.
         const started = audio.play() as Promise<void> | undefined;
         started?.catch(() => {});
       } catch {
@@ -148,9 +142,8 @@ export function Preloader() {
     if (audio) fadeOutAndStop(audio);
   }, [phase]);
 
-  // Let an impatient visitor cut through the greeting. Not while the door is
-  // up: there, a stray key or click would dismiss the intro instead of
-  // opening it, and they'd never hear the thing the door exists for.
+  // Let an impatient visitor cut through the greeting — but never at the door,
+  // where a stray key would dismiss the intro instead of opening it.
   useEffect(() => {
     if (phase !== "welcome") return;
     const skip = () => finishIntro();
@@ -174,10 +167,9 @@ export function Preloader() {
     };
   }, [phase]);
 
-  // The page is painted behind an opaque overlay, so it has to be taken out of
-  // the accessibility tree too — otherwise a screen reader can browse and
-  // activate the whole portfolio while it's visually hidden. The intro lives
-  // inside #root, so its siblings are inerted rather than the root itself.
+  // Painted behind an opaque overlay, the page has to leave the accessibility
+  // tree too, or a screen reader can browse it while it's hidden. The intro
+  // lives inside #root, so its siblings are inerted rather than the root.
   useEffect(() => {
     if (phase === "done") return;
     const behind = [
@@ -198,16 +190,14 @@ export function Preloader() {
     };
   }, [phase]);
 
-  // The lock swallows the browser's jump to a "#section" on load, so a deep
-  // link would otherwise land at the top of the page. Replay it once the
-  // intro is out of the way — instantly, since this is page entry rather
-  // than a navigation the visitor asked to watch.
+  // The lock swallows the browser's jump to "#section" on load, so replay it
+  // once the intro is gone.
   useEffect(() => {
     if (phase !== "done") return;
     const target = window.location.hash.slice(1);
     if (!target) return;
-    // "instant", not "auto" — the latter defers to `scroll-behavior: smooth`
-    // from index.css, which would animate a two-second scroll on page entry.
+    // "instant", not "auto": the latter defers to `scroll-behavior: smooth`
+    // and would animate a two-second scroll on entry.
     document
       .getElementById(target)
       ?.scrollIntoView({ behavior: "instant", block: "start" });
@@ -224,8 +214,7 @@ export function Preloader() {
         <motion.div
           key="intro"
           data-testid="preloader"
-          // Not role="status": that's advisory, and this blocks the page. The
-          // live announcements are scoped to the text that actually changes.
+          // Not role="status", which is advisory — this blocks the page.
           role="dialog"
           aria-modal="true"
           aria-label="Welcome"

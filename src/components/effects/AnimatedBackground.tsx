@@ -17,7 +17,7 @@ export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = useReducedMotion();
 
-  // Subtle pointer parallax for the aurora blobs (canvas logic untouched).
+  // Subtle pointer parallax for the aurora blobs.
   const parallaxX = useMotionValue(0);
   const parallaxY = useMotionValue(0);
   const blobX = useSpring(parallaxX, { stiffness: 40, damping: 20, mass: 0.6 });

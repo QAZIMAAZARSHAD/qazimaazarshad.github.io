@@ -56,10 +56,9 @@ function parseStart(startLabel: string): StartDate | null {
 }
 
 /**
- * Live tenure label from a "Mon YYYY" start (e.g. "Mar 2026") to now, counted
- * inclusively the way LinkedIn does — so an ongoing role stays current without
- * a hardcoded duration. Returns e.g. "5 mos", "1 yr", "2 yrs 3 mos".
- * Month granularity: any day in the label is ignored, as on a CV.
+ * Live tenure label — "5 mos", "1 yr", "2 yrs 3 mos" — counted inclusively the
+ * way LinkedIn does, so an ongoing role never needs a hardcoded duration. Works
+ * to the month; any day in the label is ignored, as on a CV.
  */
 export function durationSince(
   startLabel: string,
@@ -81,11 +80,9 @@ export function durationSince(
 }
 
 /**
- * Whole years completed since a start date, floored — so it ticks up on the
- * anniversary itself, not at the top of the anniversary month. Give it the day
- * ("22 Aug 2022") when the exact date matters; a bare "Mon YYYY" is read as the
- * 1st. Used to keep "years of experience" dynamic. Returns 0 for an
- * invalid/future start.
+ * Whole years completed, floored — it ticks on the anniversary itself, not at
+ * the top of that month. Pass the day ("22 Aug 2022") when it matters; a bare
+ * "Mon YYYY" reads as the 1st. Returns 0 for an invalid or future start.
  */
 export function completedYearsSince(
   startLabel: string,
@@ -97,8 +94,6 @@ export function completedYearsSince(
 
   let years = now.getFullYear() - year;
   const monthsIn = now.getMonth() - m;
-  // Anniversary not reached yet this year: earlier month, or the right month
-  // but before the day.
   if (monthsIn < 0 || (monthsIn === 0 && now.getDate() < day)) years -= 1;
   return Math.max(0, years);
 }

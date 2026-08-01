@@ -8,21 +8,12 @@ const AJAR_DEG = -24;
 const OPEN_DEG = -88;
 /** How far the camera flies toward the doorway before the greeting takes over. */
 const PULL_SCALE = 13;
-/**
- * How long that flight lasts. Exported so the intro hands over to the greeting
- * exactly as it lands, rather than cutting away mid-flight.
- */
+/** Flight duration. Exported so the intro hands over exactly as it lands. */
 export const PULL_MS = 780;
 
-/**
- * How the door reads in each state: how far it has swung, how much light
- * escapes around it, and — once opened — the camera's flight through it, which
- * accelerates so the doorway's light swallows the screen.
- */
+/** Swing, light spill, and the camera's flight through the doorway. */
 function doorState(opening: boolean, ajar: boolean, reduceMotion: boolean) {
   let swing = 0;
-  // Under reduced motion the panel doesn't swing at all. MotionConfig would
-  // snap it anyway, but that's the app's setting, not this component's promise.
   if (reduceMotion) swing = 0;
   else if (opening) swing = OPEN_DEG;
   else if (ajar) swing = AJAR_DEG;
@@ -50,14 +41,12 @@ interface EntryDoorProps {
 
 /**
  * The way in. Browsers won't play the greeting's music until the visitor has
- * interacted, so rather than hide that behind a bare "enter" button, the
- * gesture is the point: a door that eases ajar as you approach and swings open
- * onto a lit room — answered on the other side by the greeting.
+ * interacted, so the gesture is made the point: a door that eases ajar as you
+ * approach and swings open onto a lit room.
  */
 export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
   const reduceMotion = useReducedMotion();
-  // Tracked apart: sharing one flag let a mouseleave clear the state while the
-  // button was still focused, leaving it focused with nothing to show for it.
+  // Apart, so a mouseleave can't unlight a door that is still focused.
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
@@ -68,9 +57,8 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
   );
 
   return (
-    // The backdrop and bloom are siblings of the animated column, never inside
-    // it: a transformed ancestor becomes the containing block for its
-    // full-screen descendants, which would box them in until it settled.
+    // Backdrop and bloom stay siblings of the animated column: a transformed
+    // ancestor becomes the containing block for full-screen descendants.
     <>
       <DoorBackdrop />
 
@@ -99,7 +87,7 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
               ease: [0.55, 0, 0.9, 0.35],
               times: reduceMotion ? undefined : [0, 0.25, 1],
             },
-            // Faded earlier than it is scaled: the blow-up is the expensive
+            // Faded before it is fully scaled — the blow-up is the expensive
             // frame, and paying for it at full opacity is the worst of both.
             opacity: {
               duration: PULL_MS / 1000,
@@ -116,13 +104,11 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
           <button
             ref={buttonRef}
             type="button"
-            // aria-disabled rather than disabled: a disabled button drops focus
-            // onto <body>, ejecting a keyboard visitor from the intro for the
-            // rest of it. This keeps them on the door they just opened.
+            // aria-disabled, not disabled: a disabled button drops focus onto
+            // <body>, ejecting a keyboard visitor from the intro.
             onClick={() => !opening && onEnter()}
             aria-disabled={opening}
-            // The accessible name has to contain the visible label, or voice
-            // control can't act on what it reads (WCAG 2.5.3).
+            // Must contain the visible label for voice control (WCAG 2.5.3).
             aria-label="Come in — enter the site"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}

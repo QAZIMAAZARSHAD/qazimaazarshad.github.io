@@ -44,9 +44,9 @@ const FLASH_ORDER = [
 
 const RTL = new Set(["ar", "ur"]);
 /**
- * Scripts the display face can't render — Sora ships latin subsets only, so
- * these fall back anyway. Naming the fallback keeps it deliberate, and the
- * display face's tight tracking is dropped since it pinches joined scripts.
+ * Scripts the display face can't render — Sora ships latin subsets only. Naming
+ * the fallback keeps it deliberate, and its tight tracking is dropped because
+ * it pinches joined scripts.
  */
 const NON_LATIN = new Set([
   "hi",
@@ -77,9 +77,8 @@ interface Greeting {
 function visitorLanguage(): string {
   const tag = (navigator.language || "en").toLowerCase();
   const base = tag.split("-")[0];
-  // An own-property check, not truthiness: a tag like "constructor" would
-  // inherit from Object.prototype and resolve to something that isn't a
-  // greeting at all. Object.hasOwn would read better but needs an ES2022 lib.
+  // Own-property check: a tag like "constructor" would otherwise inherit from
+  // Object.prototype. Object.hasOwn reads better but needs an ES2022 lib.
   return Object.prototype.hasOwnProperty.call(GREETINGS, base) // NOSONAR
     ? base
     : "en";
@@ -90,16 +89,11 @@ interface WelcomeProps {
 }
 
 /**
- * The greeting that plays between the loader and the site: a burst of "hello"
- * in a dozen languages that lands on the visitor's own, resolved from their
- * browser language.
- *
- * The flash itself is hidden from assistive tech — narrating fifteen untagged
- * scripts would queue up announcements long after the intro is gone — and only
- * the greeting it settles on is announced.
- *
- * Under reduced motion the flashing is skipped entirely and the final greeting
- * is shown once, briefly.
+ * A burst of "hello" in a dozen languages that lands on the visitor's own,
+ * resolved from their browser language. The flash is hidden from assistive
+ * tech — narrating a dozen untagged scripts would queue announcements long
+ * after the intro is gone — and only the greeting it settles on is announced.
+ * Reduced motion skips the flash and shows the final greeting once.
  */
 export function Welcome({ onDone }: WelcomeProps) {
   const reduceMotion = useReducedMotion();
@@ -124,10 +118,8 @@ export function Welcome({ onDone }: WelcomeProps) {
     (WELCOME_MS - REVEAL_MS - HOLD_MS) / Math.max(1, lastIndex),
   );
 
-  // Flash through the greetings, then hold on the visitor's own and finish.
-  // `onDone` must be referentially stable (it is a useCallback in Preloader):
-  // a new identity each render would restart this effect, reset `step`, and
-  // leave the flash oscillating between the first two greetings forever.
+  // `onDone` must be referentially stable: a new identity each render would
+  // restart this effect and leave the flash stuck on the first two greetings.
   useEffect(() => {
     if (reduceMotion) {
       const done = window.setTimeout(onDone, HOLD_MS_REDUCED);
@@ -155,9 +147,8 @@ export function Welcome({ onDone }: WelcomeProps) {
         timer = window.setInterval(advance, stepMs);
     };
 
-    // Background tabs clamp timers to ~1s, which would stretch the flash past
-    // the intro's own safety timeout. Hold it until the tab is actually looked
-    // at, so the sequence the visitor sees is the one that was designed.
+    // Background tabs clamp timers to ~1s, stretching the flash past the
+    // intro's safety timeout. Hold until the tab is actually looked at.
     const onVisibility = () => (document.hidden ? stop() : start());
     if (!document.hidden) start();
     document.addEventListener("visibilitychange", onVisibility);
