@@ -45,6 +45,50 @@ test.describe("Navigation & page shell", () => {
     );
   });
 
+  // Regression: the header's scroll-spy used to be rebuilt on every render,
+  // leaving its highlight a section behind the side rail's.
+  test("header highlight tracks the section in view, in step with the side rail", async ({
+    page,
+  }) => {
+    const header = page.getByRole("navigation", { name: "Primary" });
+    const rail = page.getByRole("navigation", { name: "Section navigation" });
+
+    for (const id of ["projects", "skills", "education", "hobbies"]) {
+      await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+      await page.mouse.wheel(0, 120);
+
+      await expect(header.locator('a[aria-current="page"]')).toHaveAttribute(
+        "href",
+        `#${id}`,
+      );
+      await expect(rail.locator('[aria-current="location"]')).toHaveAttribute(
+        "aria-label",
+        new RegExp(id, "i"),
+      );
+    }
+  });
+
+  // Regression: clicking a link left it focused, which pinned the indicator
+  // there instead of letting it follow the page.
+  test("header highlight is released after clicking a nav link", async ({
+    page,
+  }) => {
+    const header = page.getByRole("navigation", { name: "Primary" });
+
+    await header.getByRole("link", { name: "Skills", exact: true }).click();
+    await expect(header.locator('a[aria-current="page"]')).toHaveAttribute(
+      "href",
+      "#skills",
+    );
+
+    await page.locator("#education").scrollIntoViewIfNeeded();
+    await page.mouse.wheel(0, 120);
+    await expect(header.locator('a[aria-current="page"]')).toHaveAttribute(
+      "href",
+      "#education",
+    );
+  });
+
   test("back-to-top button appears on scroll and returns to the top", async ({
     page,
   }) => {

@@ -91,6 +91,19 @@ test("navbar", async ({ page }) => {
   ).toHaveScreenshot("navbar.png");
 });
 
+// The docked state is the headline of the header design, so guard it too.
+test("navbar (docked)", async ({ page }) => {
+  await page.mouse.wheel(0, 800);
+  await expect(page.getByTestId("nav-dock")).toHaveAttribute(
+    "data-docked",
+    "true",
+  );
+  await page.waitForTimeout(700); // let the morph settle
+  await expect(page.getByTestId("nav-dock")).toHaveScreenshot(
+    "navbar-docked.png",
+  );
+});
+
 for (const id of SECTION_IDS) {
   test(`section: ${id}`, async ({ page }) => {
     const section = page.locator(`#${id}`);

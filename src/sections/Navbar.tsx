@@ -4,20 +4,54 @@ import { FileText, Menu, Search, X } from "lucide-react";
 import { navSections, profile } from "@/data/content";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import { SocialLinks } from "@/components/ui/SocialLinks";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { celebrate } from "@/lib/confetti";
 import { asset, cn } from "@/lib/utils";
 
 const NAV_IDS = navSections.map((s) => s.id);
 
+/**
+ * Scroll-spy targets. Kept module-level (not rebuilt per render) because
+ * `useActiveSection` keys its IntersectionObserver on this array's identity —
+ * an inline array would tear the observer down and rebuild it on every render,
+ * leaving the header lagging behind the side-rail dots.
+ *
+ * The hero is included so that, while it is in view, `active === "hero"` and no
+ * nav item (none of which use the "hero" id) is highlighted.
+ */
+const SPY_IDS = ["hero", ...NAV_IDS];
+
+/** Shared spring for the indicator pill as it glides between items. */
+const PILL_SPRING = { type: "spring", stiffness: 420, damping: 34 } as const;
+
+/**
+ * True only for focus that should be visibly indicated (keyboard, not a click).
+ * Guarded because selector engines without `:focus-visible` support throw.
+ */
+function isKeyboardFocus(el: Element): boolean {
+  try {
+    return el.matches(":focus-visible");
+  } catch {
+    return false;
+  }
+}
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // Include the hero so that, while it is in view, `active === "hero"` and no
-  // nav item (none of which use the "hero" id) is highlighted.
-  const active = useActiveSection(["hero", ...NAV_IDS]);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const active = useActiveSection(SPY_IDS);
 
   const toggleRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+
+  // The pill follows the pointer while hovering and falls back to the section
+  // you're actually reading — one indicator doing both jobs.
+  const highlighted = hovered ?? active;
+
+  // Docked = the floating capsule. The drawer needs the full-width bar back,
+  // so opening the menu returns the header to its expanded shape.
+  const docked = scrolled && !menuOpen;
 
   // Close the drawer and return focus to the hamburger toggle.
   // `preventScroll` is critical: without it, returning focus to the top-of-page
@@ -113,106 +147,176 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled || menuOpen
-          ? "glass border-b border-white/10"
-          : "border-b border-transparent bg-transparent",
+        "fixed inset-x-0 top-0 z-50",
+        menuOpen && "border-b border-white/10 bg-ink-950/95 backdrop-blur-xl",
       )}
     >
-      <nav
-        aria-label="Primary"
-        className="container-page flex h-16 items-center justify-between gap-4 sm:h-20"
+      {/* Fades page content out as it scrolls behind the floating dock, so it
+          never shows through the gap above it. */}
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 -z-10 h-28 bg-gradient-to-b from-ink-950 via-ink-950/85 to-transparent transition-opacity duration-500",
+          docked ? "opacity-100" : "opacity-0",
+        )}
+      />
+
+      <div
+        className={cn(
+          "px-5 transition-all duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)] sm:px-8",
+          docked ? "pt-3" : "pt-0",
+        )}
       >
-        <a
-          href="#hero"
-          className="group flex items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-          aria-label={`${profile.name} — home`}
+        {/* The shape-shift: an airy full-width bar at rest, contracting into a
+            floating glass dock once the page scrolls. */}
+        <div
+          data-testid="nav-dock"
+          data-docked={docked}
+          className={cn(
+            "relative mx-auto flex max-w-6xl items-center transition-all duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)]",
+            docked
+              ? "h-14 rounded-full border border-white/10 bg-ink-950/70 px-4 shadow-2xl shadow-black/50 backdrop-blur-xl"
+              : "h-16 rounded-full border border-transparent bg-transparent px-0 sm:h-20",
+          )}
         >
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-accent-500 to-cyan-400 font-display text-sm font-bold text-white shadow-lg shadow-accent-500/25 transition-transform duration-300 group-hover:scale-105">
-            QMA
-          </span>
-          <span className="hidden whitespace-nowrap font-display text-base font-semibold text-white sm:block xl:hidden">
-            {profile.name}
-          </span>
-        </a>
-
-        <ul className="hidden items-center gap-1 xl:flex">
-          {navSections.map((section) => {
-            const isActive = active === section.id;
-            return (
-              <li key={section.id}>
-                <a
-                  href={`#${section.id}`}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "group relative rounded-lg px-2.5 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
-                    isActive ? "text-white" : "text-ink-400 hover:text-white",
-                  )}
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-active-dot"
-                        className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-accent-400 to-cyan-400"
-                      />
-                    )}
-                    {section.label}
-                  </span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-
-        <div className="hidden items-center gap-3 xl:flex">
-          <button
-            type="button"
-            onClick={openPalette}
-            aria-label="Open command palette"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-400 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-          >
-            <Search className="h-4 w-4" aria-hidden />
-            <kbd className="font-mono text-xs">⌘K</kbd>
-          </button>
-          <a
-            href={resumeHref}
-            target="_blank"
-            rel="noreferrer"
-            download
-            onClick={() => celebrate().catch(() => {})}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-accent-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-accent-500/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-          >
-            <FileText className="h-4 w-4" aria-hidden />
-            Resume
-          </a>
-        </div>
-
-        <div className="flex items-center gap-2 xl:hidden">
-          <button
-            type="button"
-            onClick={openPalette}
-            aria-label="Open command palette"
-            className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-          >
-            <Search className="h-5 w-5" aria-hidden />
-          </button>
-          <button
-            ref={toggleRef}
-            type="button"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="grid h-10 w-10 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
-          >
-            {menuOpen ? (
-              <X className="h-5 w-5" aria-hidden />
-            ) : (
-              <Menu className="h-5 w-5" aria-hidden />
+          {/* Aurora sheen along the dock's top edge. */}
+          <span
+            aria-hidden
+            className={cn(
+              "pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-accent-400/60 to-transparent transition-opacity duration-500",
+              docked ? "opacity-100" : "opacity-0",
             )}
-          </button>
+          />
+
+          <nav
+            aria-label="Primary"
+            className="flex w-full items-center justify-between gap-4"
+          >
+            <a
+              href="#hero"
+              className="group flex items-center gap-3 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              aria-label={`${profile.name} — home`}
+            >
+              <span
+                className={cn(
+                  "grid place-items-center rounded-xl bg-gradient-to-br from-accent-500 to-cyan-400 font-display font-bold text-white shadow-lg shadow-accent-500/25 transition-all duration-500 group-hover:scale-105",
+                  docked ? "h-9 w-9 text-[11px]" : "h-10 w-10 text-sm",
+                )}
+              >
+                QMA
+              </span>
+              <span
+                className={cn(
+                  "hidden overflow-hidden whitespace-nowrap font-display font-semibold text-white transition-all duration-500 sm:block xl:hidden",
+                  docked
+                    ? "max-w-0 text-sm opacity-0"
+                    : "max-w-[16rem] text-base opacity-100",
+                )}
+              >
+                {profile.name}
+              </span>
+            </a>
+
+            <ul
+              className="hidden items-center xl:flex"
+              onMouseLeave={() => setHovered(null)}
+            >
+              {navSections.map((section) => {
+                const isActive = active === section.id;
+                const isLit = highlighted === section.id;
+                return (
+                  <li key={section.id}>
+                    <a
+                      href={`#${section.id}`}
+                      aria-current={isActive ? "page" : undefined}
+                      onMouseEnter={() => setHovered(section.id)}
+                      // Keyboard focus moves the pill; a click must not, or the
+                      // clicked link would keep focus and pin the pill there
+                      // while you scroll on past that section.
+                      onFocus={(e) => {
+                        if (isKeyboardFocus(e.currentTarget)) {
+                          setHovered(section.id);
+                        }
+                      }}
+                      onBlur={() => setHovered(null)}
+                      className={cn(
+                        "relative block rounded-full px-3 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
+                        isLit ? "text-white" : "text-ink-400",
+                      )}
+                    >
+                      {isLit && (
+                        <motion.span
+                          layoutId="nav-pill"
+                          aria-hidden
+                          data-testid="nav-indicator"
+                          transition={PILL_SPRING}
+                          className="absolute inset-0 rounded-full border border-white/10 bg-white/[0.07]"
+                        >
+                          {/* Lamp beam under the pill. */}
+                          <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
+                          <span className="absolute inset-x-4 -bottom-1 h-2 rounded-full bg-cyan-400/25 blur-md" />
+                        </motion.span>
+                      )}
+                      <span className="relative">{section.label}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="hidden items-center gap-3 xl:flex">
+              <button
+                type="button"
+                onClick={openPalette}
+                aria-label="Open command palette"
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-400 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              >
+                <Search className="h-4 w-4" aria-hidden />
+                <kbd className="font-mono text-xs">⌘K</kbd>
+              </button>
+              <Magnetic strength={0.25}>
+                <a
+                  href={resumeHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  onClick={() => celebrate().catch(() => {})}
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-500 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-accent-500/25 transition-shadow duration-300 hover:shadow-accent-500/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+                >
+                  <FileText className="h-4 w-4" aria-hidden />
+                  Resume
+                </a>
+              </Magnetic>
+            </div>
+
+            <div className="flex items-center gap-2 xl:hidden">
+              <button
+                type="button"
+                onClick={openPalette}
+                aria-label="Open command palette"
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              >
+                <Search className="h-5 w-5" aria-hidden />
+              </button>
+              <button
+                ref={toggleRef}
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-expanded={menuOpen}
+                aria-controls="mobile-menu"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-ink-200 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              >
+                {menuOpen ? (
+                  <X className="h-5 w-5" aria-hidden />
+                ) : (
+                  <Menu className="h-5 w-5" aria-hidden />
+                )}
+              </button>
+            </div>
+          </nav>
         </div>
-      </nav>
+      </div>
 
       <AnimatePresence>
         {menuOpen && (
@@ -227,10 +331,15 @@ export function Navbar() {
           >
             <div className="container-page flex max-h-[calc(100dvh-4rem)] flex-col gap-2 overflow-y-auto py-5">
               <ul className="flex flex-col">
-                {navSections.map((section) => {
+                {navSections.map((section, i) => {
                   const isActive = active === section.id;
                   return (
-                    <li key={section.id}>
+                    <motion.li
+                      key={section.id}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.04 * i, duration: 0.25 }}
+                    >
                       <a
                         href={`#${section.id}`}
                         onClick={(e) => goToSection(e, section.id)}
@@ -253,7 +362,7 @@ export function Navbar() {
                         />
                         {section.label}
                       </a>
-                    </li>
+                    </motion.li>
                   );
                 })}
               </ul>
