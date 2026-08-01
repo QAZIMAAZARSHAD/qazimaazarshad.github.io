@@ -65,6 +65,49 @@ test.describe("Header dock", () => {
     ).toBeVisible();
   });
 
+  // Regression: hovering used to strip the current section of its highlight,
+  // so while the pointer was in the nav nothing showed where you were.
+  test("the current section stays lit while the pointer explores elsewhere", async ({
+    page,
+  }) => {
+    await ready(page);
+    await page.locator("#skills").scrollIntoViewIfNeeded();
+    await page.mouse.wheel(0, 120);
+
+    const nav = primary(page);
+    const skills = nav.getByRole("link", { name: "Skills", exact: true });
+    await expect(nav.locator('a[aria-current="page"]')).toHaveAttribute(
+      "href",
+      "#skills",
+    );
+    await page.waitForTimeout(500); // settle the colour transition
+    const lit = await skills.evaluate((el) => getComputedStyle(el).color);
+
+    await nav.getByRole("link", { name: "Contact", exact: true }).hover();
+    await page.waitForTimeout(500);
+
+    await expect(skills).toHaveCSS("color", lit);
+    // ...and it gains a standalone beam, so it stays distinguishable.
+    await expect(skills.getByTestId("nav-active-beam")).toBeVisible();
+  });
+
+  // Regression: the drawer's state ignored the breakpoint, so widening past
+  // 1280px hid the toggle while leaving the header stuck undocked.
+  test("widening to desktop dismisses an open drawer", async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 800 });
+    await ready(page);
+
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await expect(page.locator("#mobile-menu")).toBeVisible();
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(page.locator("#mobile-menu")).toHaveCount(0);
+
+    // The header can dock again rather than being pinned open.
+    await page.mouse.wheel(0, 800);
+    await expect(dock(page)).toHaveAttribute("data-docked", "true");
+  });
+
   test("the scrim never swallows clicks meant for the page", async ({
     page,
   }) => {

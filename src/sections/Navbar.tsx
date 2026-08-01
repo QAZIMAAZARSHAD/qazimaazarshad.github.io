@@ -39,7 +39,10 @@ function isKeyboardFocus(el: Element): boolean {
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Tracked apart so blurring a keyboard-focused link can't wipe out a
+  // highlight the pointer still owns (mouseenter won't fire again to restore it).
   const [hovered, setHovered] = useState<string | null>(null);
+  const [focused, setFocused] = useState<string | null>(null);
   const active = useActiveSection(SPY_IDS);
 
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -47,7 +50,7 @@ export function Navbar() {
 
   // The pill follows the pointer while hovering and falls back to the section
   // you're actually reading — one indicator doing both jobs.
-  const highlighted = hovered ?? active;
+  const highlighted = hovered ?? focused ?? active;
 
   // Docked = the floating capsule. The drawer needs the full-width bar back,
   // so opening the menu returns the header to its expanded shape.
@@ -70,7 +73,9 @@ export function Navbar() {
     (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
       e.preventDefault();
       setMenuOpen(false);
-      document.body.style.overflow = "";
+      // Release the lock up front rather than waiting on the effect cleanup,
+      // so it can't still be engaged when we scroll on the next frame.
+      document.documentElement.style.overflow = "";
       toggleRef.current?.focus({ preventScroll: true });
       requestAnimationFrame(() => {
         document
@@ -89,10 +94,28 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Crossing to the desktop layout hides the drawer and its toggle, so the
+  // state has to be dropped too — otherwise the header stays stuck undocked
+  // with no visible way to dismiss it.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const onChange = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, []);
+
+  // The lock has to go on <html>: `html { overflow-x: clip }` stops the body's
+  // overflow from propagating to the viewport, so locking the body alone does
+  // nothing and the page scrolls behind the open drawer.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const root = document.documentElement;
+    const prev = root.style.overflow;
+    root.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = "";
+      root.style.overflow = prev;
     };
   }, [menuOpen]);
 
@@ -161,10 +184,13 @@ export function Navbar() {
         )}
       />
 
+      {/* At rest the outer wrapper adds no inset, so the dock's own padding
+          matches `container-page` and the header lines up with every section.
+          Docked, the inset moves outward to float the capsule off the edges. */}
       <div
         className={cn(
-          "px-5 transition-all duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)] sm:px-8",
-          docked ? "pt-3" : "pt-0",
+          "transition-[padding] duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)]",
+          docked ? "px-5 pt-3 sm:px-8" : "px-0 pt-0",
         )}
       >
         {/* The shape-shift: an airy full-width bar at rest, contracting into a
@@ -173,10 +199,10 @@ export function Navbar() {
           data-testid="nav-dock"
           data-docked={docked}
           className={cn(
-            "relative mx-auto flex max-w-6xl items-center transition-all duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)]",
+            "relative mx-auto flex max-w-6xl items-center transition-[height,padding,background-color,border-color,border-radius,box-shadow] duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)]",
             docked
               ? "h-14 rounded-full border border-white/10 bg-ink-950/70 px-4 shadow-2xl shadow-black/50 backdrop-blur-xl"
-              : "h-16 rounded-full border border-transparent bg-transparent px-0 sm:h-20",
+              : "h-16 rounded-full border border-transparent bg-transparent px-5 sm:h-20 sm:px-8",
           )}
         >
           {/* Aurora sheen along the dock's top edge. */}
@@ -235,15 +261,25 @@ export function Navbar() {
                       // while you scroll on past that section.
                       onFocus={(e) => {
                         if (isKeyboardFocus(e.currentTarget)) {
-                          setHovered(section.id);
+                          setFocused(section.id);
                         }
                       }}
-                      onBlur={() => setHovered(null)}
+                      onBlur={() => setFocused(null)}
                       className={cn(
                         "relative block rounded-full px-3 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
-                        isLit ? "text-white" : "text-ink-400",
+                        // The section you're in stays lit even while the pointer
+                        // explores elsewhere — the pill says "pointer", the
+                        // standalone beam below says "you are here".
+                        isLit || isActive ? "text-white" : "text-ink-400",
                       )}
                     >
+                      {isActive && !isLit && (
+                        <span
+                          aria-hidden
+                          data-testid="nav-active-beam"
+                          className="absolute inset-x-3 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-300/80 to-transparent"
+                        />
+                      )}
                       {isLit && (
                         <motion.span
                           layoutId="nav-pill"

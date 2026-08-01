@@ -104,6 +104,20 @@ describe("Navbar", () => {
     expect(screen.queryByTestId("nav-indicator")).not.toBeInTheDocument();
   });
 
+  it("keeps a keyboard-focused link lit when the pointer leaves another one", () => {
+    render(<Navbar />);
+    const list = screen.getByRole("navigation", { name: "Primary" });
+    const skills = within(list).getByRole("link", { name: "Skills" });
+    const projects = within(list).getByRole("link", { name: "Projects" });
+
+    fireEvent.mouseEnter(projects);
+    expect(projects).toContainElement(screen.getByTestId("nav-indicator"));
+
+    // Blurring a link must not wipe a highlight the pointer still owns.
+    fireEvent.blur(skills);
+    expect(projects).toContainElement(screen.getByTestId("nav-indicator"));
+  });
+
   it("marks only the active section with aria-current", () => {
     render(<Navbar />);
     const list = screen.getByRole("navigation", { name: "Primary" });
