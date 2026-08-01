@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { Volume2, VolumeX } from "lucide-react";
+import { asset } from "@/lib/utils";
 import { REVEAL_MS, Welcome } from "./Welcome";
 
 /** Minimum time the loader stays up so it never just flickers. */
@@ -11,6 +13,21 @@ const MIN_DISPLAY_MS = 600;
 const MAX_DISPLAY_MS = 14000;
 
 type Phase = "loading" | "welcome" | "done";
+
+/** Gentle — this plays unprompted, so it should never be the loudest thing. */
+const INTRO_VOLUME = 0.4;
+
+/** Ease the track out rather than cutting it dead when the intro ends. */
+function fadeOutAndStop(audio: HTMLAudioElement) {
+  const step = audio.volume / 8;
+  const fade = window.setInterval(() => {
+    audio.volume = Math.max(0, audio.volume - step);
+    if (audio.volume <= 0.01) {
+      window.clearInterval(fade);
+      audio.pause();
+    }
+  }, 40);
+}
 
 /**
  * The site's entry sequence: the loader, then a greeting, then a curtain split
@@ -24,6 +41,9 @@ export function Preloader() {
   const [phase, setPhase] = useState<Phase>("loading");
   const reduceMotion = useReducedMotion();
   const fallbackRef = useRef(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playingAudio, setPlayingAudio] = useState(false);
+  const [muted, setMuted] = useState(false);
   const finishIntro = useCallback(() => setPhase("done"), []);
   // Guarded so a skip that already ended the intro can't be undone by the
   // pending hand-off from the loader.
@@ -60,6 +80,39 @@ export function Preloader() {
       window.clearTimeout(handoff);
     };
   }, [finishIntro, startWelcome]);
+
+  // Buffer the track while the loader is still up, so it starts with the
+  // greeting rather than a beat after it.
+  useEffect(() => {
+    if (reduceMotion) return;
+    const audio = new Audio(asset("audio/intro.mp3"));
+    audio.preload = "auto";
+    audio.volume = INTRO_VOLUME;
+    audioRef.current = audio;
+    return () => {
+      audioRef.current = null;
+      audio.pause();
+    };
+  }, [reduceMotion]);
+
+  // Browsers refuse unprompted audio until a visitor has interacted with (or
+  // built up media engagement on) the site, so a refusal is expected rather
+  // than exceptional — the intro just plays silently. The mute control only
+  // appears once playback has actually started.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || phase !== "welcome") return;
+
+    audio
+      .play()
+      .then(() => setPlayingAudio(true))
+      .catch(() => setPlayingAudio(false));
+
+    return () => {
+      setPlayingAudio(false);
+      fadeOutAndStop(audio);
+    };
+  }, [phase]);
 
   // Retire the safety net the moment it's moot, rather than letting it fire
   // against a finished intro.
@@ -129,6 +182,15 @@ export function Preloader() {
       .getElementById(target)
       ?.scrollIntoView({ behavior: "instant", block: "start" });
   }, [phase]);
+
+  const toggleMute = (event: React.MouseEvent | React.PointerEvent) => {
+    // The whole window is a skip target, so this click must stop there.
+    event.stopPropagation();
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = !audio.muted;
+    setMuted(audio.muted);
+  };
 
   const curtain = {
     duration: REVEAL_MS / 1000,
@@ -221,6 +283,26 @@ export function Preloader() {
               <Welcome onDone={finishIntro} />
             )}
           </motion.div>
+
+          {/* Only shown once the track is genuinely playing — otherwise it
+              would offer to mute silence the browser already refused. */}
+          {playingAudio && (
+            <motion.button
+              type="button"
+              onPointerDown={toggleMute}
+              onClick={toggleMute}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              aria-label={muted ? "Unmute intro music" : "Mute intro music"}
+              className="absolute bottom-8 left-1/2 z-10 grid h-10 w-10 -translate-x-1/2 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-ink-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+            >
+              {muted ? (
+                <VolumeX className="h-4 w-4" aria-hidden />
+              ) : (
+                <Volume2 className="h-4 w-4" aria-hidden />
+              )}
+            </motion.button>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

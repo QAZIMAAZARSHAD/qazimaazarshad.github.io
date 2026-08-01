@@ -23,23 +23,23 @@ const GREETINGS: Record<string, string> = {
   tr: "Merhaba",
 };
 
-/** The flash order; the visitor's own greeting is appended last. */
+/**
+ * The flash order; the visitor's own greeting is appended last. Kept to twelve
+ * so each one still gets ~240ms inside the shorter budget — enough to read.
+ */
 const FLASH_ORDER = [
   "hi",
   "ur",
+  "bn",
+  "ta",
   "ja",
-  "fr",
+  "zh",
+  "ko",
   "ar",
   "ru",
+  "fr",
   "es",
-  "zh",
-  "ta",
   "de",
-  "ko",
-  "pt",
-  "it",
-  "bn",
-  "tr",
 ];
 
 const RTL = new Set(["ar", "ur"]);
@@ -63,9 +63,9 @@ const NON_LATIN = new Set([
 /** How long the curtain takes to part. Shared so the budget below stays true. */
 export const REVEAL_MS = 750;
 /** Total time the welcome screen is on screen, reveal included. */
-const WELCOME_MS = 6500;
+const WELCOME_MS = 5000;
 /** Of the remaining budget, how long the visitor's greeting holds once it lands. */
-const HOLD_MS = 2300;
+const HOLD_MS = 1400;
 /** Reduced motion skips the flash, so it shouldn't sit on a static screen. */
 const HOLD_MS_REDUCED = 1200;
 

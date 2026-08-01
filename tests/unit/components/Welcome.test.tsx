@@ -118,7 +118,7 @@ describe("Welcome", () => {
     render(<Welcome onDone={onDone} />);
 
     act(() => {
-      vi.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(3500);
     });
     expect(onDone).not.toHaveBeenCalled();
 

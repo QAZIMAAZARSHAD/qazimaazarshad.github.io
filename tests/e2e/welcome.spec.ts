@@ -102,6 +102,36 @@ test.describe("Welcome screen", () => {
     expect(restored).toEqual({ ariaHidden: null, inert: false });
   });
 
+  test.describe("music", () => {
+    test("offers a mute control that doesn't dismiss the intro", async ({
+      page,
+    }) => {
+      await page.goto("/", { waitUntil: "commit" });
+      await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+      const mute = page.getByRole("button", { name: /^mute intro music$/i });
+      await expect(mute).toBeVisible();
+
+      // Clicking anywhere skips the intro, so this control has to be an
+      // exception — otherwise reaching for mute would dismiss the greeting.
+      await mute.click();
+      await expect(intro(page)).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: /^unmute intro music$/i }),
+      ).toBeVisible();
+    });
+
+    test("stays silent under reduced motion", async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.goto("/", { waitUntil: "commit" });
+      await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+      await expect(
+        page.getByRole("button", { name: /mute intro music/i }),
+      ).toHaveCount(0);
+    });
+  });
+
   test("a keypress skips straight through", async ({ page }) => {
     await page.goto("/", { waitUntil: "commit" });
     await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
