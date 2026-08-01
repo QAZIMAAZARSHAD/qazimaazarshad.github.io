@@ -9,7 +9,7 @@ import { REVEAL_MS, Welcome } from "./Welcome";
 const MIN_DISPLAY_MS = 600;
 /** Safety net for a stalled load, so the door always eventually appears. */
 const MAX_LOADING_MS = 8000;
-/** Safety net for the greeting itself; must outlast its own 5s budget. */
+/** Safety net for the greeting itself; must outlast its own 4.4s budget. */
 const MAX_WELCOME_MS = 9000;
 
 type Phase = "loading" | "gate" | "welcome" | "done";
@@ -88,6 +88,9 @@ export function Preloader() {
   // Opening the door is the gesture the browser was waiting for, so the track
   // is started from inside the click handler where the permission applies.
   const enter = useCallback(() => {
+    // The door can be pressed again while it swings — auto-repeat on a held
+    // Enter is enough — and nothing downstream should run twice.
+    if (openingRef.current) return;
     const audio = audioRef.current;
     if (audio) {
       audio.muted = false;
@@ -104,7 +107,10 @@ export function Preloader() {
     }
     // Let the shockwave read before handing over to the greeting.
     setEntering(true);
-    openingRef.current = window.setTimeout(() => setPhase("welcome"), PULL_MS);
+    openingRef.current = window.setTimeout(
+      () => setPhase((p) => (p === "gate" ? "welcome" : p)),
+      PULL_MS,
+    );
   }, []);
 
   // Arm the safety net only once the greeting is running; it can't strand
@@ -264,9 +270,14 @@ export function Preloader() {
               exit: { opacity: 0, transition: { duration: 0.25 } },
             }}
           >
+            {/* Ambient warmth behind the loader and the greeting. Not behind
+            the door, which brings its own scenery. */}
+            {phase !== "gate" && (
+              <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-accent-600/20 blur-[120px]" />
+            )}
+
             {phase === "loading" ? (
               <>
-                <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-accent-600/20 blur-[120px]" />
                 <div className="relative flex flex-col items-center gap-7">
                   <div className="relative h-20 w-20">
                     <span className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-accent-500 to-cyan-400 opacity-50 blur-lg" />

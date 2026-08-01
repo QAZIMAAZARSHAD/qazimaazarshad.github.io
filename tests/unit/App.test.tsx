@@ -5,22 +5,39 @@ import App from "@/App";
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.useRealTimers());
 
+/**
+ * Step the clock until `done()` holds. The loader hands over on whichever of
+ * the load event, its minimum display, or the stalled-load net comes first, and
+ * it measures with real time — so a fixed jump assumes one particular path.
+ */
+function advanceUntil(done: () => boolean, budget = 12_000) {
+  for (let elapsed = 0; elapsed < budget && !done(); elapsed += 250) {
+    act(() => {
+      vi.advanceTimersByTime(250);
+    });
+  }
+  if (!done()) throw new Error("intro did not reach the expected state");
+}
+
 /** Walk the real entry flow: loader → open the door → skip the greeting. */
 function enterSite() {
-  act(() => {
-    vi.advanceTimersByTime(1000);
-  });
+  advanceUntil(
+    () =>
+      screen.queryAllByRole("button", { name: /enter the site/i }).length > 0,
+  );
   act(() => {
     fireEvent.click(screen.getByRole("button", { name: /enter the site/i }));
   });
-  // The door flies the camera through before handing over to the greeting,
-  // and only the greeting can be skipped.
-  act(() => {
-    vi.advanceTimersByTime(1200);
-  });
+
+  // The door flies the camera through before handing over to the greeting, and
+  // only the greeting can be skipped — pressing Escape at the door does nothing.
+  advanceUntil(() => screen.queryAllByTestId("welcome").length > 0);
   act(() => {
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
   });
+  // Not waiting for the overlay to leave the DOM: its exit animation never
+  // finishes under jsdom. The page is released the moment the intro is done,
+  // which is what these tests are about.
 }
 
 /**

@@ -21,8 +21,11 @@ export const PULL_MS = 780;
  */
 function doorState(opening: boolean, ajar: boolean, reduceMotion: boolean) {
   let swing = 0;
-  if (opening) swing = OPEN_DEG;
-  else if (ajar && !reduceMotion) swing = AJAR_DEG;
+  // Under reduced motion the panel doesn't swing at all. MotionConfig would
+  // snap it anyway, but that's the app's setting, not this component's promise.
+  if (reduceMotion) swing = 0;
+  else if (opening) swing = OPEN_DEG;
+  else if (ajar) swing = AJAR_DEG;
 
   let spill = "opacity-25";
   if (opening) spill = "opacity-100";
@@ -53,12 +56,16 @@ interface EntryDoorProps {
  */
 export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
   const reduceMotion = useReducedMotion();
-  const [ajar, setAjar] = useState(false);
+  // Tracked apart: sharing one flag let a mouseleave clear the state while the
+  // button was still focused, leaving it focused with nothing to show for it.
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
 
-  const open = () => setAjar(true);
-  const close = () => setAjar(false);
-
-  const { swing, spill, pull } = doorState(opening, ajar, !!reduceMotion);
+  const { swing, spill, pull } = doorState(
+    opening,
+    hovered || focused,
+    !!reduceMotion,
+  );
 
   return (
     // The backdrop and bloom are siblings of the animated column, never inside
@@ -87,9 +94,18 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
         <motion.div
           animate={pull}
           transition={{
-            duration: PULL_MS / 1000,
-            ease: [0.55, 0, 0.9, 0.35],
-            times: reduceMotion ? undefined : [0, 0.25, 1],
+            scale: {
+              duration: PULL_MS / 1000,
+              ease: [0.55, 0, 0.9, 0.35],
+              times: reduceMotion ? undefined : [0, 0.25, 1],
+            },
+            // Faded earlier than it is scaled: the blow-up is the expensive
+            // frame, and paying for it at full opacity is the worst of both.
+            opacity: {
+              duration: PULL_MS / 1000,
+              ease: "easeIn",
+              times: reduceMotion ? undefined : [0, 0.45, 0.85],
+            },
           }}
           className="flex flex-col items-center gap-10"
         >
@@ -100,14 +116,19 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
           <button
             ref={buttonRef}
             type="button"
-            onClick={onEnter}
-            disabled={opening}
-            aria-label="Enter the site"
-            onMouseEnter={open}
-            onMouseLeave={close}
-            onFocus={open}
-            onBlur={close}
-            className="relative flex flex-col items-center gap-6 outline-none"
+            // aria-disabled rather than disabled: a disabled button drops focus
+            // onto <body>, ejecting a keyboard visitor from the intro for the
+            // rest of it. This keeps them on the door they just opened.
+            onClick={() => !opening && onEnter()}
+            aria-disabled={opening}
+            // The accessible name has to contain the visible label, or voice
+            // control can't act on what it reads (WCAG 2.5.3).
+            aria-label="Come in — enter the site"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            className="relative flex flex-col items-center gap-6 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-950"
           >
             <span className="relative block h-56 w-40 [perspective:1400px] sm:h-64 sm:w-44">
               {/* The lit room on the other side, and the glow it spills around the
@@ -142,7 +163,7 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
             <span
               className={cn(
                 "font-mono text-[11px] uppercase tracking-[0.45em] transition-colors duration-300",
-                opening || ajar ? "text-white" : "text-ink-400",
+                opening || hovered || focused ? "text-white" : "text-ink-400",
               )}
             >
               Come in

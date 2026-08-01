@@ -33,7 +33,7 @@ class FakeAudio {
 }
 
 const track = () => FakeAudio.instances[0];
-const door = () => screen.getByRole("button", { name: "Enter the site" });
+const door = () => screen.getByRole("button", { name: /enter the site/i });
 
 beforeEach(() => {
   FakeAudio.instances = [];

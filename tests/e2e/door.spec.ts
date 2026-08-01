@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 const intro = (page: Page) => page.locator('[data-testid="preloader"]');
 const door = (page: Page) =>
-  page.getByRole("button", { name: "Enter the site" });
+  page.getByRole("button", { name: /enter the site/i });
 
 test.describe("Entry door", () => {
   test("follows the loader and waits to be opened", async ({ page }) => {
@@ -25,6 +25,60 @@ test.describe("Entry door", () => {
 
     await page.keyboard.press("Enter");
     await expect(page.getByTestId("welcome")).toBeVisible({ timeout: 10_000 });
+  });
+
+  // A focused door with no visible ring is unusable by keyboard, and hovering
+  // then moving the mouse away used to wipe the indicator while it was still
+  // focused.
+  test("stays visibly focused after the pointer comes and goes", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(door(page)).toBeFocused({ timeout: 10_000 });
+
+    await door(page).hover();
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(300); // NOSONAR — the colour transition
+
+    const state = await door(page).evaluate((el) => {
+      const s = getComputedStyle(el);
+      return {
+        focused: document.activeElement === el,
+        shadow: s.boxShadow,
+        label: (el.textContent ?? "").trim(),
+      };
+    });
+
+    expect(state.focused).toBe(true);
+    expect(state.label).toContain("Come in");
+    // Tailwind's focus ring is a box-shadow; "none" means no indicator at all.
+    expect(state.shadow).not.toBe("none");
+  });
+
+  test("keeps the visitor's focus while it swings open", async ({ page }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(door(page)).toBeFocused({ timeout: 10_000 });
+    await page.keyboard.press("Enter");
+
+    // Mid-flight: a `disabled` button would have dumped focus onto <body>.
+    const onBody = await page.evaluate(
+      () => document.activeElement === document.body,
+    );
+    expect(onBody).toBe(false);
+  });
+
+  test("a held Enter still only opens it once", async ({ page }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(door(page)).toBeFocused({ timeout: 10_000 });
+
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Enter");
+
+    await expect(page.getByTestId("welcome")).toHaveCount(1, {
+      timeout: 10_000,
+    });
+    await expect(intro(page)).toHaveCount(0, { timeout: 15_000 });
   });
 
   // A stray key used to be able to dismiss the whole intro; while the door is
