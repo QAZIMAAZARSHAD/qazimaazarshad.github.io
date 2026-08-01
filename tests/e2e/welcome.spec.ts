@@ -1,0 +1,149 @@
+import { test, expect, type Page } from "@playwright/test";
+
+const welcome = (page: Page) => page.getByTestId("welcome");
+const intro = (page: Page) => page.locator('[data-testid="preloader"]');
+
+/** Pin "now" so the local-time line is deterministic. */
+async function freezeClock(page: Page) {
+  await page.addInitScript(() => {
+    const FIXED = new Date("2026-07-15T09:20:00Z").getTime();
+    const OriginalDate = Date;
+    class FrozenDate extends OriginalDate {
+      constructor(...args: ConstructorParameters<typeof Date>) {
+        if (args.length === 0) super(FIXED);
+        else super(...args);
+      }
+      static now() {
+        return FIXED;
+      }
+    }
+    globalThis.Date = FrozenDate as DateConstructor;
+  });
+}
+
+/** Wait for the flash to land on the visitor's own greeting. */
+async function settled(page: Page) {
+  await expect(welcome(page)).toHaveAttribute("data-settled", "true", {
+    timeout: 15_000,
+  });
+}
+
+test.describe("Welcome screen", () => {
+  test("plays after the loader and then hands over to the page", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+
+    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    // The greeting lives inside the same overlay the whole suite waits on.
+    await expect(intro(page)).toBeVisible();
+
+    await settled(page);
+    await expect(intro(page)).toHaveCount(0, { timeout: 15_000 });
+    await expect(page.locator("#hero")).toBeVisible();
+  });
+
+  test("locks scrolling while it plays and releases it after", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+    await page.mouse.wheel(0, 600);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+    await intro(page).waitFor({ state: "detached", timeout: 15_000 });
+    await page.mouse.wheel(0, 600);
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY))
+      .toBeGreaterThan(0);
+  });
+
+  // The scroll lock swallows the browser's own jump to a hash, so the intro
+  // has to replay it — otherwise every deep link lands at the top instead.
+  test("a deep link still lands on its section", async ({ page }) => {
+    await page.goto("/#hobbies", { waitUntil: "commit" });
+    // Wait for the intro to actually mount first — otherwise "detached" is
+    // trivially true before React has rendered anything.
+    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await intro(page).waitFor({ state: "detached", timeout: 15_000 });
+
+    await expect(page.locator("#hobbies")).toBeInViewport();
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  });
+
+  test("a keypress skips straight through", async ({ page }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+    await page.keyboard.press("Escape");
+    // Far quicker than the 6.5s it would otherwise take.
+    await expect(intro(page)).toHaveCount(0, { timeout: 3_000 });
+  });
+
+  test("a click skips straight through", async ({ page }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+    await page.mouse.click(400, 400);
+    await expect(intro(page)).toHaveCount(0, { timeout: 3_000 });
+  });
+
+  test.describe("a French visitor in New York", () => {
+    test.use({ locale: "fr-FR", timezoneId: "America/New_York" });
+
+    test("is greeted in their language, with the distance from Bengaluru", async ({
+      page,
+    }) => {
+      await freezeClock(page);
+      await page.goto("/", { waitUntil: "commit" });
+      await settled(page);
+
+      await expect(welcome(page)).toContainText("Bonjour");
+      await expect(welcome(page)).toContainText("your time");
+      await expect(welcome(page)).toContainText(/Bengaluru is 9h 30m ahead/);
+    });
+  });
+
+  test.describe("a visitor already in India", () => {
+    test.use({ locale: "hi-IN", timezoneId: "Asia/Kolkata" });
+
+    test("is greeted in Hindi, with no distance to report", async ({
+      page,
+    }) => {
+      await freezeClock(page);
+      await page.goto("/", { waitUntil: "commit" });
+      await settled(page);
+
+      await expect(welcome(page)).toContainText("नमस्ते");
+      await expect(welcome(page)).not.toContainText("Bengaluru is");
+    });
+  });
+
+  test.describe("reduced motion", () => {
+    test("skips the flash and shows the greeting once", async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.goto("/", { waitUntil: "commit" });
+
+      // No flash to sit through — it lands settled immediately.
+      await expect(welcome(page)).toHaveAttribute("data-settled", "true", {
+        timeout: 10_000,
+      });
+      await expect(intro(page)).toHaveCount(0, { timeout: 6_000 });
+    });
+  });
+
+  test.describe("visual", () => {
+    test.use({ locale: "en-US", timezoneId: "America/New_York" });
+
+    test("settled greeting", async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await freezeClock(page);
+      await page.goto("/", { waitUntil: "commit" });
+      await page.evaluate(() => document.fonts.ready);
+      await settled(page);
+
+      await expect(welcome(page)).toHaveScreenshot("welcome.png");
+    });
+  });
+});
