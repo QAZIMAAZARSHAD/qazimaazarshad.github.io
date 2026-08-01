@@ -102,6 +102,36 @@ test.describe("Footer signature", () => {
     await expect(footer).not.toContainText("Built with");
   });
 
+  // Regression: the wordmark is deliberately wider than every other rail on the
+  // page, so it is the one thing that can reach the fixed scroll-dots. The last
+  // letter used to sit underneath them. Worst around 1280–1440, where the
+  // vw-driven type is widest relative to the rail's fixed inset.
+  for (const width of [1280, 1440, 1600, 1920]) {
+    test(`clears the scroll-dots rail at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await ready(page);
+
+      const clearance = await page.evaluate(() => {
+        const heading = document.querySelector("footer h2");
+        const rail = document.querySelector(
+          'nav[aria-label="Section navigation"]',
+        );
+        if (!heading || !rail) return null;
+        // The last word's box, not the heading block — the block always spans
+        // the column, while the letters are what actually collide.
+        const words = heading.querySelectorAll("span[aria-hidden] > span");
+        const last = words[words.length - 1];
+        if (!last) return null;
+        return (
+          rail.getBoundingClientRect().left - last.getBoundingClientRect().right
+        );
+      });
+
+      expect(clearance, "rail and wordmark both present").not.toBeNull();
+      expect(clearance!).toBeGreaterThan(16);
+    });
+  }
+
   test.describe("touch device", () => {
     test.use({
       viewport: { width: 390, height: 844 },

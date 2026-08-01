@@ -239,9 +239,9 @@ export const stats: Stat[] = [
 export const navSections = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },
+  { id: "skills", label: "Skills" },
   { id: "earlier", label: "Foundations" },
   { id: "projects", label: "Projects" },
-  { id: "skills", label: "Skills" },
   { id: "education", label: "Education" },
   { id: "achievements", label: "Achievements" },
   { id: "certifications", label: "Certificates" },
@@ -284,6 +284,22 @@ export const education: EducationItem[] = [
     link: "https://www.facebook.com/p/Barrows-Blue-Bells-Inter-College-Bahraich-100077404032685/",
   },
 ];
+
+/**
+ * Earliest year on record — the far end of the rewind at the threshold between
+ * the professional sections and the learning ones. Derived so the divider can
+ * never claim a date the content below it doesn't support.
+ */
+export const earliestYear = (() => {
+  const years = education.flatMap((item) =>
+    [...item.period.matchAll(/\d{4}/g)].map((m) => Number(m[0])),
+  );
+  if (years.length > 0) return Math.min(...years);
+  // Math.min() of nothing is Infinity, which would be rendered literally and
+  // leave the rewind counting to an impossible year. With no education on
+  // record, the career start is the earliest date the site knows of.
+  return Number(CAREER_START.match(/\d{4}/)?.[0] ?? new Date().getFullYear());
+})();
 
 export const experience: CompanyExperience[] = [
   {

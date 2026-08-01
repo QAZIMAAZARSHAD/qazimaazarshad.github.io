@@ -27,8 +27,11 @@ export function Footer() {
         </div>
 
         {/* Deliberately wider than the rails around it, but still capped so the
-            wordmark can't drift off their axis on ultra-wide displays. */}
-        <div className="mx-auto mt-12 max-w-[110rem] sm:mt-16">
+            wordmark can't drift off their axis on ultra-wide displays. The
+            inset from lg up clears the fixed scroll-dots rail, which the other
+            sections never reach because they sit in a narrower column — applied
+            to both sides so the name stays centred on the page. */}
+        <div className="mx-auto mt-12 max-w-[110rem] sm:mt-16 lg:px-12">
           <SignatureName name={profile.name} highlight={profile.firstName} />
         </div>
 

@@ -7,6 +7,7 @@ import { AiAssistant } from "@/components/ai/AiAssistant";
 import { SpotlightEffect } from "@/components/effects/SpotlightEffect";
 import { CustomCursor } from "@/components/effects/CustomCursor";
 import { SideNav } from "@/components/effects/SideNav";
+import { Threshold } from "@/components/threshold/Threshold";
 import { Navbar } from "@/sections/Navbar";
 import { Hero } from "@/sections/Hero";
 import { About } from "@/sections/About";
@@ -37,9 +38,11 @@ export default function App() {
         <Hero />
         <About />
         <Experience />
+        <Skills />
+        {/* Everything below the threshold is learning rather than work. */}
+        <Threshold />
         <EarlierExperience />
         <Projects />
-        <Skills />
         <Education />
         <Achievements />
         <Certifications />

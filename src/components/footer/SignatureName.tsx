@@ -4,11 +4,12 @@ import { viewportOnce } from "@/lib/motion";
 
 /**
  * Shared type metrics — every layer must match exactly so they stay aligned.
- * The leading has to clear a descending Q on the line above once the name
- * wraps, which it does on narrow screens.
+ * Leading is solid so a descending Q clears the line below once the name wraps,
+ * and the word spacing is opened back up because tracking-tighter pulls the
+ * gaps between words in along with the letters.
  */
 const TYPE =
-  "font-display font-black uppercase leading-none tracking-tighter text-[clamp(2.75rem,9.5vw,11rem)]";
+  "font-display font-black uppercase leading-none tracking-tighter [word-spacing:0.14em] text-center text-[clamp(2.75rem,8.4vw,10rem)]";
 
 /**
  * The light that paints the gradient onto the outline type. Its radii are
