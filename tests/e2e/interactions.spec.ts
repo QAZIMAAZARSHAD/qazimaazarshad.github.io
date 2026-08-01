@@ -1,10 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 async function ready(page: import("@playwright/test").Page) {
-  await page
-    .locator('[data-testid="preloader"]')
-    .waitFor({ state: "detached" })
-    .catch(() => {});
+  await enterSite(page);
 }
 
 test.describe("Skill → Projects filter", () => {

@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 /**
  * Responsiveness tests across popular screen dimensions.
@@ -44,10 +45,7 @@ for (const viewport of VIEWPORTS) {
     });
     await page.goto("/");
     await page.evaluate(() => document.fonts.ready);
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
 
     // No horizontal overflow — catches layout blowouts.
     const scrollWidth = await page.evaluate(

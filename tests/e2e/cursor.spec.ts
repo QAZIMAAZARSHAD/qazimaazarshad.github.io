@@ -1,10 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
+/**
+ * Enter from the keyboard, so the pointer has genuinely not moved yet — these
+ * tests assert on exactly that.
+ */
 async function ready(page: import("@playwright/test").Page) {
-  await page
-    .locator('[data-testid="preloader"]')
-    .waitFor({ state: "detached" })
-    .catch(() => {});
+  await enterSite(page, { keyboard: true });
 }
 
 test.describe("Custom cursor", () => {

@@ -1,11 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
+import { enterSite } from "./intro";
 
 async function ready(page: Page) {
   await page.goto("/");
-  await page
-    .locator('[data-testid="preloader"]')
-    .waitFor({ state: "detached" })
-    .catch(() => {});
+  await enterSite(page);
 }
 
 const dock = (page: Page) => page.getByTestId("nav-dock");

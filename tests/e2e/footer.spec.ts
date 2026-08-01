@@ -1,11 +1,9 @@
 import { test, expect, type Page, type Locator } from "@playwright/test";
+import { enterSite } from "./intro";
 
 async function ready(page: Page) {
   await page.goto("/");
-  await page
-    .locator('[data-testid="preloader"]')
-    .waitFor({ state: "detached" })
-    .catch(() => {});
+  await enterSite(page);
   await page.evaluate(() => document.fonts.ready);
   await page.locator("footer").scrollIntoViewIfNeeded();
   // Let the letters' entrance settle so the light has been measured.

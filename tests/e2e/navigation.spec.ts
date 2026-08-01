@@ -1,10 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 // Playwright does not resolve the "@/" alias, so import via a relative path.
 import { navSections } from "../../src/data/content";
 
 test.describe("Navigation & page shell", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await enterSite(page);
   });
 
   test("loads with the right title and hero name", async ({ page }) => {

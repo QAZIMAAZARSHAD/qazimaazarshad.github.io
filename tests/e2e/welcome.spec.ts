@@ -28,13 +28,25 @@ async function settled(page: Page) {
   });
 }
 
+/**
+ * Open the door, which is what starts the greeting (and its music). These
+ * tests drive the intro deliberately rather than using the shared helper,
+ * which skips past it.
+ */
+async function openDoor(page: Page) {
+  await page
+    .getByRole("button", { name: /enter the site/i })
+    .click({ timeout: 15_000 });
+  await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+}
+
 test.describe("Welcome screen", () => {
   test("plays after the loader and then hands over to the page", async ({
     page,
   }) => {
     await page.goto("/", { waitUntil: "commit" });
 
-    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await openDoor(page);
     // The greeting lives inside the same overlay the whole suite waits on.
     await expect(intro(page)).toBeVisible();
 
@@ -47,7 +59,7 @@ test.describe("Welcome screen", () => {
     page,
   }) => {
     await page.goto("/", { waitUntil: "commit" });
-    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await openDoor(page);
 
     await page.mouse.wheel(0, 600);
     // Polled, not read once: wheel events are dispatched asynchronously, so an
@@ -69,7 +81,7 @@ test.describe("Welcome screen", () => {
     await page.goto("/#hobbies", { waitUntil: "commit" });
     // Wait for the intro to actually mount first — otherwise "detached" is
     // trivially true before React has rendered anything.
-    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await openDoor(page);
     await intro(page).waitFor({ state: "detached", timeout: 15_000 });
 
     await expect(page.locator("#hobbies")).toBeInViewport();
@@ -80,7 +92,7 @@ test.describe("Welcome screen", () => {
     page,
   }) => {
     await page.goto("/", { waitUntil: "commit" });
-    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await openDoor(page);
 
     const hidden = await page.evaluate(() => {
       const main = document.querySelector("main");
@@ -117,7 +129,7 @@ test.describe("Welcome screen", () => {
       });
 
       await page.goto("/", { waitUntil: "commit" });
-      await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+      await openDoor(page);
 
       await settled(page);
       await expect(intro(page)).toHaveCount(0, { timeout: 15_000 });
@@ -126,7 +138,7 @@ test.describe("Welcome screen", () => {
 
     test("puts no audio controls on screen", async ({ page }) => {
       await page.goto("/", { waitUntil: "commit" });
-      await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+      await openDoor(page);
 
       await expect(
         intro(page).getByRole("button", { name: /mute|sound|music/i }),
@@ -136,7 +148,7 @@ test.describe("Welcome screen", () => {
 
   test("a keypress skips straight through", async ({ page }) => {
     await page.goto("/", { waitUntil: "commit" });
-    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await openDoor(page);
 
     await page.keyboard.press("Escape");
     // Far quicker than the 6.5s it would otherwise take.
@@ -145,7 +157,7 @@ test.describe("Welcome screen", () => {
 
   test("a click skips straight through", async ({ page }) => {
     await page.goto("/", { waitUntil: "commit" });
-    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+    await openDoor(page);
 
     await page.mouse.click(400, 400);
     await expect(intro(page)).toHaveCount(0, { timeout: 3_000 });
@@ -157,6 +169,7 @@ test.describe("Welcome screen", () => {
     test("is greeted in their own language", async ({ page }) => {
       await freezeClock(page);
       await page.goto("/", { waitUntil: "commit" });
+      await openDoor(page);
       await settled(page);
 
       await expect(welcome(page)).toContainText("Bonjour");
@@ -172,6 +185,7 @@ test.describe("Welcome screen", () => {
     test("is greeted in Hindi", async ({ page }) => {
       await freezeClock(page);
       await page.goto("/", { waitUntil: "commit" });
+      await openDoor(page);
       await settled(page);
 
       await expect(welcome(page)).toContainText("नमस्ते");
@@ -182,6 +196,7 @@ test.describe("Welcome screen", () => {
     test("skips the flash and shows the greeting once", async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.goto("/", { waitUntil: "commit" });
+      await openDoor(page);
 
       // No flash to sit through — it lands settled immediately.
       await expect(welcome(page)).toHaveAttribute("data-settled", "true", {
@@ -199,6 +214,7 @@ test.describe("Welcome screen", () => {
       await freezeClock(page);
       await page.goto("/", { waitUntil: "commit" });
       await page.evaluate(() => document.fonts.ready);
+      await openDoor(page);
       await settled(page);
 
       await expect(welcome(page)).toHaveScreenshot("welcome.png");

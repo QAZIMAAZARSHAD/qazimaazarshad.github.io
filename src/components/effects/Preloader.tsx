@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+
+import { EntryDoor, PULL_MS } from "./EntryDoor";
 import { asset } from "@/lib/utils";
 import { REVEAL_MS, Welcome } from "./Welcome";
 
 /** Minimum time the loader stays up so it never just flickers. */
 const MIN_DISPLAY_MS = 600;
-/**
- * Safety net so a stall can never trap the visitor behind the intro. Must stay
- * clear of the loader plus the full greeting, or it would cut them short.
- */
-const MAX_DISPLAY_MS = 14000;
+/** Safety net for a stalled load, so the door always eventually appears. */
+const MAX_LOADING_MS = 8000;
+/** Safety net for the greeting itself; must outlast its own 5s budget. */
+const MAX_WELCOME_MS = 9000;
 
-type Phase = "loading" | "welcome" | "done";
+type Phase = "loading" | "gate" | "welcome" | "done";
 
-/** Gentle — this plays unprompted, so it should never be the loudest thing. */
+/** Gentle — it should set a mood, not announce itself. */
 const INTRO_VOLUME = 0.4;
 
 /** Ease the track out rather than cutting it dead when the intro ends. */
@@ -29,23 +30,30 @@ function fadeOutAndStop(audio: HTMLAudioElement) {
 }
 
 /**
- * The site's entry sequence: the loader, then a greeting, then a curtain split
- * that reveals the page.
+ * The site's entry sequence: the loader, a door the visitor opens, then a
+ * greeting and a curtain split that reveals the page.
  *
- * Both phases live under one overlay that keeps `data-testid="preloader"` for
+ * The door exists for one reason: browsers refuse audible playback until a
+ * visitor has interacted with the page, so the greeting can only be scored if
+ * something is clicked first. That click is what starts the music.
+ *
+ * Every phase lives under one overlay that keeps `data-testid="preloader"` for
  * its whole life — that attribute is the "the intro is still up" signal the
- * entire e2e suite waits on, so it has to cover the greeting too.
+ * entire e2e suite waits on.
  */
 export function Preloader() {
   const [phase, setPhase] = useState<Phase>("loading");
   const reduceMotion = useReducedMotion();
   const fallbackRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const enterRef = useRef<HTMLButtonElement>(null);
+  const openingRef = useRef(0);
+  const [entering, setEntering] = useState(false);
   const finishIntro = useCallback(() => setPhase("done"), []);
   // Guarded so a skip that already ended the intro can't be undone by the
   // pending hand-off from the loader.
-  const startWelcome = useCallback(
-    () => setPhase((p) => (p === "loading" ? "welcome" : p)),
+  const openDoor = useCallback(
+    () => setPhase((p) => (p === "loading" ? "gate" : p)),
     [],
   );
 
@@ -53,35 +61,69 @@ export function Preloader() {
     const start = performance.now();
     let handoff = 0;
 
-    const toWelcome = () => {
+    const toGate = () => {
       const elapsed = performance.now() - start;
       handoff = window.setTimeout(
-        startWelcome,
+        openDoor,
         Math.max(0, MIN_DISPLAY_MS - elapsed),
       );
     };
 
     if (document.readyState === "complete") {
-      toWelcome();
+      toGate();
     } else {
-      window.addEventListener("load", toWelcome, { once: true });
+      window.addEventListener("load", toGate, { once: true });
     }
 
-    // Never strand the visitor behind the intro, whatever stalls.
-    const fallback = window.setTimeout(finishIntro, MAX_DISPLAY_MS);
-    fallbackRef.current = fallback;
+    // Only guards a stalled load — the door itself waits as long as it takes.
+    const fallback = window.setTimeout(openDoor, MAX_LOADING_MS);
 
     return () => {
-      window.removeEventListener("load", toWelcome);
+      window.removeEventListener("load", toGate);
       window.clearTimeout(fallback);
       window.clearTimeout(handoff);
     };
-  }, [finishIntro, startWelcome]);
+  }, [openDoor]);
 
-  // Buffer the track while the loader is still up, so it starts with the
-  // greeting rather than a beat after it. Not gated on reduced motion: that
-  // preference is about movement, not sound, and the fade-out covers the
-  // shorter reduced-motion intro.
+  // Opening the door is the gesture the browser was waiting for, so the track
+  // is started from inside the click handler where the permission applies.
+  const enter = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.muted = false;
+      audio.volume = INTRO_VOLUME;
+      try {
+        // Started here, inside the click, because that is the gesture the
+        // browser grants permission to. Environments without media support
+        // return undefined rather than a promise.
+        const started = audio.play() as Promise<void> | undefined;
+        started?.catch(() => {});
+      } catch {
+        /* no audio support — the greeting plays silent */
+      }
+    }
+    // Let the shockwave read before handing over to the greeting.
+    setEntering(true);
+    openingRef.current = window.setTimeout(() => setPhase("welcome"), PULL_MS);
+  }, []);
+
+  // Arm the safety net only once the greeting is running; it can't strand
+  // anyone at the door, which is waiting for them on purpose.
+  useEffect(() => {
+    if (phase !== "welcome") return;
+    fallbackRef.current = window.setTimeout(finishIntro, MAX_WELCOME_MS);
+    return () => window.clearTimeout(fallbackRef.current);
+  }, [phase, finishIntro]);
+
+  // Send focus to the door so it can be opened from the keyboard alone.
+  useEffect(() => {
+    if (phase === "gate") enterRef.current?.focus();
+  }, [phase]);
+
+  useEffect(() => () => window.clearTimeout(openingRef.current), []);
+
+  // Buffer the track while the loader and the door are up, so it starts the
+  // instant the door is opened rather than a beat later.
   useEffect(() => {
     const audio = new Audio(asset("audio/intro.mp3"));
     audio.preload = "auto";
@@ -93,27 +135,18 @@ export function Preloader() {
     };
   }, []);
 
-  // Play the moment the greeting starts. Browsers refuse unprompted audible
-  // playback until a visitor has built up media engagement with the site, and
-  // the intro offers no gesture to satisfy that, so a refusal is expected —
-  // the greeting simply runs silent rather than breaking.
+  // Fade the track out with the curtain instead of cutting it dead.
   useEffect(() => {
+    if (phase !== "done") return;
     const audio = audioRef.current;
-    if (!audio || phase !== "welcome") return;
-
-    void audio.play().catch(() => {});
-    return () => fadeOutAndStop(audio);
+    if (audio) fadeOutAndStop(audio);
   }, [phase]);
 
-  // Retire the safety net the moment it's moot, rather than letting it fire
-  // against a finished intro.
+  // Let an impatient visitor cut through the greeting. Not while the door is
+  // up: there, a stray key or click would dismiss the intro instead of
+  // opening it, and they'd never hear the thing the door exists for.
   useEffect(() => {
-    if (phase === "done") window.clearTimeout(fallbackRef.current);
-  }, [phase]);
-
-  // Let an impatient visitor cut straight through.
-  useEffect(() => {
-    if (phase === "done") return;
+    if (phase !== "welcome") return;
     const skip = () => finishIntro();
     window.addEventListener("keydown", skip);
     window.addEventListener("pointerdown", skip);
@@ -231,39 +264,52 @@ export function Preloader() {
               exit: { opacity: 0, transition: { duration: 0.25 } },
             }}
           >
-            <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-accent-600/20 blur-[120px]" />
-
             {phase === "loading" ? (
-              <div className="relative flex flex-col items-center gap-7">
-                <div className="relative h-20 w-20">
-                  <span className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-accent-500 to-cyan-400 opacity-50 blur-lg" />
-                  <span className="absolute -inset-2 animate-spin rounded-[1.4rem] border-2 border-transparent border-t-accent-400 border-r-cyan-400/60 [animation-duration:1.1s]" />
-                  <span className="relative grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-accent-500 via-accent-400 to-cyan-400 font-display text-2xl font-bold tracking-tight text-white shadow-xl shadow-accent-500/30">
-                    QMA
-                  </span>
-                </div>
+              <>
+                <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-accent-600/20 blur-[120px]" />
+                <div className="relative flex flex-col items-center gap-7">
+                  <div className="relative h-20 w-20">
+                    <span className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-accent-500 to-cyan-400 opacity-50 blur-lg" />
+                    <span className="absolute -inset-2 animate-spin rounded-[1.4rem] border-2 border-transparent border-t-accent-400 border-r-cyan-400/60 [animation-duration:1.1s]" />
+                    <span className="relative grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-accent-500 via-accent-400 to-cyan-400 font-display text-2xl font-bold tracking-tight text-white shadow-xl shadow-accent-500/30">
+                      QMA
+                    </span>
+                  </div>
 
-                <div className="relative h-1 w-44 overflow-hidden rounded-full bg-white/10">
-                  <motion.span
-                    className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-gradient-to-r from-accent-500 to-cyan-400"
-                    animate={
-                      reduceMotion ? { x: "120%" } : { x: ["-120%", "360%"] }
-                    }
-                    transition={
-                      reduceMotion
-                        ? undefined
-                        : { repeat: Infinity, duration: 1.1, ease: "easeInOut" }
-                    }
-                  />
-                </div>
+                  <div className="relative h-1 w-44 overflow-hidden rounded-full bg-white/10">
+                    <motion.span
+                      className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-gradient-to-r from-accent-500 to-cyan-400"
+                      animate={
+                        reduceMotion ? { x: "120%" } : { x: ["-120%", "360%"] }
+                      }
+                      transition={
+                        reduceMotion
+                          ? undefined
+                          : {
+                              repeat: Infinity,
+                              duration: 1.1,
+                              ease: "easeInOut",
+                            }
+                      }
+                    />
+                  </div>
 
-                <output className="font-mono text-[11px] uppercase tracking-[0.35em] text-ink-500">
-                  Loading
-                </output>
-              </div>
-            ) : (
-              <Welcome onDone={finishIntro} />
-            )}
+                  <output className="font-mono text-[11px] uppercase tracking-[0.35em] text-ink-500">
+                    Loading
+                  </output>
+                </div>
+              </>
+            ) : null}
+
+            {phase === "gate" ? (
+              <EntryDoor
+                onEnter={enter}
+                opening={entering}
+                buttonRef={enterRef}
+              />
+            ) : null}
+
+            {phase === "welcome" ? <Welcome onDone={finishIntro} /> : null}
           </motion.div>
         </motion.div>
       )}

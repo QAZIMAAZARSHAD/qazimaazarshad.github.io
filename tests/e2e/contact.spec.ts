@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 test.describe("Contact section", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await enterSite(page);
     await page.locator("#contact").scrollIntoViewIfNeeded();
   });
 

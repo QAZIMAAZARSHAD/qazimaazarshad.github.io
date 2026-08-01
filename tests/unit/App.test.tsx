@@ -1,9 +1,23 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, screen, act, fireEvent } from "@testing-library/react";
 import App from "@/App";
 
-/** The intro covers the page until dismissed; any key cuts through it. */
-function skipIntro() {
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => vi.useRealTimers());
+
+/** Walk the real entry flow: loader → open the door → skip the greeting. */
+function enterSite() {
+  act(() => {
+    vi.advanceTimersByTime(1000);
+  });
+  act(() => {
+    fireEvent.click(screen.getByRole("button", { name: /enter the site/i }));
+  });
+  // The door flies the camera through before handing over to the greeting,
+  // and only the greeting can be skipped.
+  act(() => {
+    vi.advanceTimersByTime(1200);
+  });
   act(() => {
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
   });
@@ -17,7 +31,7 @@ function skipIntro() {
 describe("App", () => {
   it("mounts the whole page without crashing", () => {
     render(<App />);
-    skipIntro();
+    enterSite();
 
     expect(
       screen.getByRole("navigation", { name: "Primary" }),
@@ -35,7 +49,7 @@ describe("App", () => {
     expect(main).toHaveAttribute("aria-hidden", "true");
     expect(main.inert).toBe(true);
 
-    skipIntro();
+    enterSite();
 
     expect(main).not.toHaveAttribute("aria-hidden");
     expect(main.inert).toBe(false);

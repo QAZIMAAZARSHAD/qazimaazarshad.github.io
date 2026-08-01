@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 // The counter is backed by CounterAPI.dev; we mock it so the test never touches
 // the live counter. The init flag opts localhost into counting (the component
@@ -25,10 +26,7 @@ test.describe("Visit counter", () => {
     );
 
     await page.goto("/");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
 
     const counter = page.getByTestId("visit-counter");
     await counter.scrollIntoViewIfNeeded();
@@ -43,10 +41,7 @@ test.describe("Visit counter", () => {
     );
 
     await page.goto("/");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
 
     await expect(page.getByTestId("visit-counter")).toHaveCount(0);
   });

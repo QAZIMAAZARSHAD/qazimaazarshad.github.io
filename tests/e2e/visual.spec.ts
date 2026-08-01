@@ -1,4 +1,5 @@
 import { test, expect, type Page, type Locator } from "@playwright/test";
+import { enterSite } from "./intro";
 
 /**
  * Visual regression tests — one element screenshot per section, plus the
@@ -74,10 +75,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
   // Wait for the preloader to fade out so screenshots capture the real page.
-  await page
-    .locator('[data-testid="preloader"]')
-    .waitFor({ state: "detached" })
-    .catch(() => {});
+  await enterSite(page);
   // Hide always-on floating widgets so they don't leak into section snapshots.
   await page.addStyleTag({
     content:

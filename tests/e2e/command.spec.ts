@@ -1,12 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 test.describe("Command palette", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
   });
 
   const dialog = (page: import("@playwright/test").Page) =>

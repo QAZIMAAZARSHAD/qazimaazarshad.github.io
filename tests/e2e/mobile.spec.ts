@@ -1,4 +1,5 @@
 import { test, expect, devices } from "@playwright/test";
+import { enterSite } from "./intro";
 import { navSections } from "../../src/data/content";
 
 test.use({ ...devices["Pixel 7"] });
@@ -6,10 +7,7 @@ test.use({ ...devices["Pixel 7"] });
 test.describe("Mobile behavior (regression guards)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
   });
 
   // Guards the bug where filtered/initial project cards rendered at opacity:0

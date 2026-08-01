@@ -63,7 +63,7 @@ const NON_LATIN = new Set([
 /** How long the curtain takes to part. Shared so the budget below stays true. */
 export const REVEAL_MS = 750;
 /** Total time the welcome screen is on screen, reveal included. */
-const WELCOME_MS = 5000;
+const WELCOME_MS = 4400;
 /** Of the remaining budget, how long the visitor's greeting holds once it lands. */
 const HOLD_MS = 1400;
 /** Reduced motion skips the flash, so it shouldn't sit on a static screen. */

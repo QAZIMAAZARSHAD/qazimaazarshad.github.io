@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 // Note: the actual in-browser inference needs WebGPU (not available in headless
 // CI), so these tests verify the UI, wiring, and graceful fallback only — never
@@ -6,10 +7,7 @@ import { test, expect } from "@playwright/test";
 test.describe("AI assistant", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
   });
 
   const panel = (page: import("@playwright/test").Page) =>

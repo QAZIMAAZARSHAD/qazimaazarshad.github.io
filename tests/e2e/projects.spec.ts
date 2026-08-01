@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { enterSite } from "./intro";
 
 /** The live result count paragraph inside the Projects section. */
 const count = (page: Page) => page.getByTestId("projects-count");
@@ -25,6 +26,7 @@ async function revealProjects(page: Page): Promise<void> {
 test.describe("Projects — filtering, search, and detail modal", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
+    await enterSite(page);
     await revealProjects(page);
   });
 

@@ -1,12 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { enterSite } from "./intro";
 
 test.describe("Certifications", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/#certifications");
-    await page
-      .locator('[data-testid="preloader"]')
-      .waitFor({ state: "detached" })
-      .catch(() => {});
+    await enterSite(page);
   });
 
   const section = (page: import("@playwright/test").Page) =>
