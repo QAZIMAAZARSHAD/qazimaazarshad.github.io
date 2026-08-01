@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { enterSite } from "./intro";
 
 const threshold = (page: Page) => page.locator("#threshold");
-const year = (page: Page) => threshold(page).locator("p[aria-hidden]").first();
+const year = (page: Page) => page.getByTestId("threshold-year");
 
 /**
  * Park the section at a fraction of its own travel through the viewport.
@@ -32,19 +32,29 @@ test.describe("Threshold", () => {
       nodes.map((n) => n.id),
     );
 
-    expect(ids).toContain("threshold");
-    // Skills sits with the professional half; everything after the line is not.
-    expect(ids.indexOf("skills")).toBeLessThan(ids.indexOf("threshold"));
-    expect(ids.indexOf("experience")).toBeLessThan(ids.indexOf("skills"));
-    expect(ids.indexOf("threshold")).toBeLessThan(ids.indexOf("earlier"));
-    expect(ids.indexOf("earlier")).toBeLessThan(ids.indexOf("projects"));
+    // Spelled out rather than compared pairwise: indexOf returns -1 for a
+    // missing section, which would satisfy every "comes before" check.
+    expect(ids).toEqual([
+      "hero",
+      "about",
+      "experience",
+      "skills",
+      "threshold",
+      "earlier",
+      "projects",
+      "education",
+      "achievements",
+      "certifications",
+      "hobbies",
+      "contact",
+    ]);
   });
 
   test("winds the year back as it is scrolled through", async ({ page }) => {
     await scrollThrough(page, 0.1);
     const before = Number(await year(page).innerText());
 
-    // Fully past the section, so the rewind has certainly finished.
+    // Near the end of the section's travel; the rewind finishes well before.
     await scrollThrough(page, 2);
     const after = Number(await year(page).innerText());
 

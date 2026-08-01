@@ -96,7 +96,7 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
           }}
           className="flex flex-col items-center gap-10"
         >
-          <h1 className="relative font-display text-[clamp(2.25rem,6vw,4rem)] font-black leading-none tracking-tight text-white">
+          <h1 className="relative font-display text-[clamp(2.25rem,6vw,4rem)] font-extrabold leading-none tracking-tight text-white">
             Knock knock.
           </h1>
 

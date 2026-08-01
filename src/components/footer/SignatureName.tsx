@@ -9,7 +9,7 @@ import { viewportOnce } from "@/lib/motion";
  * gaps between words in along with the letters.
  */
 const TYPE =
-  "font-display font-black uppercase leading-none tracking-tighter [word-spacing:0.14em] text-center text-[clamp(2.75rem,8.4vw,10rem)]";
+  "font-display font-extrabold uppercase leading-none tracking-tighter [word-spacing:0.14em] text-center text-[clamp(2.75rem,7.9vw,9.5rem)]";
 
 /**
  * The light that paints the gradient onto the outline type. Its radii are

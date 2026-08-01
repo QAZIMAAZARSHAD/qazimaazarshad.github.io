@@ -175,7 +175,7 @@ export function Welcome({ onDone }: WelcomeProps) {
 
       <div
         aria-hidden
-        className="relative flex min-h-[1.5em] items-center justify-center text-[clamp(2.75rem,9vw,7rem)] font-black leading-[1.15]"
+        className="relative flex min-h-[1.5em] items-center justify-center text-[clamp(2.75rem,9vw,7rem)] font-extrabold leading-[1.15]"
       >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span

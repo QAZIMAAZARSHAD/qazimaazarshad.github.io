@@ -281,9 +281,9 @@ export const education: EducationItem[] = [
 ];
 
 /**
- * Earliest year on record — the far end of the rewind at the threshold between
- * the professional sections and the learning ones. Derived so the divider can
- * never claim a date the content below it doesn't support.
+ * Far end of the rewind at the threshold. Taken from `education`, which is
+ * assumed to reach furthest back of anything below the divider — true while
+ * school entries are listed, and worth rechecking if they ever go.
  */
 export const earliestYear = (() => {
   const years = education.flatMap((item) =>

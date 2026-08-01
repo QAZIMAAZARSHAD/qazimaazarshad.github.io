@@ -101,33 +101,46 @@ test.describe("Footer signature", () => {
     await expect(footer).not.toContainText("Built with");
   });
 
-  // Regression: the wordmark is deliberately wider than every other rail on the
-  // page, so it is the one thing that can reach the fixed scroll-dots. The last
-  // letter used to sit underneath them. Worst around 1280–1440, where the
-  // vw-driven type is widest relative to the rail's fixed inset.
-  for (const width of [1280, 1440, 1600, 1920]) {
-    test(`clears the scroll-dots rail at ${width}px`, async ({ page }) => {
+  // The wordmark is deliberately wider than every other column, so it alone can
+  // reach the fixed scroll-dots — the last letter used to sit under them.
+  //
+  // Two things are being held at once, and the tighter one is the wrap. The
+  // type is sized in vw against a column that loses a fixed inset, so the
+  // narrow end of the lg range is where the name comes closest to spilling onto
+  // a second line; 1150 and 1200 are there for that. Asserting the line count
+  // also stops the clearance check passing for the wrong reason: a wrapped name
+  // is short, so it clears the rail easily while looking nothing like intended.
+  for (const width of [1025, 1150, 1200, 1280, 1440, 1600, 1920]) {
+    test(`stays on one line and clears the scroll-dots rail at ${width}px`, async ({
+      page,
+    }) => {
       await page.setViewportSize({ width, height: 800 });
       await ready(page);
 
-      const clearance = await page.evaluate(() => {
+      const measured = await page.evaluate(() => {
         const heading = document.querySelector("footer h2");
         const rail = document.querySelector(
           'nav[aria-label="Section navigation"]',
         );
         if (!heading || !rail) return null;
-        // The last word's box, not the heading block — the block always spans
-        // the column, while the letters are what actually collide.
-        const words = heading.querySelectorAll("span[aria-hidden] > span");
-        const last = words[words.length - 1];
-        if (!last) return null;
-        return (
-          rail.getBoundingClientRect().left - last.getBoundingClientRect().right
-        );
+
+        // Word boxes, not the heading block — the block always spans the
+        // column, while the letters are what actually collide and wrap.
+        const words = [...heading.querySelectorAll("span[aria-hidden] > span")];
+        if (words.length === 0) return null;
+        const boxes = words.map((w) => w.getBoundingClientRect());
+
+        return {
+          lines: new Set(boxes.map((b) => Math.round(b.top))).size,
+          clearance:
+            rail.getBoundingClientRect().left -
+            Math.max(...boxes.map((b) => b.right)),
+        };
       });
 
-      expect(clearance, "rail and wordmark both present").not.toBeNull();
-      expect(clearance!).toBeGreaterThan(16);
+      expect(measured, "rail and wordmark both present").not.toBeNull();
+      expect(measured!.lines, "wordmark stays on one line").toBe(1);
+      expect(measured!.clearance).toBeGreaterThan(16);
     });
   }
 

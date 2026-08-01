@@ -53,8 +53,7 @@ export function Threshold() {
     <section
       ref={ref}
       id="threshold"
-      aria-labelledby="threshold-title"
-      className="relative isolate overflow-hidden py-28 sm:py-36"
+      className="relative isolate overflow-hidden scroll-mt-24 py-28 sm:py-36"
     >
       {/* A floor running back to the horizon: the distance is the point. It is
           laid out with left/width rather than a translate, because the arbitrary
@@ -91,15 +90,13 @@ export function Threshold() {
 
         <p
           aria-hidden
-          className="mt-4 select-none bg-gradient-to-b from-white via-accent-200 to-accent-500/30 bg-clip-text font-display text-[clamp(4rem,16vw,12rem)] font-black leading-none tracking-tighter text-transparent tabular-nums drop-shadow-[0_0_60px_rgba(99,102,241,0.25)]"
+          data-testid="threshold-year"
+          className="mt-4 select-none bg-gradient-to-b from-white via-accent-200 to-accent-500/30 bg-clip-text font-display text-[clamp(4rem,16vw,12rem)] font-extrabold leading-none tracking-tighter text-transparent tabular-nums drop-shadow-[0_0_60px_rgba(99,102,241,0.25)]"
         >
           {year}
         </p>
 
-        <h2
-          id="threshold-title"
-          className="mt-6 font-display text-2xl font-bold text-white sm:text-3xl"
-        >
+        <h2 className="mt-6 font-display text-2xl font-bold text-white sm:text-3xl">
           Where the habit started
         </h2>
 
@@ -111,6 +108,7 @@ export function Threshold() {
 
         <a
           href="#earlier"
+          aria-label="Keep going — to the Foundations section"
           className="group mt-10 inline-flex flex-col items-center gap-2 text-ink-400 transition-colors duration-300 hover:text-accent-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
         >
           <span className="font-mono text-[0.65rem] uppercase tracking-[0.3em]">

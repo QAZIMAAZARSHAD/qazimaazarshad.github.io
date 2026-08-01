@@ -113,7 +113,7 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
           animate={{ opacity: [0, 1, 1, 0], scale: 1 }}
           transition={{ duration: 1.9, times: [0, 0.12, 0.84, 1] }}
           className={cn(
-            "max-w-[min(90vw,40rem)] text-balance break-words text-center font-display font-black uppercase leading-[1.08]",
+            "max-w-[min(90vw,40rem)] text-balance break-words text-center font-display font-extrabold uppercase leading-[1.08]",
             wordSizeClass,
           )}
           style={{ color: effect.color }}
@@ -198,7 +198,7 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
       <div className="absolute left-1/2 top-1/2 w-full max-w-[min(90vw,40rem)] -translate-x-1/2 -translate-y-1/2 px-4 text-center">
         <motion.span
           className={cn(
-            "inline-block text-balance break-words font-display font-black uppercase leading-[1.08] tracking-tight",
+            "inline-block text-balance break-words font-display font-extrabold uppercase leading-[1.08] tracking-tight",
             wordSizeClass,
           )}
           initial={{ opacity: 0, scale: 0.2, rotate: -14 }}
