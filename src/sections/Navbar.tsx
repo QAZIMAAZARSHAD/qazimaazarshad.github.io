@@ -243,6 +243,10 @@ export function Navbar() {
               </span>
             </a>
 
+            {/* Pointer-only: it releases the hover highlight when the mouse
+            leaves the list. Keyboard users drive the same highlight through
+            focus, so there is nothing to mirror here. */}
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
             <ul
               className="hidden items-center xl:flex"
               onMouseLeave={() => setHovered(null)}

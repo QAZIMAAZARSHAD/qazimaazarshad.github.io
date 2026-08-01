@@ -1,0 +1,66 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // oxlint rather than ESLint: typescript-eslint refuses to run against
+  // TypeScript 7 ("does not support TS 7.0"), and no released version supports
+  // it. oxlint brings its own parser, so it is not tied to our TS version.
+  "plugins": [
+    "react",
+    "jsx-a11y",
+    "import",
+    "typescript",
+    "unicorn",
+    "promise",
+    "vitest"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  // Everything switched off below was checked against real findings first, and
+  // turned off because the rule is wrong for this stack — not to quieten it.
+  "rules": {
+    // The two rules most worth having on a hooks-heavy codebase. Neither is on
+    // by default, and a conditional hook slipped past until they were.
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    // The automatic JSX runtime doesn't need React in scope.
+    "react/react-in-jsx-scope": "off",
+    // Our index keys are on fixed lists that never reorder (marquee letters,
+    // scrambled characters, the signature wordmark, lightbox thumbnails).
+    "react/no-array-index-key": "off",
+    // A native <dialog> brings its own focus, backdrop and Esc behaviour, which
+    // would fight the modals we already control.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // Fires on any sort(), including ones on an array filter() already copied.
+    "unicorn/no-array-sort": "off",
+    "unicorn/consistent-function-scoping": "off",
+    // Side-effect imports are how CSS enters the bundle.
+    "import/no-unassigned-import": "off",
+    // then() used purely for a side effect has nothing to return.
+    "promise/always-return": "off",
+    // Sequencing is deliberate where we await in a loop.
+    "eslint/no-await-in-loop": "off",
+    // Test-only globals are deliberately __SHOUTED__.
+    "eslint/no-underscore-dangle": "off",
+    // Jest-derived rules that misread Vitest: expect(value, message) takes a
+    // message, and our data-integrity tests assert on optional fields inside
+    // conditionals, which these rules can't see.
+    "vitest/valid-expect": "off",
+    "vitest/expect-expect": "off",
+    "vitest/no-conditional-expect": "off",
+    "vitest/require-mock-type-parameters": "off"
+  },
+  "ignorePatterns": [
+    "dist",
+    "coverage",
+    "playwright-report",
+    "test-results",
+    "*.mjs"
+  ]
+}

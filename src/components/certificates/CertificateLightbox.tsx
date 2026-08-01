@@ -89,14 +89,14 @@ export function CertificateLightbox({
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
+      const focused = document.activeElement;
 
       if (event.shiftKey) {
-        if (active === first || !dialog.contains(active)) {
+        if (focused === first || !dialog.contains(focused)) {
           event.preventDefault();
           last.focus();
         }
-      } else if (active === last) {
+      } else if (focused === last) {
         event.preventDefault();
         first.focus();
       }

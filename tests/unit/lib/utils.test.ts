@@ -12,6 +12,9 @@ describe("cn", () => {
   });
 
   it("handles conditional / falsy values", () => {
+    // The constant is the point: `cond && "class"` is how callers write this,
+    // and cn has to drop the false.
+    // eslint-disable-next-line no-constant-binary-expression
     expect(cn("base", false && "hidden", null, undefined, "active")).toBe(
       "base active",
     );

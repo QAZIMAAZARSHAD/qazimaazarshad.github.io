@@ -12,7 +12,7 @@ import {
 import { certificates } from "@/data/certificates";
 
 /** Categories that are valid on a ProjectItem (everything except the "All" filter pseudo-value). */
-const validCategories = projectCategories.filter(
+const validProjectCategories = projectCategories.filter(
   (c): c is ProjectCategory => c !== "All",
 );
 
@@ -50,7 +50,7 @@ describe("content: projects", () => {
 
   it("every project category is one of the ProjectCategory values", () => {
     for (const project of projects) {
-      expect(validCategories, `category for ${project.title}`).toContain(
+      expect(validProjectCategories, `category for ${project.title}`).toContain(
         project.category,
       );
     }
@@ -166,7 +166,7 @@ describe("content: earlierExperience", () => {
 });
 
 describe("content: certificates", () => {
-  const validCategories = certificateCategories
+  const validCertificateCategories = certificateCategories
     .filter((c) => c.id !== "all")
     .map((c) => c.id);
 
@@ -175,7 +175,7 @@ describe("content: certificates", () => {
     for (const cert of certificates) {
       expect(cert.id.trim(), "id").not.toBe("");
       expect(cert.title.trim(), `title for ${cert.id}`).not.toBe("");
-      expect(validCategories, `category for ${cert.id}`).toContain(
+      expect(validCertificateCategories, `category for ${cert.id}`).toContain(
         cert.category,
       );
       expect(["pdf", "image"], `fileType for ${cert.id}`).toContain(
