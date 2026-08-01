@@ -76,7 +76,6 @@ const KNOWLEDGE_FACTS: { label: string; value: string }[] = [
   { label: "Nationality", value: "Indian" },
 ];
 
-/** The multicolour letters of the Google wordmark. */
 const GOOGLE_LETTERS: readonly [string, string][] = [
   ["G", "#4285F4"],
   ["o", "#EA4335"],
@@ -102,7 +101,6 @@ function GoogleWordmark() {
   );
 }
 
-/** Trigger pill + the mock search-results modal. */
 export function GoogleMe() {
   const [open, setOpen] = useState(false);
 
@@ -203,7 +201,6 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
         transition={{ duration: 0.26, ease: [0.21, 0.47, 0.32, 0.98] }}
         className="relative z-10 my-4 w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b1120] shadow-2xl shadow-accent-500/10"
       >
-        {/* Search header */}
         <div className="flex flex-col gap-4 border-b border-white/10 p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
           <GoogleWordmark />
           <div className="flex flex-1 items-center gap-3 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2.5">
@@ -255,7 +252,6 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
           </p>
 
           <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
-            {/* Organic results */}
             <ol className="flex flex-col gap-6">
               {RESULTS.map((r) => (
                 <li key={r.id}>
@@ -289,7 +285,6 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
               ))}
             </ol>
 
-            {/* Knowledge panel */}
             <aside className="glass h-fit rounded-2xl p-5">
               <div className="flex items-center gap-4">
                 <img
@@ -340,7 +335,6 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-white/[0.02] p-5 sm:p-6">
           <p className="text-xs text-ink-500">
             A playful preview — try the real thing <span aria-hidden>👇</span>

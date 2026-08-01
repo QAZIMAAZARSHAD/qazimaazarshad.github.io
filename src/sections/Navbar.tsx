@@ -56,7 +56,6 @@ export function Navbar() {
   // so opening the menu returns the header to its expanded shape.
   const docked = scrolled && !menuOpen;
 
-  // Close the drawer and return focus to the hamburger toggle.
   // `preventScroll` is critical: without it, returning focus to the top-of-page
   // toggle scrolls the viewport back up and cancels the in-page anchor
   // navigation triggered by tapping a nav link on mobile.
@@ -205,7 +204,6 @@ export function Navbar() {
               : "h-16 rounded-full border border-transparent bg-transparent px-5 sm:h-20 sm:px-8",
           )}
         >
-          {/* Aurora sheen along the dock's top edge. */}
           <span
             aria-hidden
             className={cn(
@@ -292,7 +290,6 @@ export function Navbar() {
                           transition={PILL_SPRING}
                           className="absolute inset-0 rounded-full border border-white/10 bg-white/[0.07]"
                         >
-                          {/* Lamp beam under the pill. */}
                           <span className="absolute inset-x-3 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent" />
                           <span className="absolute inset-x-4 -bottom-1 h-2 rounded-full bg-cyan-400/25 blur-md" />
                         </motion.span>

@@ -25,9 +25,8 @@ export interface HobbyEffect {
   word: string;
   /** Accent color for the flash, speed lines, and word glow. */
   color: string;
-  /** Whether the whole page briefly shakes on impact. */
   shake?: boolean;
-  /** Play a short synthesized chime on click (used by the Music chip). */
+  /** Music chip only: Hobbies plays a synthesized guitar strum on click. */
   sound?: boolean;
 }
 
@@ -40,10 +39,9 @@ interface HobbyImpactProps {
 const easeOut: [number, number, number, number] = [0.16, 0.84, 0.44, 1];
 
 /**
- * Full-screen, hobby-specific animation: the themed emoji accelerates from the
- * clicked chip straight at the camera, a manga speed-line burst and color flash
- * detonate on impact, a big comic word pops in, and (optionally) the page
- * shakes. Portals over the app so nothing clips; auto-dismisses via onDone.
+ * Full-screen hobby reaction: a projectile rushes the viewer from the chip that
+ * was clicked, landing in a flash of speed lines, a comic word, and an optional
+ * page shake. Portalled so nothing clips it; auto-dismisses via onDone.
  */
 export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
   const reduceMotion = useReducedMotion();
@@ -58,7 +56,6 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
   const peakScale = Math.max(3.5, Math.min(9, targetPeak / projectileBase));
   const midScale = peakScale * 0.66;
 
-  // Fall back to the emoji projectile if the custom image fails to load.
   const [imageFailed, setImageFailed] = useState(false);
 
   // Keep onDone stable so re-renders of the parent can't restart the timeline.

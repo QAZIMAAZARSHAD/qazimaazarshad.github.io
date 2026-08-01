@@ -31,7 +31,6 @@ export function Experience() {
       />
 
       <div ref={sectionRef} className="relative">
-        {/* Faint static track */}
         <span
           aria-hidden
           className="pointer-events-none absolute left-8 top-2 bottom-4 w-px -translate-x-1/2 bg-gradient-to-b from-accent-500/60 via-accent-400/25 to-transparent sm:left-10"

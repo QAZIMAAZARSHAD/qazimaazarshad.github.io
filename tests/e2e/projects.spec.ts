@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { enterSite } from "./intro";
 
-/** The live result count paragraph inside the Projects section. */
+/** The live result count in the Projects section. */
 const count = (page: Page) => page.getByTestId("projects-count");
 
 /** A project card is a button labelled "View details for <title>". */
@@ -48,7 +48,6 @@ test.describe("Projects — filtering, search, and detail modal", () => {
       "1",
     );
 
-    // Show all expands to every project; Show less collapses back.
     await page.getByRole("button", { name: /show all 23 projects/i }).click();
     await expect(cards).toHaveCount(23);
 
@@ -119,7 +118,6 @@ test.describe("Projects — filtering, search, and detail modal", () => {
     await page.keyboard.press("Escape");
     await expect(dialog).toHaveCount(0);
 
-    // Reopen, then close by clicking the backdrop (top-left, away from card).
     await card(page, title).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.mouse.click(8, 8);

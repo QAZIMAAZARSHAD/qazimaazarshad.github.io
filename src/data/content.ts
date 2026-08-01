@@ -1,7 +1,6 @@
 /**
- * Single source of truth for all portfolio content.
- * Extracted and preserved from the original site, restructured and typed.
- * Every section component reads from here — no content is hard-coded in views.
+ * Single source of truth for all portfolio content. Every section reads from
+ * here; nothing is hard-coded in the views.
  */
 
 import { completedYearsSince } from "@/lib/utils";
@@ -163,16 +162,12 @@ export const heroTaglines = [
 ];
 
 /**
- * Footer visit counter via CounterAPI.dev — no account, no backend. Value is
- * "<namespace>/<key>"; each load increments and returns the running total.
- * Empty disables the counter entirely.
+ * Footer visit counter via CounterAPI.dev — "<namespace>/<key>", empty disables.
  *
  * The total undercounts: EasyPrivacy carries `||counterapi.dev^$third-party`,
- * so uBlock Origin, AdGuard and Brave block it by default, and this audience
- * runs blockers. Only a first-party endpoint can escape that rule, which needs
- * a domain and somewhere to run code — neither of which static Pages hosting
- * gives us. Renaming the path or using an image pixel would not help; the rule
- * matches the domain.
+ * so most blockers stop the request. Only a first-party endpoint escapes that
+ * rule, and static Pages hosting can't serve one — renaming the path or using
+ * an image pixel wouldn't help, since the rule matches the domain.
  */
 export const analytics = {
   visitCounter: "qazimaazarshad-portfolio/visits",

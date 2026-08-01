@@ -223,7 +223,6 @@ export function Preloader() {
           initial="idle"
           animate="idle"
         >
-          {/* Curtain halves — they part to reveal the page. */}
           <motion.div
             className="absolute inset-x-0 top-0 h-1/2 bg-ink-950"
             variants={{
@@ -241,7 +240,6 @@ export function Preloader() {
             transition={curtain}
           />
 
-          {/* Seam of light along the split. */}
           <motion.div
             aria-hidden
             className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-accent-400 to-transparent"

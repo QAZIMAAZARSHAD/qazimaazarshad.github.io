@@ -201,7 +201,6 @@ export function Welcome({ onDone }: WelcomeProps) {
         </AnimatePresence>
       </div>
 
-      {/* A hairline that draws itself under the greeting once it lands. */}
       <motion.span
         aria-hidden
         initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}

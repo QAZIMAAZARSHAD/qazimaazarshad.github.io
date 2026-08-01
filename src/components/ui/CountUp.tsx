@@ -2,14 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 
 interface CountUpProps {
-  /** Target integer to animate to. */
   readonly value: number;
   /** Rendered before the number (e.g. "$"). */
   readonly prefix?: string;
   /** Rendered after the number (e.g. "+"). */
   readonly suffix?: string;
   readonly className?: string;
-  /** Animation duration in milliseconds. */
   readonly durationMs?: number;
 }
 

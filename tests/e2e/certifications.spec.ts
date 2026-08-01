@@ -24,18 +24,15 @@ test.describe("Certifications", () => {
     // Truncated card titles carry a native tooltip (title attribute).
     await expect(cards.first().locator("h3[title]")).toHaveCount(1);
 
-    // Filter to a specific category.
     await sec.getByRole("button", { name: /Courses & MOOCs/i }).click();
     await expect(cards.first()).toBeVisible();
 
-    // Open the first card → lightbox dialog, then close with Escape.
     await cards.first().click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
 
-    // Search narrows results.
     await sec.getByLabel("Search certificates").fill("coursera");
     await expect(cards.first()).toBeVisible();
     await expect(

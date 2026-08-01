@@ -59,7 +59,6 @@ test.describe("Footer signature", () => {
     const word = page.getByTestId("signature-highlight");
     const rest = await centreOf(word);
 
-    // Move across the name — the light tracks the cursor.
     await page.mouse.move(rest.x + 260, rest.y, { steps: 10 });
     await expect
       .poll(async () => (await lightCentre(page))!.x)

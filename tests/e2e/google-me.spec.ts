@@ -28,12 +28,10 @@ test.describe("Google Me", () => {
       dialog.getByText(/Software Engineer at Salesforce/i).first(),
     ).toBeVisible();
 
-    // An organic result (scoped to the results list) links out.
     await expect(
       dialog.locator("ol").getByRole("link", { name: /LinkedIn/i }),
     ).toBeVisible();
 
-    // The real Google search opens in a new tab.
     const googleLink = dialog.getByRole("link", { name: /open in google/i });
     await expect(googleLink).toHaveAttribute("href", /google\.com\/search/);
     await expect(googleLink).toHaveAttribute("target", "_blank");

@@ -50,7 +50,6 @@ export function Projects() {
   const shown = expanded ? filtered : filtered.slice(0, INITIAL_COUNT);
   const remaining = filtered.length - shown.length;
 
-  // Collapse back to the first page whenever the filter/search changes.
   useEffect(() => {
     setExpanded(false);
   }, [activeCategory, query]);

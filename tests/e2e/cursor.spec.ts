@@ -24,7 +24,6 @@ test.describe("Custom cursor", () => {
     await page.mouse.move(200, 200, { steps: 2 });
     await expect(page.locator("html")).toHaveClass(/qma-cursor-active/);
 
-    // Over an interactive element → ring enters its "hover" state.
     const button = page.getByRole("link", { name: /view projects/i });
     const btnBox = await button.boundingBox();
     await page.mouse.move(
@@ -34,7 +33,6 @@ test.describe("Custom cursor", () => {
     );
     await expect(ring).toHaveAttribute("data-hover", "true");
 
-    // Over plain content (the heading) → hover state clears.
     const heading = page.getByRole("heading", { level: 1 });
     const hBox = await heading.boundingBox();
     await page.mouse.move(hBox!.x + 10, hBox!.y + hBox!.height / 2, {
@@ -42,7 +40,6 @@ test.describe("Custom cursor", () => {
     });
     await expect(ring).toHaveAttribute("data-hover", "false");
 
-    // Pressing contracts the ring.
     await page.mouse.down();
     await expect(ring).toHaveAttribute("data-active", "true");
     await page.mouse.up();

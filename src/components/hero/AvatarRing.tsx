@@ -54,7 +54,6 @@ const BADGES: TechBadge[] = [
 export function AvatarRing() {
   const reduceMotion = useReducedMotion();
 
-  // Subtle pointer parallax: the avatar drifts a few px toward the cursor.
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const x = useSpring(pointerX, { stiffness: 50, damping: 18, mass: 0.5 });

@@ -69,7 +69,6 @@ for (const viewport of VIEWPORTS) {
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-    // Visual record — hero section element screenshot per viewport.
     const hero = page.locator("#hero");
     await hero.scrollIntoViewIfNeeded();
     await expect(hero.getByRole("heading").first()).toBeVisible();

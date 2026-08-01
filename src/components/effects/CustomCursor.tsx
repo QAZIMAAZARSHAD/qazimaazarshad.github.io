@@ -23,12 +23,12 @@ function cursorEnabled(): boolean {
 }
 
 /**
- * A bespoke pointer: a glowing dot that tracks the mouse instantly plus a ring
- * that trails with a springy lag, expanding over interactive elements and
- * contracting on click. Runs only on fine (mouse) pointers and never under
- * prefers-reduced-motion; GPU-accelerated via transforms with no React
- * re-renders on move. The native cursor is only hidden once we're actually
- * drawing a replacement, and the animation loop idles when the pointer rests.
+ * A bespoke pointer: a dot tracking the mouse exactly, and a ring trailing
+ * behind it that expands over interactive elements and contracts on click.
+ *
+ * Fine pointers only, never under reduced motion. Driven by transforms with no
+ * React re-renders on move, and the loop idles when the pointer rests. The
+ * native cursor is hidden only once this one is actually drawing.
  */
 export function CustomCursor() {
   const [enabled] = useState(cursorEnabled);

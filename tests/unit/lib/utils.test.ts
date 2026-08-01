@@ -62,7 +62,6 @@ describe("durationSince", () => {
 
 describe("completedYearsSince", () => {
   it("ticks up on the anniversary itself, not at the top of that month", () => {
-    // 22 Aug 2022 start:
     expect(completedYearsSince("22 Aug 2022", new Date(2026, 6, 27))).toBe(3); // Jul 2026
     expect(completedYearsSince("22 Aug 2022", new Date(2026, 7, 1))).toBe(3); // 1 Aug — not yet
     expect(completedYearsSince("22 Aug 2022", new Date(2026, 7, 21))).toBe(3); // day before

@@ -62,7 +62,6 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
     <>
       <DoorBackdrop />
 
-      {/* A soft bloom as the doorway swallows the frame. */}
       {opening && !reduceMotion && (
         <motion.span
           aria-hidden
@@ -131,7 +130,6 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
                 )}
               />
 
-              {/* The panel, hinged on the left. */}
               <motion.span
                 aria-hidden
                 animate={{ rotateY: swing }}

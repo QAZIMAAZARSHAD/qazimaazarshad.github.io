@@ -60,10 +60,8 @@ describe("SignatureName", () => {
     );
     const wrap = container.firstElementChild as HTMLElement;
 
-    // Centre of the word: left + width / 2, top + height / 2.
     expect(wrap.style.getPropertyValue("--sx")).toBe("670px");
     expect(wrap.style.getPropertyValue("--sy")).toBe("56px");
-    // Radii derived from the word box.
     expect(wrap.style.getPropertyValue("--lw")).toBe("255px");
     expect(wrap.style.getPropertyValue("--lh")).toBe(`${112 * 0.67}px`);
   });
