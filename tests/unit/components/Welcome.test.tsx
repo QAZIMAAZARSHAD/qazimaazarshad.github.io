@@ -34,7 +34,7 @@ describe("Welcome", () => {
       "data-settled",
       "true",
     );
-    expect(screen.getByText("Bonjour")).toBeInTheDocument();
+    expect(screen.getByTestId("welcome")).toHaveTextContent("Bonjour");
   });
 
   it("matches on the base tag, ignoring the region", () => {
@@ -42,7 +42,7 @@ describe("Welcome", () => {
     render(<Welcome onDone={vi.fn()} />);
 
     playThrough();
-    expect(screen.getByText("नमस्ते")).toBeInTheDocument();
+    expect(screen.getByTestId("welcome")).toHaveTextContent("नमस्ते");
   });
 
   it("falls back to English for a language it doesn't know", () => {
@@ -50,7 +50,41 @@ describe("Welcome", () => {
     render(<Welcome onDone={vi.fn()} />);
 
     playThrough();
-    expect(screen.getByText("Hello")).toBeInTheDocument();
+    expect(screen.getByTestId("welcome")).toHaveTextContent("Hello");
+  });
+
+  // A language tag that resolves against Object.prototype would otherwise
+  // hand React something that isn't a greeting at all.
+  it("survives a language tag that collides with Object.prototype", () => {
+    speaks("constructor");
+    expect(() => render(<Welcome onDone={vi.fn()} />)).not.toThrow();
+
+    playThrough();
+    expect(screen.getByTestId("welcome")).toHaveTextContent("Hello");
+  });
+
+  it("tags each greeting with its language and direction", () => {
+    speaks("ar-EG");
+    render(<Welcome onDone={vi.fn()} />);
+
+    playThrough();
+    const arabic = screen
+      .getByTestId("welcome")
+      .querySelector('[lang="ar"][dir="rtl"]');
+    expect(arabic).not.toBeNull();
+    expect(arabic).toHaveTextContent("مرحبا");
+  });
+
+  it("hides the flash from assistive tech and announces only what it lands on", () => {
+    speaks("en-US");
+    render(<Welcome onDone={vi.fn()} />);
+
+    // Mid-flash the live region is empty, so nothing is narrated per frame.
+    const status = screen.getByRole("status");
+    expect(status).toBeEmptyDOMElement();
+
+    playThrough();
+    expect(status).toHaveTextContent("Hello");
   });
 
   it("shows the greeting alone — no clock, no timezone", () => {

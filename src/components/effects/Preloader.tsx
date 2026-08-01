@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { REVEAL_MS, Welcome } from "./Welcome";
 
@@ -23,6 +23,7 @@ type Phase = "loading" | "welcome" | "done";
 export function Preloader() {
   const [phase, setPhase] = useState<Phase>("loading");
   const reduceMotion = useReducedMotion();
+  const fallbackRef = useRef(0);
   const finishIntro = useCallback(() => setPhase("done"), []);
   // Guarded so a skip that already ended the intro can't be undone by the
   // pending hand-off from the loader.
@@ -51,6 +52,7 @@ export function Preloader() {
 
     // Never strand the visitor behind the intro, whatever stalls.
     const fallback = window.setTimeout(finishIntro, MAX_DISPLAY_MS);
+    fallbackRef.current = fallback;
 
     return () => {
       window.removeEventListener("load", toWelcome);
@@ -58,6 +60,12 @@ export function Preloader() {
       window.clearTimeout(handoff);
     };
   }, [finishIntro, startWelcome]);
+
+  // Retire the safety net the moment it's moot, rather than letting it fire
+  // against a finished intro.
+  useEffect(() => {
+    if (phase === "done") window.clearTimeout(fallbackRef.current);
+  }, [phase]);
 
   // Let an impatient visitor cut straight through.
   useEffect(() => {
@@ -80,6 +88,30 @@ export function Preloader() {
     root.style.overflow = "hidden";
     return () => {
       root.style.overflow = prev;
+    };
+  }, [phase]);
+
+  // The page is painted behind an opaque overlay, so it has to be taken out of
+  // the accessibility tree too — otherwise a screen reader can browse and
+  // activate the whole portfolio while it's visually hidden. The intro lives
+  // inside #root, so its siblings are inerted rather than the root itself.
+  useEffect(() => {
+    if (phase === "done") return;
+    const behind = [
+      document.querySelector("main"),
+      document.querySelector("header"),
+      document.querySelector("footer"),
+    ].filter((el): el is HTMLElement => el instanceof HTMLElement);
+
+    for (const el of behind) {
+      el.inert = true;
+      el.setAttribute("aria-hidden", "true");
+    }
+    return () => {
+      for (const el of behind) {
+        el.inert = false;
+        el.removeAttribute("aria-hidden");
+      }
     };
   }, [phase]);
 
@@ -109,8 +141,11 @@ export function Preloader() {
         <motion.div
           key="intro"
           data-testid="preloader"
-          role="status"
-          aria-label={phase === "loading" ? "Loading" : "Welcome"}
+          // Not role="status": that's advisory, and this blocks the page. The
+          // live announcements are scoped to the text that actually changes.
+          role="dialog"
+          aria-modal="true"
+          aria-label="Welcome"
           className="fixed inset-0 z-[100]"
           exit="exit"
           initial="idle"
@@ -178,9 +213,9 @@ export function Preloader() {
                   />
                 </div>
 
-                <span className="font-mono text-[11px] uppercase tracking-[0.35em] text-ink-500">
+                <output className="font-mono text-[11px] uppercase tracking-[0.35em] text-ink-500">
                   Loading
-                </span>
+                </output>
               </div>
             ) : (
               <Welcome onDone={finishIntro} />

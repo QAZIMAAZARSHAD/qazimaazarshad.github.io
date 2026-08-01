@@ -50,7 +50,11 @@ test.describe("Welcome screen", () => {
     await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
 
     await page.mouse.wheel(0, 600);
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    // Polled, not read once: wheel events are dispatched asynchronously, so an
+    // immediate read would pass even against a lock that does nothing.
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY), { timeout: 2_000 })
+      .toBe(0);
 
     await intro(page).waitFor({ state: "detached", timeout: 15_000 });
     await page.mouse.wheel(0, 600);
@@ -70,6 +74,32 @@ test.describe("Welcome screen", () => {
 
     await expect(page.locator("#hobbies")).toBeInViewport();
     expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  });
+
+  test("takes the page out of the accessibility tree while it plays", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+    const hidden = await page.evaluate(() => {
+      const main = document.querySelector("main");
+      return {
+        ariaHidden: main?.getAttribute("aria-hidden"),
+        inert: (main as HTMLElement | null)?.inert,
+      };
+    });
+    expect(hidden).toEqual({ ariaHidden: "true", inert: true });
+
+    await intro(page).waitFor({ state: "detached", timeout: 15_000 });
+    const restored = await page.evaluate(() => {
+      const main = document.querySelector("main");
+      return {
+        ariaHidden: main?.getAttribute("aria-hidden"),
+        inert: (main as HTMLElement | null)?.inert,
+      };
+    });
+    expect(restored).toEqual({ ariaHidden: null, inert: false });
   });
 
   test("a keypress skips straight through", async ({ page }) => {

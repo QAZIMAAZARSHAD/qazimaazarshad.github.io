@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 /** Greetings flashed before the visitor's own language lands last. */
 const GREETINGS: Record<string, string> = {
@@ -41,6 +42,24 @@ const FLASH_ORDER = [
   "tr",
 ];
 
+const RTL = new Set(["ar", "ur"]);
+/**
+ * Scripts the display face can't render — Sora ships latin subsets only, so
+ * these fall back anyway. Naming the fallback keeps it deliberate, and the
+ * display face's tight tracking is dropped since it pinches joined scripts.
+ */
+const NON_LATIN = new Set([
+  "hi",
+  "ur",
+  "bn",
+  "ta",
+  "ru",
+  "ja",
+  "zh",
+  "ko",
+  "ar",
+]);
+
 /** How long the curtain takes to part. Shared so the budget below stays true. */
 export const REVEAL_MS = 750;
 /** Total time the welcome screen is on screen, reveal included. */
@@ -50,10 +69,20 @@ const HOLD_MS = 2300;
 /** Reduced motion skips the flash, so it shouldn't sit on a static screen. */
 const HOLD_MS_REDUCED = 1200;
 
+interface Greeting {
+  code: string;
+  text: string;
+}
+
 function visitorLanguage(): string {
   const tag = (navigator.language || "en").toLowerCase();
   const base = tag.split("-")[0];
-  return GREETINGS[base] ? base : "en";
+  // An own-property check, not truthiness: a tag like "constructor" would
+  // inherit from Object.prototype and resolve to something that isn't a
+  // greeting at all. Object.hasOwn would read better but needs an ES2022 lib.
+  return Object.prototype.hasOwnProperty.call(GREETINGS, base) // NOSONAR
+    ? base
+    : "en";
 }
 
 interface WelcomeProps {
@@ -65,23 +94,29 @@ interface WelcomeProps {
  * in a dozen languages that lands on the visitor's own, resolved from their
  * browser language.
  *
+ * The flash itself is hidden from assistive tech — narrating fifteen untagged
+ * scripts would queue up announcements long after the intro is gone — and only
+ * the greeting it settles on is announced.
+ *
  * Under reduced motion the flashing is skipped entirely and the final greeting
  * is shown once, briefly.
  */
 export function Welcome({ onDone }: WelcomeProps) {
   const reduceMotion = useReducedMotion();
 
-  const sequence = useMemo(() => {
+  const sequence = useMemo<Greeting[]>(() => {
     const own = visitorLanguage();
-    const flashes = FLASH_ORDER.filter((code) => code !== own).map(
-      (code) => GREETINGS[code],
-    );
-    return [...flashes, GREETINGS[own]];
+    const flashes = FLASH_ORDER.filter((code) => code !== own).map((code) => ({
+      code,
+      text: GREETINGS[code],
+    }));
+    return [...flashes, { code: own, text: GREETINGS[own] }];
   }, []);
 
   const lastIndex = sequence.length - 1;
   const [index, setIndex] = useState(reduceMotion ? lastIndex : 0);
   const settled = index === lastIndex;
+  const greeting = sequence[index];
 
   // Spread the flash across whatever the hold and the reveal leave behind, so
   // the screen is gone at WELCOME_MS however many languages are shown.
@@ -90,6 +125,9 @@ export function Welcome({ onDone }: WelcomeProps) {
   );
 
   // Flash through the greetings, then hold on the visitor's own and finish.
+  // `onDone` must be referentially stable (it is a useCallback in Preloader):
+  // a new identity each render would restart this effect, reset `step`, and
+  // leave the flash oscillating between the first two greetings forever.
   useEffect(() => {
     if (reduceMotion) {
       const done = window.setTimeout(onDone, HOLD_MS_REDUCED);
@@ -98,20 +136,40 @@ export function Welcome({ onDone }: WelcomeProps) {
 
     let step = 0;
     let done = 0;
-    const timer = window.setInterval(() => {
+    let timer = 0;
+
+    const stop = () => {
+      window.clearInterval(timer);
+      timer = 0;
+    };
+    const advance = () => {
       step += 1;
       setIndex(step);
       if (step >= lastIndex) {
-        window.clearInterval(timer);
+        stop();
         done = window.setTimeout(onDone, HOLD_MS);
       }
-    }, stepMs);
+    };
+    const start = () => {
+      if (!timer && step < lastIndex)
+        timer = window.setInterval(advance, stepMs);
+    };
+
+    // Background tabs clamp timers to ~1s, which would stretch the flash past
+    // the intro's own safety timeout. Hold it until the tab is actually looked
+    // at, so the sequence the visitor sees is the one that was designed.
+    const onVisibility = () => (document.hidden ? stop() : start());
+    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      window.clearInterval(timer);
+      stop();
       window.clearTimeout(done);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [reduceMotion, lastIndex, stepMs, onDone]);
+
+  const nonLatin = NON_LATIN.has(greeting.code);
 
   return (
     <div
@@ -119,29 +177,35 @@ export function Welcome({ onDone }: WelcomeProps) {
       data-settled={settled}
       className="relative flex flex-col items-center gap-6 px-6 text-center"
     >
-      <div className="relative flex h-[1.2em] items-center justify-center font-display text-[clamp(2.75rem,9vw,7rem)] font-black leading-none tracking-tight">
+      {/* Announce only what it lands on, not every frame of the flash. */}
+      <output className="sr-only">
+        {settled ? <span lang={greeting.code}>{greeting.text}</span> : ""}
+      </output>
+
+      <div
+        aria-hidden
+        className="relative flex min-h-[1.5em] items-center justify-center text-[clamp(2.75rem,9vw,7rem)] font-black leading-[1.15]"
+      >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
             key={index}
-            initial={
-              reduceMotion
-                ? false
-                : { opacity: 0, y: "35%", filter: "blur(6px)" }
-            }
-            animate={{ opacity: 1, y: "0%", filter: "blur(0px)" }}
-            exit={
-              reduceMotion
-                ? undefined
-                : { opacity: 0, y: "-35%", filter: "blur(6px)" }
-            }
+            lang={greeting.code}
+            dir={RTL.has(greeting.code) ? "rtl" : "ltr"}
+            initial={reduceMotion ? false : { opacity: 0, y: "35%" }}
+            animate={{ opacity: 1, y: "0%" }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: "-35%" }}
             transition={{ duration: settled ? 0.5 : 0.2, ease: "easeOut" }}
-            className={
+            style={
+              nonLatin ? { fontFamily: "system-ui, sans-serif" } : undefined
+            }
+            className={cn(
+              nonLatin ? "tracking-normal" : "font-display tracking-tight",
               settled
                 ? "bg-gradient-to-r from-accent-400 via-cyan-300 to-accent-400 bg-clip-text text-transparent"
-                : "text-ink-300"
-            }
+                : "text-ink-300",
+            )}
           >
-            {sequence[index]}
+            {greeting.text}
           </motion.span>
         </AnimatePresence>
       </div>
