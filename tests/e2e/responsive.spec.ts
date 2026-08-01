@@ -56,7 +56,7 @@ for (const viewport of VIEWPORTS) {
     expect(scrollWidth).toBeLessThanOrEqual(viewport.width + 1);
 
     const hamburger = page.getByRole("button", { name: "Open menu" });
-    // Scope to the Primary navigation so we don't also match the footer nav.
+    // Scope to the Primary navigation so we don't match any other nav landmark.
     const desktopLink = page
       .getByRole("navigation", { name: "Primary" })
       .getByRole("link", { name: "About", exact: true });

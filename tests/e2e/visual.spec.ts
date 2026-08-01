@@ -120,6 +120,20 @@ test("footer", async ({ page }) => {
   await expect(footer).toHaveScreenshot("footer.png");
 });
 
+// The signature wraps to two lines here, so this also guards the light staying
+// on a single word instead of flooding the whole name on narrow screens.
+test.describe("mobile", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("footer (mobile)", async ({ page }) => {
+    const footer = page.locator("footer");
+    await footer.scrollIntoViewIfNeeded();
+    await expect(footer.getByRole("heading").first()).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(footer).toHaveScreenshot("footer-mobile.png");
+  });
+});
+
 test("command palette", async ({ page }) => {
   await page.keyboard.press("ControlOrMeta+k");
   const dialog = page.getByRole("dialog", { name: /command palette/i });

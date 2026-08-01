@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Eye } from "lucide-react";
 import { analytics } from "@/data/content";
 
 const PATH = analytics.visitCounter;
@@ -77,10 +76,13 @@ export function VisitCounter() {
       animate={{ opacity: 1 }}
       aria-label={`${count.toLocaleString()} total visits`}
       title={`${count.toLocaleString()} total visits`}
-      className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 font-mono text-xs text-ink-400"
+      className="inline-flex items-center gap-2 font-mono text-xs text-ink-400"
     >
-      <Eye className="h-3.5 w-3.5 text-accent-300" aria-hidden />
-      <span className="tabular-nums text-ink-300">
+      <span aria-hidden className="relative flex h-1.5 w-1.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+      </span>
+      <span className="tabular-nums text-white">
         {display.toLocaleString()}
       </span>{" "}
       {count === 1 ? "visit" : "visits"}
