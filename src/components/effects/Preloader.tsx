@@ -42,8 +42,8 @@ export function Preloader() {
   const reduceMotion = useReducedMotion();
   const fallbackRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [playingAudio, setPlayingAudio] = useState(false);
-  const [muted, setMuted] = useState(false);
+  /** "none" = nothing is playing; "off" = playing but muted by policy. */
+  const [sound, setSound] = useState<"none" | "on" | "off">("none");
   const finishIntro = useCallback(() => setPhase("done"), []);
   // Guarded so a skip that already ended the intro can't be undone by the
   // pending hand-off from the loader.
@@ -95,21 +95,36 @@ export function Preloader() {
     };
   }, [reduceMotion]);
 
-  // Browsers refuse unprompted audio until a visitor has interacted with (or
-  // built up media engagement on) the site, so a refusal is expected rather
-  // than exceptional — the intro just plays silently. The mute control only
-  // appears once playback has actually started.
+  // Browsers refuse unprompted *audible* playback until a visitor has built up
+  // media engagement with the site — a fresh or incognito profile always will.
+  // Muted playback is never refused, so fall back to that: the track runs from
+  // the top either way and a single click turns the sound on, rather than
+  // demanding a gesture before the intro can even start.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || phase !== "welcome") return;
+    let cancelled = false;
 
-    audio
-      .play()
-      .then(() => setPlayingAudio(true))
-      .catch(() => setPlayingAudio(false));
+    const start = async () => {
+      try {
+        audio.muted = false;
+        await audio.play();
+        if (!cancelled) setSound("on");
+      } catch {
+        try {
+          audio.muted = true;
+          await audio.play();
+          if (!cancelled) setSound("off");
+        } catch {
+          if (!cancelled) setSound("none");
+        }
+      }
+    };
+    void start();
 
     return () => {
-      setPlayingAudio(false);
+      cancelled = true;
+      setSound("none");
       fadeOutAndStop(audio);
     };
   }, [phase]);
@@ -183,13 +198,20 @@ export function Preloader() {
       ?.scrollIntoView({ behavior: "instant", block: "start" });
   }, [phase]);
 
-  const toggleMute = (event: React.MouseEvent | React.PointerEvent) => {
+  const toggleSound = (event: React.MouseEvent | React.PointerEvent) => {
     // The whole window is a skip target, so this click must stop there.
     event.stopPropagation();
     const audio = audioRef.current;
     if (!audio) return;
-    audio.muted = !audio.muted;
-    setMuted(audio.muted);
+
+    const turningOn = audio.muted;
+    audio.muted = !turningOn;
+    if (turningOn) {
+      audio.volume = INTRO_VOLUME;
+      // This click is the gesture the browser was holding out for.
+      void audio.play().catch(() => {});
+    }
+    setSound(turningOn ? "on" : "off");
   };
 
   const curtain = {
@@ -284,23 +306,32 @@ export function Preloader() {
             )}
           </motion.div>
 
-          {/* Only shown once the track is genuinely playing — otherwise it
-              would offer to mute silence the browser already refused. */}
-          {playingAudio && (
+          {/* Shown only while the track is genuinely running, so it never
+              offers to control silence. When the browser muted us, it reads as
+              an invitation rather than a toggle. */}
+          {sound !== "none" && (
             <motion.button
               type="button"
-              onPointerDown={toggleMute}
-              onClick={toggleMute}
+              // The skip listeners sit on the window, so this control has to
+              // keep its own events from reaching them — otherwise reaching
+              // for sound would dismiss the greeting. Only `click` toggles;
+              // the others merely stop there.
+              onPointerDown={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+              onClick={toggleSound}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              aria-label={muted ? "Unmute intro music" : "Mute intro music"}
-              className="absolute bottom-8 left-1/2 z-10 grid h-10 w-10 -translate-x-1/2 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-ink-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+              aria-label={
+                sound === "on" ? "Mute intro music" : "Play intro music"
+              }
+              className="absolute bottom-8 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-400 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
             >
-              {muted ? (
-                <VolumeX className="h-4 w-4" aria-hidden />
+              {sound === "on" ? (
+                <Volume2 className="h-3.5 w-3.5" aria-hidden />
               ) : (
-                <Volume2 className="h-4 w-4" aria-hidden />
+                <VolumeX className="h-3.5 w-3.5" aria-hidden />
               )}
+              {sound === "on" ? "Mute" : "Sound on"}
             </motion.button>
           )}
         </motion.div>

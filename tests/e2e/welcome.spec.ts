@@ -117,7 +117,41 @@ test.describe("Welcome screen", () => {
       await mute.click();
       await expect(intro(page)).toBeVisible();
       await expect(
-        page.getByRole("button", { name: /^unmute intro music$/i }),
+        page.getByRole("button", { name: /^play intro music$/i }),
+      ).toBeVisible();
+    });
+
+    // What a real browser does on a fresh profile: refuse audible playback,
+    // but allow it muted. The track should still run, with sound one click away.
+    test("falls back to muted playback when the browser refuses sound", async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        const play = HTMLMediaElement.prototype.play;
+        HTMLMediaElement.prototype.play = function patched(
+          this: HTMLMediaElement,
+        ) {
+          if (!this.muted) {
+            return Promise.reject(
+              new DOMException("blocked by autoplay policy", "NotAllowedError"),
+            );
+          }
+          return play.call(this);
+        };
+      });
+
+      await page.goto("/", { waitUntil: "commit" });
+      await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
+
+      // The control appearing at all proves muted playback started; had both
+      // attempts failed there would be nothing to click.
+      const enable = page.getByRole("button", { name: /^play intro music$/i });
+      await expect(enable).toBeVisible();
+
+      await enable.click();
+      await expect(intro(page)).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: /^mute intro music$/i }),
       ).toBeVisible();
     });
 
