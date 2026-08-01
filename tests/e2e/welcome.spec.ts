@@ -103,65 +103,33 @@ test.describe("Welcome screen", () => {
   });
 
   test.describe("music", () => {
-    test("offers a mute control that doesn't dismiss the intro", async ({
-      page,
-    }) => {
-      await page.goto("/", { waitUntil: "commit" });
-      await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
-
-      const mute = page.getByRole("button", { name: /^mute intro music$/i });
-      await expect(mute).toBeVisible();
-
-      // Clicking anywhere skips the intro, so this control has to be an
-      // exception — otherwise reaching for mute would dismiss the greeting.
-      await mute.click();
-      await expect(intro(page)).toBeVisible();
-      await expect(
-        page.getByRole("button", { name: /^play intro music$/i }),
-      ).toBeVisible();
-    });
-
-    // What a real browser does on a fresh profile: refuse audible playback,
-    // but allow it muted. The track should still run, with sound one click away.
-    test("falls back to muted playback when the browser refuses sound", async ({
+    // Browsers refuse unprompted audible playback on a fresh profile, and the
+    // intro offers no gesture to satisfy that — so the refusal must be a
+    // non-event, not something that stalls or breaks the greeting.
+    test("still plays through when the browser refuses to start the track", async ({
       page,
     }) => {
       await page.addInitScript(() => {
-        const play = HTMLMediaElement.prototype.play;
-        HTMLMediaElement.prototype.play = function patched(
-          this: HTMLMediaElement,
-        ) {
-          if (!this.muted) {
-            return Promise.reject(
-              new DOMException("blocked by autoplay policy", "NotAllowedError"),
-            );
-          }
-          return play.call(this);
-        };
+        HTMLMediaElement.prototype.play = () =>
+          Promise.reject(
+            new DOMException("blocked by autoplay policy", "NotAllowedError"),
+          );
       });
 
       await page.goto("/", { waitUntil: "commit" });
       await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
 
-      // The control appearing at all proves muted playback started; had both
-      // attempts failed there would be nothing to click.
-      const enable = page.getByRole("button", { name: /^play intro music$/i });
-      await expect(enable).toBeVisible();
-
-      await enable.click();
-      await expect(intro(page)).toBeVisible();
-      await expect(
-        page.getByRole("button", { name: /^mute intro music$/i }),
-      ).toBeVisible();
+      await settled(page);
+      await expect(intro(page)).toHaveCount(0, { timeout: 15_000 });
+      await expect(page.locator("#hero")).toBeVisible();
     });
 
-    test("stays silent under reduced motion", async ({ page }) => {
-      await page.emulateMedia({ reducedMotion: "reduce" });
+    test("puts no audio controls on screen", async ({ page }) => {
       await page.goto("/", { waitUntil: "commit" });
       await expect(welcome(page)).toBeVisible({ timeout: 10_000 });
 
       await expect(
-        page.getByRole("button", { name: /mute intro music/i }),
+        intro(page).getByRole("button", { name: /mute|sound|music/i }),
       ).toHaveCount(0);
     });
   });
