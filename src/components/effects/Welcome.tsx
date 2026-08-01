@@ -50,35 +50,10 @@ const HOLD_MS = 2300;
 /** Reduced motion skips the flash, so it shouldn't sit on a static screen. */
 const HOLD_MS_REDUCED = 1200;
 
-/** Where the site's owner is, for the "how far apart are we" line. */
-const OWNER_TZ_OFFSET_MIN = 330; // IST, UTC+5:30
-const OWNER_CITY = "Bengaluru";
-
 function visitorLanguage(): string {
   const tag = (navigator.language || "en").toLowerCase();
   const base = tag.split("-")[0];
   return GREETINGS[base] ? base : "en";
-}
-
-function timeOfDay(hour: number): string {
-  if (hour < 5) return "You're up late";
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  if (hour < 21) return "Good evening";
-  return "Good evening";
-}
-
-/** e.g. "Bengaluru is 9h 30m ahead" — or null when we're in the same zone. */
-function distanceFromOwner(date: Date): string | null {
-  const visitorOffset = -date.getTimezoneOffset();
-  const diff = OWNER_TZ_OFFSET_MIN - visitorOffset;
-  if (diff === 0) return null;
-  const hours = Math.floor(Math.abs(diff) / 60);
-  const minutes = Math.abs(diff) % 60;
-  const span = [hours ? `${hours}h` : "", minutes ? `${minutes}m` : ""]
-    .filter(Boolean)
-    .join(" ");
-  return `${OWNER_CITY} is ${span} ${diff > 0 ? "ahead" : "behind"}`;
 }
 
 interface WelcomeProps {
@@ -87,8 +62,8 @@ interface WelcomeProps {
 
 /**
  * The greeting that plays between the loader and the site: a burst of "hello"
- * in a dozen languages that lands on the visitor's own, then a line telling
- * them what time it is where they are and how far that is from Bengaluru.
+ * in a dozen languages that lands on the visitor's own, resolved from their
+ * browser language.
  *
  * Under reduced motion the flashing is skipped entirely and the final greeting
  * is shown once, briefly.
@@ -96,24 +71,12 @@ interface WelcomeProps {
 export function Welcome({ onDone }: WelcomeProps) {
   const reduceMotion = useReducedMotion();
 
-  const { sequence, meta } = useMemo(() => {
+  const sequence = useMemo(() => {
     const own = visitorLanguage();
     const flashes = FLASH_ORDER.filter((code) => code !== own).map(
       (code) => GREETINGS[code],
     );
-    const now = new Date();
-    const apart = distanceFromOwner(now);
-    return {
-      sequence: [...flashes, GREETINGS[own]],
-      meta: {
-        greeting: timeOfDay(now.getHours()),
-        time: now.toLocaleTimeString(undefined, {
-          hour: "numeric",
-          minute: "2-digit",
-        }),
-        apart,
-      },
-    };
+    return [...flashes, GREETINGS[own]];
   }, []);
 
   const lastIndex = sequence.length - 1;
@@ -183,25 +146,16 @@ export function Welcome({ onDone }: WelcomeProps) {
         </AnimatePresence>
       </div>
 
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-        animate={settled ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="flex flex-col items-center gap-3"
-      >
-        <span
-          aria-hidden
-          className="h-px w-24 bg-gradient-to-r from-transparent via-accent-400/70 to-transparent"
-        />
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-400">
-          {meta.greeting} · {meta.time} your time
-        </p>
-        {meta.apart && (
-          <p className="font-mono text-[11px] tracking-[0.2em] text-ink-600">
-            {meta.apart}
-          </p>
-        )}
-      </motion.div>
+      {/* A hairline that draws itself under the greeting once it lands. */}
+      <motion.span
+        aria-hidden
+        initial={reduceMotion ? false : { scaleX: 0, opacity: 0 }}
+        animate={
+          settled ? { scaleX: 1, opacity: 1 } : { scaleX: 0, opacity: 0 }
+        }
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="h-px w-32 bg-gradient-to-r from-transparent via-accent-400/70 to-transparent"
+      />
     </div>
   );
 }

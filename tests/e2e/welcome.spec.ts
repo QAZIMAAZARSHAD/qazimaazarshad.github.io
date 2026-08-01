@@ -92,31 +92,27 @@ test.describe("Welcome screen", () => {
   test.describe("a French visitor in New York", () => {
     test.use({ locale: "fr-FR", timezoneId: "America/New_York" });
 
-    test("is greeted in their language, with the distance from Bengaluru", async ({
-      page,
-    }) => {
+    test("is greeted in their own language", async ({ page }) => {
       await freezeClock(page);
       await page.goto("/", { waitUntil: "commit" });
       await settled(page);
 
       await expect(welcome(page)).toContainText("Bonjour");
-      await expect(welcome(page)).toContainText("your time");
-      await expect(welcome(page)).toContainText(/Bengaluru is 9h 30m ahead/);
+      // The visitor's clock and timezone are deliberately not surfaced.
+      await expect(welcome(page)).not.toContainText(/your time/i);
+      await expect(welcome(page)).not.toContainText(/bengaluru/i);
     });
   });
 
   test.describe("a visitor already in India", () => {
     test.use({ locale: "hi-IN", timezoneId: "Asia/Kolkata" });
 
-    test("is greeted in Hindi, with no distance to report", async ({
-      page,
-    }) => {
+    test("is greeted in Hindi", async ({ page }) => {
       await freezeClock(page);
       await page.goto("/", { waitUntil: "commit" });
       await settled(page);
 
       await expect(welcome(page)).toContainText("नमस्ते");
-      await expect(welcome(page)).not.toContainText("Bengaluru is");
     });
   });
 
