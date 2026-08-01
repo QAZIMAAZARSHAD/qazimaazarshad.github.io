@@ -46,20 +46,35 @@ describe("durationSince", () => {
     expect(durationSince("Jan 2024", new Date(2026, 0, 1))).toBe("2 yrs 1 mo");
   });
 
+  it("ignores a day in the label, as a CV would", () => {
+    expect(durationSince("22 Aug 2022", new Date(2022, 7, 1))).toBe(
+      durationSince("Aug 2022", new Date(2022, 7, 1)),
+    );
+  });
+
   it("returns empty for an unparseable label", () => {
     expect(durationSince("whenever")).toBe("");
   });
 });
 
 describe("completedYearsSince", () => {
-  it("floors to whole years, ticking up only on the anniversary month", () => {
-    // Aug 2022 start:
-    expect(completedYearsSince("Aug 2022", new Date(2026, 6, 27))).toBe(3); // Jul 2026 → not yet 4
-    expect(completedYearsSince("Aug 2022", new Date(2026, 7, 1))).toBe(4); // Aug 2026 → 4
-    expect(completedYearsSince("Aug 2022", new Date(2023, 6, 1))).toBe(0); // Jul 2023 → <1
+  it("ticks up on the anniversary itself, not at the top of that month", () => {
+    // 22 Aug 2022 start:
+    expect(completedYearsSince("22 Aug 2022", new Date(2026, 6, 27))).toBe(3); // Jul 2026
+    expect(completedYearsSince("22 Aug 2022", new Date(2026, 7, 1))).toBe(3); // 1 Aug — not yet
+    expect(completedYearsSince("22 Aug 2022", new Date(2026, 7, 21))).toBe(3); // day before
+    expect(completedYearsSince("22 Aug 2022", new Date(2026, 7, 22))).toBe(4); // the day
+    expect(completedYearsSince("22 Aug 2022", new Date(2026, 8, 3))).toBe(4); // after
+    expect(completedYearsSince("22 Aug 2022", new Date(2023, 6, 1))).toBe(0); // <1
+  });
+
+  it("reads a day-less label as the 1st", () => {
+    expect(completedYearsSince("Aug 2022", new Date(2026, 7, 1))).toBe(4);
+    expect(completedYearsSince("Aug 2022", new Date(2026, 6, 31))).toBe(3);
   });
 
   it("returns 0 for an unparseable label", () => {
     expect(completedYearsSince("whenever")).toBe(0);
+    expect(completedYearsSince("22 whenever 2022")).toBe(0);
   });
 });

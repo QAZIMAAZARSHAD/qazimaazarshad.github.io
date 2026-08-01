@@ -31,19 +31,43 @@ const MONTH_ABBR = [
   "dec",
 ];
 
+interface StartDate {
+  month: number;
+  year: number;
+  /** Day of month; 1 when the label carries no day. */
+  day: number;
+}
+
+/**
+ * Parse a start label. Accepts "Mon YYYY" ("Aug 2022") and, where the exact
+ * date matters, a leading day ("22 Aug 2022"). Returns null if unparseable.
+ */
+function parseStart(startLabel: string): StartDate | null {
+  const parts = startLabel.trim().split(/\s+/);
+  const leadingDay = Number.parseInt(parts[0] ?? "", 10);
+  const hasDay = !Number.isNaN(leadingDay);
+  const [mon, yearStr] = hasDay ? parts.slice(1) : parts;
+
+  const month = MONTH_ABBR.indexOf((mon ?? "").slice(0, 3).toLowerCase());
+  const year = Number.parseInt(yearStr ?? "", 10);
+  if (month < 0 || Number.isNaN(year)) return null;
+
+  return { month, year, day: hasDay ? leadingDay : 1 };
+}
+
 /**
  * Live tenure label from a "Mon YYYY" start (e.g. "Mar 2026") to now, counted
  * inclusively the way LinkedIn does — so an ongoing role stays current without
  * a hardcoded duration. Returns e.g. "5 mos", "1 yr", "2 yrs 3 mos".
+ * Month granularity: any day in the label is ignored, as on a CV.
  */
 export function durationSince(
   startLabel: string,
   now: Date = new Date(),
 ): string {
-  const [mon, yearStr] = startLabel.trim().split(/\s+/);
-  const m = MONTH_ABBR.indexOf((mon ?? "").slice(0, 3).toLowerCase());
-  const year = Number.parseInt(yearStr ?? "", 10);
-  if (m < 0 || Number.isNaN(year)) return "";
+  const start = parseStart(startLabel);
+  if (!start) return "";
+  const { month: m, year } = start;
 
   const months =
     Math.max(0, (now.getFullYear() - year) * 12 + (now.getMonth() - m)) + 1;
@@ -57,20 +81,24 @@ export function durationSince(
 }
 
 /**
- * Whole years completed since a "Mon YYYY" start (e.g. "Aug 2022"), floored —
- * i.e. it only ticks up on the anniversary month. Used to keep "years of
- * experience" dynamic. Returns 0 for an invalid/future start.
+ * Whole years completed since a start date, floored — so it ticks up on the
+ * anniversary itself, not at the top of the anniversary month. Give it the day
+ * ("22 Aug 2022") when the exact date matters; a bare "Mon YYYY" is read as the
+ * 1st. Used to keep "years of experience" dynamic. Returns 0 for an
+ * invalid/future start.
  */
 export function completedYearsSince(
   startLabel: string,
   now: Date = new Date(),
 ): number {
-  const [mon, yearStr] = startLabel.trim().split(/\s+/);
-  const m = MONTH_ABBR.indexOf((mon ?? "").slice(0, 3).toLowerCase());
-  const year = Number.parseInt(yearStr ?? "", 10);
-  if (m < 0 || Number.isNaN(year)) return 0;
+  const start = parseStart(startLabel);
+  if (!start) return 0;
+  const { month: m, year, day } = start;
 
   let years = now.getFullYear() - year;
-  if (now.getMonth() < m) years -= 1; // anniversary month not reached yet this year
+  const monthsIn = now.getMonth() - m;
+  // Anniversary not reached yet this year: earlier month, or the right month
+  // but before the day.
+  if (monthsIn < 0 || (monthsIn === 0 && now.getDate() < day)) years -= 1;
   return Math.max(0, years);
 }

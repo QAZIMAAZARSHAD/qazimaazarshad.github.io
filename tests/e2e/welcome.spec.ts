@@ -216,6 +216,10 @@ test.describe("Welcome screen", () => {
       await page.evaluate(() => document.fonts.ready);
       await openDoor(page);
       await settled(page);
+      // data-settled flips when the flash ends, which is a beat before the
+      // final greeting has finished painting. Under parallel load the shot
+      // could otherwise catch it mid-transition.
+      await page.waitForTimeout(400); // NOSONAR
 
       await expect(welcome(page)).toHaveScreenshot("welcome.png");
     });

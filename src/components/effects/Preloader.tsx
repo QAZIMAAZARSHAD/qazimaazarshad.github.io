@@ -14,8 +14,8 @@ const MAX_WELCOME_MS = 9000;
 
 type Phase = "loading" | "gate" | "welcome" | "done";
 
-/** Gentle — it should set a mood, not announce itself. */
-const INTRO_VOLUME = 0.4;
+/** Played as mastered — the visitor opened the door, so let it land. */
+const INTRO_VOLUME = 1;
 
 /** Ease the track out rather than cutting it dead when the intro ends. */
 function fadeOutAndStop(audio: HTMLAudioElement) {
