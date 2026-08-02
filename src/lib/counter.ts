@@ -21,12 +21,17 @@ export function countsForReal(): boolean {
 /**
  * Read a counter without moving it. Null if it can't be reached.
  *
+ * Held to the same rule as incrementing, even though reading changes nothing:
+ * otherwise every dev refresh and every e2e test calls out just to render a
+ * number, which is exactly what happened before the guard was here rather than
+ * at one call site.
+ *
  * The trailing slash is load-bearing: without it the API answers 301, and that
  * redirect carries no access-control-allow-origin, so the browser abandons the
  * request before following it. Reads work from curl and fail in the page.
  */
 export async function readCount(path: string): Promise<number | null> {
-  if (!path) return null;
+  if (!path || !countsForReal()) return null;
   try {
     const response = await fetch(`${BASE}/${path}/`);
     if (!response.ok) return null;

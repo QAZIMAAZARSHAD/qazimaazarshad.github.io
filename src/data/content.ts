@@ -181,8 +181,18 @@ export const analytics = {
  * counts, so the feature degrades to a plain reaction rather than breaking.
  *
  * The key is public by necessity: it ships in the bundle, as it must for any
- * backend-less form. Web3Forms rate-limits it, the form carries a honeypot, and
- * a visitor is only counted once, which together keep the inbox sane.
+ * backend-less form. Web3Forms treat it as an alias for an email address rather
+ * than a secret, and it can only send mail to me.
+ *
+ * Be clear about what actually limits abuse, which is Web3Forms' own rate
+ * limiting and quota — and nothing else. The honeypot field only catches bots
+ * that fill in every input of a rendered form, and there is no rendered form
+ * here; anyone POSTing the key directly is unaffected by it. The one-per-browser
+ * rule is a courtesy to honest visitors, not a control. If the quota is ever
+ * burned the relay fails silently by design, so the first sign would be mail
+ * that stops arriving. A real challenge (hCaptcha or Turnstile, both supported)
+ * is the only thing that would raise the cost, at the price of putting a puzzle
+ * in front of a one-tap heart.
  */
 export const reactionKey = "b331f813-debd-4cea-bddb-5e7b3ea36e80";
 

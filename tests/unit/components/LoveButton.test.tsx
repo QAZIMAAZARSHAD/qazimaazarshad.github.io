@@ -5,6 +5,7 @@ import { LoveButton } from "@/components/footer/LoveButton";
 const heart = () => screen.getByRole("button", { name: /love this site/i });
 const calls = () =>
   vi.mocked(globalThis.fetch).mock.calls.map((c) => String(c[0]));
+const relays = () => calls().filter((url) => url.includes("web3forms")).length;
 
 function mockFetch(count = 41) {
   const fetchMock = vi.fn(
@@ -51,9 +52,13 @@ describe("LoveButton", () => {
 
     expect(screen.getByText(/thank you/i)).toBeInTheDocument();
     expect(screen.getByText(/42 loves/)).toBeInTheDocument();
+    // aria-disabled, not aria-pressed: it can be given but never taken back.
     expect(
       screen.getByRole("button", { name: /you loved this site/i }),
-    ).toHaveAttribute("aria-pressed", "true");
+    ).toHaveAttribute("aria-disabled", "true");
+    // The visible copy is hidden from assistive tech, so the live region is
+    // the only thing that speaks — and focus moves shortly after.
+    expect(screen.getByText(/loved\. 42 so far/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/say something/i)).toBeInTheDocument();
   });
 
@@ -67,6 +72,52 @@ describe("LoveButton", () => {
     render(<LoveButton />);
     fireEvent.click(heart());
     expect(screen.getByText(/1 love$/)).toBeInTheDocument();
+  });
+
+  // The read is sent before the tap and answers after it, so taking it at face
+  // value would wipe the love the visitor just gave.
+  it("does not let a late read undo the tap", async () => {
+    let settle: (r: Response) => void = () => {};
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        (url: string) =>
+          new Promise<Response>((resolve) => {
+            if (String(url).endsWith("/up")) {
+              resolve(new Response(JSON.stringify({ count: 42 })));
+            } else {
+              settle = resolve;
+            }
+          }),
+      ),
+    );
+
+    render(<LoveButton />);
+    fireEvent.click(heart());
+    // The read finally answers with the total from *before* the bump.
+    settle(new Response(JSON.stringify({ count: 41 })));
+
+    await waitFor(() =>
+      expect(screen.getByText(/42 loves/)).toBeInTheDocument(),
+    );
+    expect(screen.queryByText(/41 loves/)).toBeNull();
+  });
+
+  // Restoring the note box on every visit would leave an open mail button in
+  // the footer that a returning visitor could use without limit.
+  it("offers the note once, not on every later visit", async () => {
+    const { unmount } = render(<LoveButton />);
+    fireEvent.click(heart());
+    expect(screen.getByPlaceholderText(/say something/i)).toBeInTheDocument();
+    unmount();
+
+    render(<LoveButton />);
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /you loved this site/i }),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.queryByPlaceholderText(/say something/i)).toBeNull();
   });
 
   it("only lets a visitor love it once", async () => {
@@ -87,7 +138,7 @@ describe("LoveButton", () => {
     expect(calls().filter((url) => url.endsWith("/up")).length).toBe(after);
   });
 
-  it("sends a note only when one is written", async () => {
+  it("relays the note that was written, and only once", async () => {
     render(<LoveButton />);
     fireEvent.click(heart());
 
@@ -97,7 +148,18 @@ describe("LoveButton", () => {
     fireEvent.change(screen.getByPlaceholderText(/say something/i), {
       target: { value: "the door is lovely" },
     });
+
+    const before = relays();
     fireEvent.click(send);
+    // The form stays mounted through its exit animation, so a second press
+    // lands on a live button.
+    fireEvent.click(send);
+
+    expect(relays() - before).toBe(1);
+    const sent = vi.mocked(globalThis.fetch).mock.calls;
+    expect(String(sent[sent.length - 1][1]?.body)).toContain(
+      "the door is lovely",
+    );
 
     await waitFor(() =>
       expect(screen.queryByPlaceholderText(/say something/i)).toBeNull(),

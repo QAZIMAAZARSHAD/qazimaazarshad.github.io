@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Heart, Send } from "lucide-react";
 import { analytics } from "@/data/content";
-import { bumpCount, countsForReal, readCount } from "@/lib/counter";
+import { bumpCount, readCount } from "@/lib/counter";
 import { hasLoved, rememberLove, sendLove } from "@/lib/reactions";
 import { cn } from "@/lib/utils";
 
@@ -30,24 +30,31 @@ export function LoveButton() {
   const [note, setNote] = useState("");
   const [burst, setBurst] = useState(0);
   const noteRef = useRef<HTMLInputElement>(null);
+  const focusTimer = useRef(0);
+  const tapped = useRef(false);
+  const sent = useRef(false);
 
   useEffect(() => {
-    if (hasLoved()) setStage("loved");
-    // Held to the same rule as incrementing: local dev and CI shouldn't be
-    // calling out on every page load just to render a number.
-    if (!countsForReal()) return;
+    // Straight to the end for someone who has already given one. The note box
+    // is offered once, in the moment — restoring it every visit would leave an
+    // open, unbounded mail button sitting in the footer.
+    if (hasLoved()) setStage("thanked");
 
     let alive = true;
     void readCount(COUNTER).then((value) => {
-      if (alive && value !== null) setCount(value);
+      // A tap while this was in flight already moved the number, and this
+      // reply predates the bump, so it would undo it.
+      if (alive && value !== null && !tapped.current) setCount(value);
     });
     return () => {
       alive = false;
+      window.clearTimeout(focusTimer.current);
     };
   }, []);
 
   const love = () => {
     if (stage !== "idle") return;
+    tapped.current = true;
     setStage("loved");
     setBurst((n) => n + 1);
     // Counted straight away: the number is the feedback, and waiting on a
@@ -56,19 +63,36 @@ export function LoveButton() {
     rememberLove();
 
     void sendLove();
-    void bumpCount(COUNTER);
+    // The bump replies with the real total, which settles the guess above.
+    void bumpCount(COUNTER).then((total) => {
+      if (total !== null) setCount(total);
+    });
     // Let them say more, if they want to.
-    window.setTimeout(() => noteRef.current?.focus(), 400);
+    focusTimer.current = window.setTimeout(() => noteRef.current?.focus(), 400);
   };
 
   const send = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!note.trim()) return;
+    // Latched in a ref, not read from state: the form stays mounted through
+    // its exit animation holding this render's handler, so a second press
+    // would see a stale "loved" and relay the same note twice.
+    if (sent.current || !note.trim()) return;
+    sent.current = true;
     void sendLove(note);
     setStage("thanked");
   };
 
   const filled = stage !== "idle";
+
+  // The visible copy is aria-hidden, so this is the only thing spoken. It has
+  // to carry the acknowledgement and the new total, since focus is pulled to
+  // the note field a beat later with no other warning.
+  let announcement = "";
+  if (stage === "loved") {
+    announcement = count === null ? "Loved." : `Loved. ${count} so far.`;
+  } else if (stage === "thanked") {
+    announcement = "Note sent. Thank you.";
+  }
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -76,12 +100,11 @@ export function LoveButton() {
         <button
           type="button"
           onClick={love}
-          aria-pressed={filled}
+          aria-disabled={filled}
           aria-label={filled ? "You loved this site" : "Love this site"}
           className="group relative grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-rose-400/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/60"
         >
           <motion.span
-            key={burst}
             animate={
               reduceMotion || !burst ? undefined : { scale: [1, 1.45, 1] }
             }
@@ -119,12 +142,15 @@ export function LoveButton() {
           )}
         </button>
 
-        <p className="text-left font-mono text-xs text-ink-400">
+        <p aria-hidden className="text-left font-mono text-xs text-ink-400">
           <span className="block text-ink-300">
             {stage === "idle" ? "Loved the site?" : "Thank you — that lands."}
           </span>
           {count !== null && (
-            <span className="tabular-nums text-ink-500">
+            <span
+              data-testid="love-count"
+              className="tabular-nums text-ink-500"
+            >
               {count.toLocaleString()} {count === 1 ? "love" : "loves"}
             </span>
           )}
@@ -167,9 +193,7 @@ export function LoveButton() {
         )}
       </AnimatePresence>
 
-      <output className="sr-only">
-        {stage === "thanked" ? "Note sent. Thank you." : ""}
-      </output>
+      <output className="sr-only">{announcement}</output>
     </div>
   );
 }

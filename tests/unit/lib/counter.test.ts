@@ -36,8 +36,15 @@ describe("counter", () => {
     );
   });
 
-  // Reading is always allowed: it shows the number without changing it.
+  // Reading changes nothing, but it is held to the same rule so that dev and
+  // CI make no network calls at all.
+  it("refuses to read from localhost either", async () => {
+    expect(await readCount("ns/key")).toBeNull();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
   it("reads without the /up that would move it", async () => {
+    testFlag().__VISIT_COUNTER_TEST__ = true;
     expect(await readCount("ns/key")).toBe(7);
     expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).not.toMatch(
       /\/up$/,
@@ -48,6 +55,7 @@ describe("counter", () => {
   // no CORS header, so the browser drops the request. It reads fine from curl
   // and silently fails in the page, which is how it reached production.
   it("asks for the slashed path, so the read isn't lost to a redirect", async () => {
+    testFlag().__VISIT_COUNTER_TEST__ = true;
     await readCount("ns/key");
     expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).toMatch(
       /\/ns\/key\/$/,
@@ -55,6 +63,7 @@ describe("counter", () => {
   });
 
   it("returns null rather than throwing when it can't be reached", async () => {
+    testFlag().__VISIT_COUNTER_TEST__ = true;
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => {

@@ -79,7 +79,7 @@ test.beforeEach(async ({ page }) => {
   // Hide always-on floating widgets so they don't leak into section snapshots.
   await page.addStyleTag({
     content:
-      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"],[data-testid="visit-counter"],[aria-label="Section navigation"],.qma-cursor-layer{display:none !important}',
+      '[aria-label="Ask my portfolio — AI assistant"],[aria-label="Back to top"],[data-testid="visit-counter"],[data-testid="love-count"],[aria-label="Section navigation"],.qma-cursor-layer{display:none !important}',
   });
 });
 
