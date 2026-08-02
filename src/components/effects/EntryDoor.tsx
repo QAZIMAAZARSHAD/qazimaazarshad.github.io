@@ -19,9 +19,8 @@ function doorState(opening: boolean, ajar: boolean, reduceMotion: boolean) {
   else if (opening) swing = OPEN_DEG;
   else if (ajar) swing = AJAR_DEG;
 
-  let spill = "opacity-25";
-  if (opening) spill = "opacity-100";
-  else if (ajar) spill = "opacity-80";
+  // Only ever seen before the flight starts, so there is no opening value.
+  const spill = ajar ? "opacity-80" : "opacity-25";
 
   const pull = reduceMotion
     ? { opacity: opening ? 0 : 1 }
@@ -138,17 +137,21 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
                 flightSeconds={PULL_MS / 1000}
               />
               {/* The glow the room spills around the frame once it's ajar. */}
-              <span
-                aria-hidden
-                className={cn(
-                  "absolute -inset-8 rounded-[2.5rem] bg-accent-400/30 transition-opacity duration-500",
-                  // Dropped for the flight: a 64px blur re-rasterised at 13x is
-                  // the costliest thing on screen, and the room's own light
-                  // covers the spill by then.
-                  opening ? "opacity-0" : "blur-3xl",
-                  opening ? "" : spill,
-                )}
-              />
+              {/* Unmounted for the flight rather than faded: a 64px blur
+                  re-rasterised at 13x is the costliest thing on screen, and by
+                  then the room's own light covers the spill. Fading it instead
+                  left a hard-edged plate behind, because filter is not a
+                  transitioned property and vanished a frame ahead of the
+                  opacity. */}
+              {!opening && (
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute -inset-8 rounded-[2.5rem] bg-accent-400/30 blur-3xl transition-opacity duration-500",
+                    spill,
+                  )}
+                />
+              )}
 
               <motion.span
                 aria-hidden

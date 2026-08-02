@@ -1,10 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+import resolveConfig from "tailwindcss/resolveConfig";
 import tailwind from "../../tailwind.config.js";
-import defaultColors from "tailwindcss/colors";
 
-const SRC = resolve(process.cwd(), "src");
+const ROOT = process.cwd();
+const SRC = resolve(ROOT, "src");
 
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((entry) => {
@@ -14,36 +15,48 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-const extended = (tailwind.theme?.extend?.colors ?? {}) as Record<
+/**
+ * The resolved theme, not `theme.extend`. Reading the extension alone gets it
+ * wrong in both directions: it skips shades that a built-in scale never had
+ * (cyan-1000 is just as dead as accent-950), and it would quietly stop covering
+ * a palette that ever moved out of `extend` — the one case where unlisted
+ * shades really are deleted rather than merged.
+ */
+const palettes = resolveConfig(tailwind).theme.colors as unknown as Record<
   string,
-  Record<string, string>
+  Record<string, string> | string
 >;
 
-/**
- * Only palettes invented here can produce a dead class. `extend` merges with
- * Tailwind's defaults, so a name it already ships — cyan — keeps its whole
- * scale, and listing two shades doesn't remove the rest. `accent` and `ink`
- * exist nowhere else, so an unlisted shade of those resolves to nothing.
- */
-const builtIn = new Set(Object.keys(defaultColors));
-const palettes = Object.fromEntries(
-  Object.entries(extended).filter(([name]) => !builtIn.has(name)),
-);
+const defines = (palette: string, shade: string): boolean => {
+  const scale = palettes[palette];
+  if (typeof scale !== "object") return false;
+  return Object.prototype.hasOwnProperty.call(scale, shade);
+};
+
+const names = Object.keys(palettes).join("|");
+
+/** `text-accent-400`, `bg-ink-900/40`, `from-cyan-300`. */
+const CLASS = new RegExp(`-(${names})-(\\d+)`, "g");
+/** `shadow-[0_0_10px_theme(colors.accent.400)]`, which the class form misses. */
+const THEME = new RegExp(`theme\\(\\s*['"]?colors\\.(${names})\\.(\\d+)`, "g");
 
 describe("colour palette", () => {
-  // A shade that isn't in the config produces no CSS at all — the element
+  // A shade the theme doesn't define produces no CSS at all — the element
   // silently keeps whatever it inherited. A door monogram written as
   // text-accent-950 read as pale lavender on a white wall and looked designed.
-  it("never names a shade the config doesn't define", () => {
-    const names = Object.keys(palettes).join("|");
-    const used = new RegExp(`-(${names})-(\\d+)`, "g");
+  it("never names a shade the theme doesn't define", () => {
+    const scanned = [...sourceFiles(SRC), resolve(ROOT, "index.html")];
 
     const offenders: string[] = [];
-    for (const file of sourceFiles(SRC)) {
+    for (const file of scanned) {
       const source = readFileSync(file, "utf8");
-      for (const [, palette, shade] of source.matchAll(used)) {
-        if (!palettes[palette][shade]) {
-          offenders.push(`${file.replace(SRC, "src")}: ${palette}-${shade}`);
+      for (const pattern of [CLASS, THEME]) {
+        for (const [, palette, shade] of source.matchAll(pattern)) {
+          if (!defines(palette, shade)) {
+            offenders.push(
+              `${file.replace(ROOT + "/", "")}: ${palette}-${shade}`,
+            );
+          }
         }
       }
     }
@@ -51,11 +64,21 @@ describe("colour palette", () => {
     expect(offenders, offenders.join("\n")).toEqual([]);
   });
 
-  it("is actually scanning something", () => {
+  it("is scanning real files against a real theme", () => {
     expect(sourceFiles(SRC).length).toBeGreaterThan(20);
-    expect(Object.keys(palettes)).toContain("accent");
-    expect(Object.keys(palettes)).toContain("ink");
-    // cyan extends a built-in scale, so it is deliberately not audited.
-    expect(Object.keys(palettes)).not.toContain("cyan");
+    // Invented here, so unlisted shades of it resolve to nothing.
+    expect(defines("accent", "400")).toBe(true);
+    expect(defines("accent", "950")).toBe(false);
+    // Extends a built-in scale, which `extend` merges rather than replaces.
+    expect(defines("cyan", "100")).toBe(true);
+    expect(defines("cyan", "1000")).toBe(false);
+  });
+
+  // The class form would not have caught this one.
+  it("reads shades named through theme() as well as through classes", () => {
+    const sample = "shadow-[0_0_10px_theme(colors.accent.950)]";
+    const [, palette, shade] = [...sample.matchAll(THEME)][0];
+    expect([palette, shade]).toEqual(["accent", "950"]);
+    expect(defines(palette, shade)).toBe(false);
   });
 });

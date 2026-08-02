@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { DoorRoom } from "@/components/effects/DoorRoom";
 
 const room = (overrides: Partial<Parameters<typeof DoorRoom>[0]> = {}) =>
@@ -29,22 +29,33 @@ describe("DoorRoom", () => {
     expect(screen.queryByRole("img")).toBeNull();
   });
 
-  it("travels only when motion is allowed", () => {
-    // Scoped to each render's own container: three rooms share document.body,
-    // so a global query would match all of them.
+  // Driven by rerendering a mounted room rather than mounting three: with
+  // initial={false} a fresh mount jumps straight to its target, which can't
+  // tell "parked at rest" from "parked at the end of the flight".
+  it("travels when the door opens, and not when motion is reduced", async () => {
     const corridor = (view: ReturnType<typeof render>) =>
       view.container.querySelector<HTMLElement>('[data-testid="door-corridor"]')
         ?.style.transform ?? "";
 
-    const parked = corridor(room({ opening: false, reduceMotion: false }));
-    const flying = corridor(room({ opening: true, reduceMotion: false }));
-    const still = corridor(room({ opening: true, reduceMotion: true }));
+    const view = room({ opening: false, reduceMotion: false });
+    const parked = corridor(view);
 
-    // Guard against the whole comparison being empty-vs-empty, which is how
-    // this test previously passed while watching the wrong element.
-    expect(flying).toMatch(/scale/);
-    expect(flying).not.toBe(parked);
-    // Opening under reduced motion looks exactly like sitting still.
-    expect(still).toBe(parked);
+    view.rerender(
+      <DoorRoom opening reduceMotion={false} flightSeconds={0.78} />,
+    );
+    // Polled, because the transform is written frame by frame rather than on
+    // the rerender itself. Guards against the comparison being empty-vs-empty,
+    // which is how this test once passed while watching a static element.
+    await waitFor(() => expect(corridor(view)).toMatch(/scale/), {
+      timeout: 4000,
+    });
+    expect(corridor(view)).not.toBe(parked);
+
+    const reduced = room({ opening: false, reduceMotion: true });
+    const before = corridor(reduced);
+    reduced.rerender(<DoorRoom opening reduceMotion flightSeconds={0.78} />);
+    // Given the same chance to move, it doesn't.
+    await new Promise((r) => setTimeout(r, 120));
+    expect(corridor(reduced), "opening changes nothing").toBe(before);
   });
 });

@@ -55,7 +55,7 @@ export function DoorRoom({
         ))}
 
         {/* The mark at the end of it, which the camera passes through. */}
-        <span className="absolute inset-0 grid scale-[0.55] place-items-center font-display text-[2.75rem] font-extrabold tracking-tight text-accent-900">
+        <span className="absolute inset-0 grid scale-[0.32] place-items-center font-display text-[2.75rem] font-extrabold tracking-tight text-accent-900">
           QMA
         </span>
       </motion.span>
