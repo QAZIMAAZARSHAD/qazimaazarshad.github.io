@@ -1,6 +1,7 @@
 import { BackToTop } from "@/components/contact/BackToTop";
 import { VisitCounter } from "@/components/analytics/VisitCounter";
 import { FooterBackdrop } from "@/components/footer/FooterBackdrop";
+import { LoveButton } from "@/components/footer/LoveButton";
 import { SignatureName } from "@/components/footer/SignatureName";
 import { profile } from "@/data/content";
 
@@ -36,6 +37,10 @@ export function Footer() {
         </div>
 
         <div className="mx-auto mt-8 max-w-6xl">
+          <div className="mb-10 flex justify-center">
+            <LoveButton />
+          </div>
+
           <div
             aria-hidden
             className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent"

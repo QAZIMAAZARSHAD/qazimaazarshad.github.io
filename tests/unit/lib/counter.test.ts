@@ -1,0 +1,63 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { bumpCount, countsForReal, readCount } from "@/lib/counter";
+
+const testFlag = () =>
+  window as unknown as { __VISIT_COUNTER_TEST__?: boolean };
+
+beforeEach(() => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () => new Response(JSON.stringify({ count: 7 }), { status: 200 }),
+    ),
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  delete testFlag().__VISIT_COUNTER_TEST__;
+});
+
+describe("counter", () => {
+  // The single most important behaviour here: developing the site, or running
+  // CI, must never move the numbers shown to real visitors.
+  it("refuses to increment from localhost", async () => {
+    expect(window.location.hostname).toBe("localhost");
+    expect(countsForReal()).toBe(false);
+    expect(await bumpCount("ns/key")).toBeNull();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it("increments once a test opts in", async () => {
+    testFlag().__VISIT_COUNTER_TEST__ = true;
+    expect(await bumpCount("ns/key")).toBe(7);
+    expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).toMatch(
+      /\/ns\/key\/up$/,
+    );
+  });
+
+  // Reading is always allowed: it shows the number without changing it.
+  it("reads without the /up that would move it", async () => {
+    expect(await readCount("ns/key")).toBe(7);
+    expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).toMatch(
+      /\/ns\/key$/,
+    );
+  });
+
+  it("returns null rather than throwing when it can't be reached", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("blocked");
+      }),
+    );
+    await expect(readCount("ns/key")).resolves.toBeNull();
+  });
+
+  it("does nothing without a path", async () => {
+    testFlag().__VISIT_COUNTER_TEST__ = true;
+    expect(await readCount("")).toBeNull();
+    expect(await bumpCount("")).toBeNull();
+    expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+});

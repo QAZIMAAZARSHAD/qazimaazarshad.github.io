@@ -1,25 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { analytics } from "@/data/content";
+import { bumpCount } from "@/lib/counter";
 
 const PATH = analytics.visitCounter;
 const COUNT_UP_MS = 1200;
-
-/** CounterAPI returns { count: number }; keep only the digits defensively. */
-function parseCount(raw: unknown): number | null {
-  if (typeof raw !== "string" && typeof raw !== "number") return null;
-  const digits = String(raw).replace(/\D/g, "");
-  return digits ? Number.parseInt(digits, 10) : null;
-}
-
-/** Skip counting on local dev so it never inflates the real total (tests opt in). */
-function shouldCount(): boolean {
-  if (!PATH) return false;
-  const w = window as unknown as { __VISIT_COUNTER_TEST__?: boolean };
-  if (w.__VISIT_COUNTER_TEST__) return true;
-  const host = window.location.hostname;
-  return host !== "localhost" && host !== "127.0.0.1" && host !== "::1";
-}
 
 /**
  * Footer visit counter backed by CounterAPI.dev. Each real load bumps the total
@@ -36,17 +21,10 @@ export function VisitCounter() {
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!shouldCount()) return;
     let alive = true;
-    fetch(`https://api.counterapi.dev/v1/${PATH}/up`)
-      .then((r) =>
-        r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)),
-      )
-      .then((data) => {
-        const n = parseCount(data?.count);
-        if (alive && n != null) setCount(n);
-      })
-      .catch(() => {});
+    void bumpCount(PATH).then((n) => {
+      if (alive && n !== null) setCount(n);
+    });
     return () => {
       alive = false;
     };

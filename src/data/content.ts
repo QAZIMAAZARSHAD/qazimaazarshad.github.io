@@ -171,7 +171,20 @@ export const heroTaglines = [
  */
 export const analytics = {
   visitCounter: "qazimaazarshad-portfolio/visits",
+  /** Counter behind the footer's "loved it" heart. Same caveat as above. */
+  loveCounter: "qazimaazarshad-portfolio/loves",
 } as const;
+
+/**
+ * Web3Forms access key, which relays the footer's heart to my inbox — there is
+ * no backend here to receive it. Empty means no email is sent; the heart still
+ * counts, so the feature degrades to a plain reaction rather than breaking.
+ *
+ * The key is public by necessity: it ships in the bundle, as it must for any
+ * backend-less form. Web3Forms rate-limits it, the form carries a honeypot, and
+ * a visitor is only counted once, which together keep the inbox sane.
+ */
+export const reactionKey = "b331f813-debd-4cea-bddb-5e7b3ea36e80";
 
 export const socials: SocialLink[] = [
   {
