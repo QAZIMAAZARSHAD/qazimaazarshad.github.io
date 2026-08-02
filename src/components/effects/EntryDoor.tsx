@@ -2,6 +2,7 @@ import { useEffect, useState, type RefObject } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { DoorBackdrop } from "./DoorBackdrop";
+import { DoorRoom } from "./DoorRoom";
 
 /** How far the door comes off the jamb on approach, and when opened. */
 const AJAR_DEG = -24;
@@ -131,17 +132,21 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
                   "group-focus-visible:ring-2 group-focus-visible:ring-accent-400/60 group-focus-visible:ring-offset-4 group-focus-visible:ring-offset-ink-950",
               )}
             >
-              {/* The lit room on the other side, and the glow it spills around the
-              frame once the door is off the jamb. */}
-              <span
-                aria-hidden
-                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-300 via-cyan-200 to-accent-200"
+              <DoorRoom
+                opening={opening}
+                reduceMotion={!!reduceMotion}
+                flightSeconds={PULL_MS / 1000}
               />
+              {/* The glow the room spills around the frame once it's ajar. */}
               <span
                 aria-hidden
                 className={cn(
-                  "absolute -inset-8 rounded-[2.5rem] bg-accent-400/30 blur-3xl transition-opacity duration-500",
-                  spill,
+                  "absolute -inset-8 rounded-[2.5rem] bg-accent-400/30 transition-opacity duration-500",
+                  // Dropped for the flight: a 64px blur re-rasterised at 13x is
+                  // the costliest thing on screen, and the room's own light
+                  // covers the spill by then.
+                  opening ? "opacity-0" : "blur-3xl",
+                  opening ? "" : spill,
                 )}
               />
 

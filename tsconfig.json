@@ -19,7 +19,10 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // Only so the palette test can import tailwind.config.js, which ships no
+    // types. It pulls that one file into the program and nothing else.
+    "allowJs": true
   },
   "include": ["src", "tests/unit", "tests/setup.ts"],
   "exclude": ["dist", "node_modules"]
