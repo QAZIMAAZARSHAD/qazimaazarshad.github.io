@@ -50,11 +50,10 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
-  const { swing, spill, pull } = doorState(
-    opening,
-    hovered || focused,
-    !!reduceMotion,
-  );
+  // The door eases off the jamb on approach, and approach means the pointer.
+  // Focus lands here programmatically the moment the intro arrives, so treating
+  // that as approach left the door hanging open before anyone had touched it.
+  const { swing, spill, pull } = doorState(opening, hovered, !!reduceMotion);
 
   return (
     // Backdrop and bloom stay siblings of the animated column: a transformed
@@ -113,9 +112,9 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
             onMouseLeave={() => setHovered(false)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            className="relative flex flex-col items-center gap-6 rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-950"
+            className="group relative flex flex-col items-center gap-6 focus-visible:outline-none"
           >
-            <span className="relative block h-56 w-40 [perspective:1400px] sm:h-64 sm:w-44">
+            <span className="relative block h-56 w-40 rounded-2xl [perspective:1400px] group-focus-visible:ring-2 group-focus-visible:ring-accent-400/60 group-focus-visible:ring-offset-4 group-focus-visible:ring-offset-ink-950 sm:h-64 sm:w-44">
               {/* The lit room on the other side, and the glow it spills around the
               frame once the door is off the jamb. */}
               <span

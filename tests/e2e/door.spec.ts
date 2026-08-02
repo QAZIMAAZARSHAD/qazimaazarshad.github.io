@@ -27,6 +27,30 @@ test.describe("Entry door", () => {
     await expect(page.getByTestId("welcome")).toBeVisible({ timeout: 10_000 });
   });
 
+  // Regression: focus is sent to the door the moment the intro arrives, and
+  // that was treated as approach — so the door hung open, and its focus ring
+  // boxed in the caption, before anyone had touched anything.
+  test("arrives shut, and only eases open under the pointer", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(door(page)).toBeFocused({ timeout: 10_000 });
+    await page.waitForTimeout(700); // NOSONAR — past any entrance transition
+
+    const panel = () =>
+      door(page).evaluate(
+        (el) => getComputedStyle(el.querySelector(".origin-left")!).transform,
+      );
+
+    expect(await panel(), "shut on arrival").toBe("none");
+
+    await door(page).hover();
+    await expect.poll(panel, { timeout: 3_000 }).not.toBe("none");
+
+    await page.mouse.move(5, 5);
+    await expect.poll(panel, { timeout: 3_000 }).toBe("none");
+  });
+
   // A focused door with no visible ring is unusable by keyboard, and hovering
   // then moving the mouse away used to wipe the indicator while it was still
   // focused.
@@ -41,10 +65,12 @@ test.describe("Entry door", () => {
     await page.waitForTimeout(300); // NOSONAR — the colour transition
 
     const state = await door(page).evaluate((el) => {
-      const s = getComputedStyle(el);
+      // The ring is on the doorway, so that it frames the door rather than
+      // boxing in the caption underneath it.
+      const frame = el.querySelector("span.relative.block")!;
       return {
         focused: document.activeElement === el,
-        shadow: s.boxShadow,
+        shadow: getComputedStyle(frame).boxShadow,
         label: (el.textContent ?? "").trim(),
       };
     });

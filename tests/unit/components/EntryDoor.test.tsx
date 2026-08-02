@@ -65,9 +65,24 @@ describe("EntryDoor", () => {
 
   it("shows a focus ring rather than removing the outline outright", () => {
     const { door } = renderDoor();
-    expect(door.className).toContain("focus-visible:ring-2");
+    // The ring hugs the doorway rather than the whole button, which would draw
+    // a box around the caption as well and read as part of the frame.
+    const frame = door.querySelector("span.relative.block");
+    expect(frame?.className).toContain("group-focus-visible:ring-2");
     // Bare outline-none would leave a keyboard visitor with no indicator.
     expect(door.className).not.toMatch(/(^|\s)outline-none(\s|$)/);
+  });
+
+  // Regression: focus arrives programmatically the moment the intro does, so
+  // treating it as approach left the door hanging open before anyone touched it.
+  it("stays shut when focus arrives on its own", () => {
+    const { door } = renderDoor();
+    const panel = door.querySelector(".origin-left")!;
+    const before = panel.getAttribute("style");
+
+    fireEvent.focus(door);
+
+    expect(panel.getAttribute("style")).toBe(before);
   });
 
   it("exposes its button through the forwarded ref, so focus can be sent to it", () => {
