@@ -18,11 +18,17 @@ export function countsForReal(): boolean {
   return host !== "localhost" && host !== "127.0.0.1" && host !== "::1";
 }
 
-/** Read a counter without moving it. Null if it can't be reached. */
+/**
+ * Read a counter without moving it. Null if it can't be reached.
+ *
+ * The trailing slash is load-bearing: without it the API answers 301, and that
+ * redirect carries no access-control-allow-origin, so the browser abandons the
+ * request before following it. Reads work from curl and fail in the page.
+ */
 export async function readCount(path: string): Promise<number | null> {
   if (!path) return null;
   try {
-    const response = await fetch(`${BASE}/${path}`);
+    const response = await fetch(`${BASE}/${path}/`);
     if (!response.ok) return null;
     return parseCount(((await response.json()) as { count?: unknown })?.count);
   } catch {

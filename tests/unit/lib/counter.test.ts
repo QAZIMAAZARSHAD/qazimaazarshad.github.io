@@ -39,8 +39,18 @@ describe("counter", () => {
   // Reading is always allowed: it shows the number without changing it.
   it("reads without the /up that would move it", async () => {
     expect(await readCount("ns/key")).toBe(7);
+    expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).not.toMatch(
+      /\/up$/,
+    );
+  });
+
+  // Without the trailing slash the API answers 301, and that redirect carries
+  // no CORS header, so the browser drops the request. It reads fine from curl
+  // and silently fails in the page, which is how it reached production.
+  it("asks for the slashed path, so the read isn't lost to a redirect", async () => {
+    await readCount("ns/key");
     expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).toMatch(
-      /\/ns\/key$/,
+      /\/ns\/key\/$/,
     );
   });
 
