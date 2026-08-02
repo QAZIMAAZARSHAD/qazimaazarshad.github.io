@@ -1,4 +1,4 @@
-import { useState, type RefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { DoorBackdrop } from "./DoorBackdrop";
@@ -49,6 +49,16 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
   // Apart, so a mouseleave can't unlight a door that is still focused.
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+
+  // :focus-visible would normally keep the ring to keyboard users, but focus is
+  // put on the door before anyone has done anything, and the browser counts
+  // that as keyboard-driven. So the ring waits for a real key.
+  const [keyboardUsed, setKeyboardUsed] = useState(false);
+  useEffect(() => {
+    const onKey = () => setKeyboardUsed(true);
+    window.addEventListener("keydown", onKey, { once: true });
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // The door eases off the jamb on approach, and approach means the pointer.
   // Focus lands here programmatically the moment the intro arrives, so treating
@@ -114,7 +124,13 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
             onBlur={() => setFocused(false)}
             className="group relative flex flex-col items-center gap-6 focus-visible:outline-none"
           >
-            <span className="relative block h-56 w-40 rounded-2xl [perspective:1400px] group-focus-visible:ring-2 group-focus-visible:ring-accent-400/60 group-focus-visible:ring-offset-4 group-focus-visible:ring-offset-ink-950 sm:h-64 sm:w-44">
+            <span
+              className={cn(
+                "relative block h-56 w-40 rounded-2xl [perspective:1400px] sm:h-64 sm:w-44",
+                keyboardUsed &&
+                  "group-focus-visible:ring-2 group-focus-visible:ring-accent-400/60 group-focus-visible:ring-offset-4 group-focus-visible:ring-offset-ink-950",
+              )}
+            >
               {/* The lit room on the other side, and the glow it spills around the
               frame once the door is off the jamb. */}
               <span

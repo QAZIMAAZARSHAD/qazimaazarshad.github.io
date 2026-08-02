@@ -47,7 +47,8 @@ describe("GoogleMe", () => {
     }
   });
 
-  it("does not show a Wikidata source link", () => {
+  // The Wikidata item this used to cite has since been deleted.
+  it("does not cite a knowledge-graph source", () => {
     const dialog = openModal();
     expect(dialog).toBeInTheDocument();
     expect(screen.queryByText(/source: wikidata/i)).toBeNull();

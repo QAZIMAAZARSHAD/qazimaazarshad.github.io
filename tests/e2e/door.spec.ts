@@ -59,6 +59,10 @@ test.describe("Entry door", () => {
   }) => {
     await page.goto("/", { waitUntil: "commit" });
     await expect(door(page)).toBeFocused({ timeout: 10_000 });
+    // Arm the ring the way a keyboard visitor would.
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await expect(door(page)).toBeFocused();
 
     await door(page).hover();
     await page.mouse.move(5, 5);
@@ -79,6 +83,61 @@ test.describe("Entry door", () => {
     expect(state.label).toContain("Come in");
     // Tailwind's focus ring is a box-shadow; "none" means no indicator at all.
     expect(state.shadow).not.toBe("none");
+  });
+
+  // Focus is put on the door before the visitor has done anything, and the
+  // browser counts that as keyboard-driven — so a mouse user was met by a ring
+  // around the door that read as the component being selected.
+  test("arrives without a focus ring, and rings once a key is used", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(door(page)).toBeFocused({ timeout: 10_000 });
+
+    const ring = () =>
+      door(page).evaluate(
+        (el) =>
+          getComputedStyle(el.querySelector("span.relative.block")!).boxShadow,
+      );
+
+    expect(await ring(), "quiet on arrival").toBe("none");
+
+    await page.mouse.move(512, 350);
+    await page.waitForTimeout(250); // NOSONAR — nothing should follow from this
+    expect(await ring(), "still quiet for a pointer").toBe("none");
+
+    // Tab leaves the door and comes back to it, the way a keyboard visitor
+    // reaches it — and now the ring is earned.
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await expect(door(page)).toBeFocused();
+    expect(await ring()).not.toBe("none");
+  });
+
+  // The intro covers the page, so Tab must not walk into it. The floating
+  // widgets sit beside main/header/footer, so inerting those three by name left
+  // the assistant, the scroll-dots and back-to-top all reachable.
+  test("keyboard focus cannot escape into the page behind it", async ({
+    page,
+  }) => {
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(door(page)).toBeFocused({ timeout: 10_000 });
+
+    const reached: string[] = [];
+    for (let i = 0; i < 6; i++) {
+      await page.keyboard.press("Tab");
+      reached.push(
+        await page.evaluate(() => {
+          const el = document.activeElement;
+          if (!el || el === document.body) return "BODY";
+          return el.getAttribute("aria-label") ?? el.tagName;
+        }),
+      );
+    }
+
+    for (const stop of reached) {
+      expect(["BODY", "Come in — enter the site"]).toContain(stop);
+    }
   });
 
   test("keeps the visitor's focus while it swings open", async ({ page }) => {

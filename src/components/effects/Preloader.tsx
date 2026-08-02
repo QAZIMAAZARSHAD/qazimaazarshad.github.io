@@ -168,15 +168,17 @@ export function Preloader() {
   }, [phase]);
 
   // Painted behind an opaque overlay, the page has to leave the accessibility
-  // tree too, or a screen reader can browse it while it's hidden. The intro
-  // lives inside #root, so its siblings are inerted rather than the root.
+  // tree too, or a screen reader can browse it while it's hidden — and Tab can
+  // walk into it. Everything alongside the intro is inerted rather than a fixed
+  // list of landmarks: the floating widgets (assistant, scroll-dots, back to
+  // top) are siblings of main/header/footer, so naming those three left every
+  // one of them reachable.
   useEffect(() => {
     if (phase === "done") return;
-    const behind = [
-      document.querySelector("main"),
-      document.querySelector("header"),
-      document.querySelector("footer"),
-    ].filter((el): el is HTMLElement => el instanceof HTMLElement);
+    const overlay = document.querySelector('[data-testid="preloader"]');
+    const behind = [...(overlay?.parentElement?.children ?? [])].filter(
+      (el): el is HTMLElement => el instanceof HTMLElement && el !== overlay,
+    );
 
     for (const el of behind) {
       el.inert = true;

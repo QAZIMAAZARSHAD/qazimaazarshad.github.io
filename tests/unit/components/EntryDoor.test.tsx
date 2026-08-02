@@ -63,12 +63,19 @@ describe("EntryDoor", () => {
     expect(name.toLowerCase()).toContain("come in");
   });
 
-  it("shows a focus ring rather than removing the outline outright", () => {
+  it("rings for a keyboard visitor, and not before one arrives", () => {
     const { door } = renderDoor();
-    // The ring hugs the doorway rather than the whole button, which would draw
-    // a box around the caption as well and read as part of the frame.
-    const frame = door.querySelector("span.relative.block");
-    expect(frame?.className).toContain("group-focus-visible:ring-2");
+    const frame = () => door.querySelector("span.relative.block")!;
+
+    // Focus is put here on arrival, so a ring straight away would show for
+    // everyone — including a mouse user who has touched nothing.
+    expect(frame().className).not.toContain("group-focus-visible:ring");
+
+    fireEvent.keyDown(window, { key: "Tab" });
+
+    // The ring hugs the doorway, not the whole button, which would box in the
+    // caption underneath and read as part of the frame.
+    expect(frame().className).toContain("group-focus-visible:ring-2");
     // Bare outline-none would leave a keyboard visitor with no indicator.
     expect(door.className).not.toMatch(/(^|\s)outline-none(\s|$)/);
   });

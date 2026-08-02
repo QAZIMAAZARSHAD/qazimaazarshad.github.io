@@ -53,9 +53,6 @@ describe("SEO: index.html head", () => {
     expect(data.alumniOf?.name).toMatch(/Lovely Professional University/);
     expect(Array.isArray(data.sameAs)).toBe(true);
 
-    // Anchor the entity to its Wikidata item for stronger name-based results.
-    expect(data.sameAs).toContain("https://www.wikidata.org/wiki/Q140717220");
-
     // Every public social profile is linked via sameAs (drift guard).
     for (const social of socials.filter((s) => s.id !== "email")) {
       expect(data.sameAs, social.id).toContain(social.href);
