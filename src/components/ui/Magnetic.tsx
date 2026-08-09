@@ -11,6 +11,16 @@ interface MagneticProps {
   readonly className?: string;
   /** Fraction of the cursor offset the element follows (0–1). */
   readonly strength?: number;
+  /**
+   * Furthest the element may travel from its resting place, in px. Needed
+   * wherever it sits inside a bounded shape — unclamped, the pull carries it
+   * out through the container's edge.
+   */
+  readonly max?: number;
+}
+
+function clamp(value: number, limit: number): number {
+  return Math.min(Math.max(value, -limit), limit);
 }
 
 /**
@@ -21,6 +31,7 @@ export function Magnetic({
   children,
   className,
   strength = 0.35,
+  max = Number.POSITIVE_INFINITY,
 }: MagneticProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
@@ -38,8 +49,8 @@ export function Magnetic({
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = rectRef.current;
     if (reduceMotion || !rect) return;
-    x.set((e.clientX - (rect.left + rect.width / 2)) * strength);
-    y.set((e.clientY - (rect.top + rect.height / 2)) * strength);
+    x.set(clamp((e.clientX - (rect.left + rect.width / 2)) * strength, max));
+    y.set(clamp((e.clientY - (rect.top + rect.height / 2)) * strength, max));
   };
 
   const reset = () => {

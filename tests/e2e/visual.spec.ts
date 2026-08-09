@@ -25,7 +25,25 @@ const SECTION_IDS = [
   "contact",
 ] as const;
 
+/**
+ * Take the header out of the shot.
+ *
+ * It floats over whatever is behind it, so it lands in section screenshots and
+ * carries its own state into them — docked or not, which item is current — none
+ * of which belongs to the section underneath. That state moves whenever the
+ * page above changes length, which is how a nav reorder came to sit in these
+ * baselines unnoticed, under the diff tolerance, until an unrelated section
+ * grew and pushed it over. The header has two snapshots of its own, and its
+ * current-item behaviour is asserted in navigation.spec.ts.
+ *
+ * It is fixed, so hiding it reflows nothing.
+ */
+async function hideHeader(page: Page): Promise<void> {
+  await page.addStyleTag({ content: "header{display:none !important}" });
+}
+
 async function settleSection(page: Page, section: Locator): Promise<void> {
+  await hideHeader(page);
   await section.scrollIntoViewIfNeeded();
   // Wait for the section's heading so the Framer reveal has settled.
   await expect(section.getByRole("heading").first()).toBeVisible();
@@ -125,6 +143,7 @@ test("projects filtered by Game", async ({ page }) => {
 
 test("footer", async ({ page }) => {
   const footer = page.locator("footer");
+  await hideHeader(page);
   await footer.scrollIntoViewIfNeeded();
   await expect(footer.getByRole("heading").first()).toBeVisible();
   await page.waitForTimeout(500);
@@ -138,6 +157,7 @@ test.describe("mobile", () => {
 
   test("footer (mobile)", async ({ page }) => {
     const footer = page.locator("footer");
+    await hideHeader(page);
     await footer.scrollIntoViewIfNeeded();
     await expect(footer.getByRole("heading").first()).toBeVisible();
     await page.waitForTimeout(500);

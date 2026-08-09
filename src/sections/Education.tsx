@@ -1,66 +1,166 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { TiltCard } from "@/components/ui/TiltCard";
 import { LogoTile } from "@/components/timeline/LogoTile";
 import { education, type EducationItem } from "@/data/content";
-import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
+import { fadeUp, viewportOnce } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
-function EducationCard({ item }: Readonly<{ item: EducationItem }>) {
+const EASE = [0.21, 0.47, 0.32, 0.98] as const;
+
+/** Rules draw themselves in, one line at a time, as the record scrolls in. */
+const sheet: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.16, delayChildren: 0.1 } },
+};
+
+const entry: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+};
+
+const rule: Variants = {
+  hidden: { scaleX: 0 },
+  show: { scaleX: 1, transition: { duration: 0.9, ease: EASE } },
+};
+
+/** Every four-digit year in a period string, oldest first. */
+function yearsIn(period: string): string[] {
+  return [...period.matchAll(/\d{4}/g)].map((m) => m[0]);
+}
+
+/**
+ * The span the record covers, read off the entries rather than written down
+ * twice — a new qualification widens it on its own.
+ */
+function recordSpan(items: readonly EducationItem[]): string | null {
+  const years = items.flatMap((item) => yearsIn(item.period)).sort();
+  if (years.length === 0) return null;
+  const first = years[0];
+  const last = years[years.length - 1];
+  return first === last ? first : `${first} — ${last}`;
+}
+
+/**
+ * A personal mark rather than an institutional one — the same monogram that
+ * sits at the end of the corridor behind the door.
+ */
+function Seal() {
+  return (
+    <span
+      aria-hidden
+      className="relative grid h-14 w-14 shrink-0 place-items-center rounded-full bg-gradient-to-br from-accent-500/25 to-cyan-500/10 ring-1 ring-white/15"
+    >
+      <span className="absolute inset-1.5 rounded-full border border-dashed border-white/20 motion-safe:animate-[spin_22s_linear_infinite]" />
+      <span className="font-display text-[0.65rem] font-extrabold tracking-[0.15em] text-white/75">
+        QMA
+      </span>
+    </span>
+  );
+}
+
+function Record({
+  item,
+  first,
+}: Readonly<{ item: EducationItem; first: boolean }>) {
+  const years = yearsIn(item.period);
+  const finished = years[years.length - 1];
+  const started = years.length > 1 ? years[0] : null;
+
   const body = (
-    <div className="glass glass-hover spotlight flex h-full flex-col rounded-3xl p-6 shadow-lg shadow-black/20 hover:shadow-accent-500/20">
-      <div className="flex items-start justify-between gap-4">
-        <LogoTile
-          src={item.image}
-          alt={`${item.institution} logo`}
-          className="h-16 w-16"
-        />
-        {item.link && (
-          <ExternalLink
+    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-4 px-1 py-7 sm:grid-cols-[5rem_auto_1fr_auto] sm:gap-x-6 sm:py-8">
+      {/* The year is the anchor of each line; the period reads once, to
+          assistive tech, rather than twice on screen. */}
+      <div className="col-start-1 row-start-1 flex flex-col">
+        <span className="sr-only">{item.period}</span>
+        <span
+          aria-hidden
+          className="font-mono text-2xl font-semibold leading-none text-ink-300 transition-colors duration-300 group-hover:text-white sm:text-[1.75rem]"
+        >
+          {finished ?? item.period}
+        </span>
+        {started && (
+          <span
             aria-hidden
-            className="h-4 w-4 text-ink-500 transition-colors duration-300 group-hover:text-accent-300"
-          />
+            className="mt-1.5 font-mono text-[0.7rem] uppercase tracking-widest text-ink-500"
+          >
+            from {started}
+          </span>
         )}
       </div>
 
-      <h3 className="mt-5 font-display text-lg font-semibold leading-snug text-white">
-        {item.degree}
-      </h3>
-      <p className="mt-1.5 text-sm text-ink-300">{item.institution}</p>
+      <LogoTile
+        src={item.image}
+        alt={`${item.institution} logo`}
+        className="col-start-1 row-start-2 h-12 w-12 sm:col-start-2 sm:row-start-1"
+      />
 
-      <div className="mt-auto flex items-center justify-between gap-3 pt-6">
-        <span className="inline-flex items-center rounded-full bg-gradient-to-r from-accent-500 to-cyan-500 px-3 py-1 font-mono text-xs font-semibold text-white shadow-lg shadow-accent-500/25">
-          {item.score}
-        </span>
-        <span className="font-mono text-xs text-ink-400">{item.period}</span>
+      <div className="col-span-2 col-start-2 row-start-2 min-w-0 sm:col-span-1 sm:col-start-3 sm:row-start-1">
+        <h3 className="font-display text-base font-semibold leading-snug text-white sm:text-lg">
+          {item.degree}
+        </h3>
+        <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-400">
+          {item.institution}
+          {item.link && (
+            <ArrowUpRight
+              aria-hidden
+              className="h-3.5 w-3.5 shrink-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            />
+          )}
+        </p>
       </div>
+
+      {/* Unlabelled: a CGPA or a percentage says what it is on its own. */}
+      <span className="col-start-3 row-start-1 justify-self-end whitespace-nowrap font-mono text-sm font-semibold text-accent-200 transition-colors duration-300 group-hover:text-white sm:col-start-4 sm:text-base">
+        {item.score}
+      </span>
     </div>
   );
 
-  const wrapper: ReactNode = item.link ? (
+  const inner: ReactNode = item.link ? (
     <a
       href={item.link}
       target="_blank"
       rel="noreferrer"
       aria-label={`${item.institution} — ${item.degree} (opens in a new tab)`}
-      className="group block h-full rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+      className="block rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
     >
       {body}
     </a>
   ) : (
-    <div className="group h-full">{body}</div>
+    body
   );
 
   return (
-    <TiltCard max={6} className="h-full">
-      {wrapper}
-    </TiltCard>
+    <motion.li variants={entry} className="group relative">
+      {/* The top line closes the column headings, so it is dropped on narrow
+          screens where those are gone and the list already carries a rule. */}
+      <motion.span
+        aria-hidden
+        variants={rule}
+        className={cn(
+          "absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-white/15 via-white/10 to-transparent",
+          first && "hidden sm:block",
+        )}
+      />
+      {/* Marks the hovered line without moving anything on the page. */}
+      <span
+        aria-hidden
+        className="absolute inset-y-4 -left-3 w-px origin-top scale-y-0 rounded-full bg-gradient-to-b from-accent-400 to-cyan-400 transition-transform duration-300 group-hover:scale-y-100"
+      />
+      <div className="rounded-2xl transition-colors duration-300 group-hover:bg-white/[0.025]">
+        {inner}
+      </div>
+    </motion.li>
   );
 }
 
 export function Education() {
+  const reduceMotion = useReducedMotion();
+  const span = recordSpan(education);
+
   return (
     <Section id="education">
       <SectionHeading
@@ -70,21 +170,57 @@ export function Education() {
       />
 
       <motion.div
-        variants={staggerContainer}
-        initial="hidden"
+        variants={fadeUp}
+        initial={reduceMotion ? false : "hidden"}
         whileInView="show"
         viewport={viewportOnce}
-        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        className="glass spotlight overflow-hidden rounded-3xl px-5 shadow-xl shadow-black/25 sm:px-8"
       >
-        {education.map((item) => (
-          <motion.div
-            key={`${item.degree}__${item.institution}`}
-            variants={fadeUp}
-            className="h-full"
-          >
-            <EducationCard item={item} />
-          </motion.div>
-        ))}
+        <div className="flex items-center justify-between gap-4 pb-6 pt-7">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-ink-400">
+              Transcript
+            </p>
+            <p className="mt-1.5 font-mono text-[0.7rem] text-ink-500">
+              {education.length} {education.length === 1 ? "record" : "records"}
+              {span && ` · ${span}`}
+            </p>
+          </div>
+          <Seal />
+        </div>
+
+        {/*
+          Column headings stand over the grid only while it is a grid; the rule
+          below moves onto the list once they go. They carry no rule of their
+          own — the first row's brings up a single line beneath them, rather
+          than pinching the labels between two. The logo column is pinned to
+          the tile's own width — left on auto it collapses to nothing here,
+          since nothing sits in it, and the headings drift off their columns.
+        */}
+        <div
+          aria-hidden
+          className="hidden pb-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-500 sm:grid sm:grid-cols-[5rem_3rem_1fr_auto] sm:gap-x-6 sm:px-1"
+        >
+          <span>Year</span>
+          <span className="col-start-3">Qualification</span>
+          <span className="justify-self-end">Result</span>
+        </div>
+
+        <motion.ol
+          variants={sheet}
+          initial={reduceMotion ? "show" : "hidden"}
+          whileInView="show"
+          viewport={viewportOnce}
+          className="border-t border-white/10 pb-4 sm:border-t-0"
+        >
+          {education.map((item, i) => (
+            <Record
+              key={`${item.degree}__${item.institution}`}
+              item={item}
+              first={i === 0}
+            />
+          ))}
+        </motion.ol>
       </motion.div>
     </Section>
   );
