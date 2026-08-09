@@ -25,10 +25,15 @@ jobs:
       - run: npm test # Vitest unit/component tests
 
   e2e:
-    name: E2E (Playwright)
+    name: E2E (Playwright) ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.61.1-jammy
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2]
+        shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
@@ -38,10 +43,13 @@ jobs:
       # To also enforce visual regression in CI: generate Linux baselines once
       # (run `npx playwright test --update-snapshots` inside this same container),
       # commit the new *-linux.png files, and remove `--ignore-snapshots` below.
-      - run: npx playwright test --ignore-snapshots
+      #
+      # Parallelism: each shard runs with 4 workers (see playwright.config.ts).
+      # Two shards × four workers cut wall-clock from ~10m serial to a few minutes.
+      - run: npx playwright test --ignore-snapshots --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-results
+          name: playwright-results-${{ matrix.shardIndex }}
           path: test-results/
           retention-days: 7
