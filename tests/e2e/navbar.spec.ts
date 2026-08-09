@@ -106,9 +106,8 @@ test.describe("Header dock", () => {
     await expect(dock(page)).toHaveAttribute("data-docked", "true");
   });
 
-  // Regression: the row of controls was wider than the capsule, leaving the
-  // trailing Resume button hanging out past the rounded border — and the
-  // magnetic pull dragged it a good deal further out again on hover.
+  // Regression: the row outgrew the capsule, leaving Resume hanging out past
+  // the border, and the magnetic pull dragged it further out again on hover.
   test("the capsule holds its controls, magnetic pull included", async ({
     page,
   }) => {
@@ -118,8 +117,6 @@ test.describe("Header dock", () => {
     await expect(dock(page)).toHaveAttribute("data-docked", "true");
     await page.waitForTimeout(700); // let the 500ms morph settle
 
-    // The root cause: once the row outgrows the capsule there is nothing
-    // `justify-between` can do about it, and the last child spills out the end.
     const overflow = await primary(page).evaluate(
       (el) => el.scrollWidth - el.clientWidth,
     );
@@ -137,7 +134,7 @@ test.describe("Header dock", () => {
 
     expect(await gapToEdge()).toBeGreaterThan(0);
 
-    // The pull reaches furthest when the pointer sits on the far edge.
+    // The pull reaches furthest with the pointer on the far edge.
     const box = (await resume.boundingBox())!;
     await page.mouse.move(box.x + box.width - 2, box.y + box.height / 2);
     await page.waitForTimeout(500);

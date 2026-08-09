@@ -886,8 +886,6 @@ export const skillGroups: SkillGroup[] = [
 export const achievements: string[] = [
   "Gold Medal — International Humanity Olympiad",
   "All India Rank 49 — National Engineering Olympiad",
-  "5-Star Problem Solver on HackerRank",
-  "Solved 300+ coding problems on LeetCode",
   "1st Prize — Inter-School Quiz (District Level)",
   "1st Prize — Science Exhibition (School Level)",
   "1st Prize — Quizzora Quiz Competition (University Level)",
@@ -919,12 +917,6 @@ export const achievementLinks: Record<string, AchievementLink> = {
   },
   "All India Rank 49 — National Engineering Olympiad": {
     certificateId: "achievement-neo-excellence",
-  },
-  "5-Star Problem Solver on HackerRank": {
-    href: "https://www.hackerrank.com/qazimaazarshad",
-  },
-  "Solved 300+ coding problems on LeetCode": {
-    href: "https://leetcode.com/qazimaazarshad/",
   },
   "1st Prize — Quizzora Quiz Competition (University Level)": {
     certificateId: "achievement-quizzora-1st",

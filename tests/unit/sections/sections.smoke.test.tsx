@@ -7,6 +7,7 @@ import { Certifications } from "@/sections/Certifications";
 import { Hobbies } from "@/sections/Hobbies";
 import { Experience } from "@/sections/Experience";
 import { Education } from "@/sections/Education";
+import { parseHonour } from "@/lib/honours";
 import {
   profile,
   stats,
@@ -47,13 +48,26 @@ describe("Skills", () => {
 });
 
 describe("Achievements", () => {
-  it("renders its heading and the first achievement", () => {
+  it("renders its heading and a card per achievement", () => {
     render(<Achievements />);
 
     expect(
       screen.getByRole("heading", { name: /awards & achievements/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(achievements[0])).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(achievements.length);
+  });
+
+  it("keeps the full achievement line available to assistive tech", () => {
+    render(<Achievements />);
+
+    expect(
+      screen.getByRole("button", {
+        name: `View certificate: ${parseHonour(achievements[0]).raw}`,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(parseHonour(achievements[0]).title),
+    ).toBeInTheDocument();
   });
 });
 

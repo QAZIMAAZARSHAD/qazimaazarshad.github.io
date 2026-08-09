@@ -5,7 +5,7 @@ async function ready(page: import("@playwright/test").Page) {
   await enterSite(page);
 }
 
-test.describe("Achievements — certificate & profile links", () => {
+test.describe("Achievements — certificate links", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/#achievements");
     await ready(page);
@@ -14,18 +14,6 @@ test.describe("Achievements — certificate & profile links", () => {
 
   const section = (page: import("@playwright/test").Page) =>
     page.locator("#achievements");
-
-  test("coding-profile achievements link out to LeetCode and HackerRank", async ({
-    page,
-  }) => {
-    const sec = section(page);
-    const leetcode = sec.getByRole("link", { name: /leetcode/i });
-    const hackerrank = sec.getByRole("link", { name: /hackerrank/i });
-
-    await expect(leetcode).toHaveAttribute("href", /leetcode\.com/);
-    await expect(leetcode).toHaveAttribute("target", "_blank");
-    await expect(hackerrank).toHaveAttribute("href", /hackerrank\.com/);
-  });
 
   test("a certificate-linked achievement opens the lightbox and closes", async ({
     page,

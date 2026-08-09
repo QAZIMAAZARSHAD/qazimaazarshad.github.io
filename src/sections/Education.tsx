@@ -71,8 +71,7 @@ function Record({
 
   const body = (
     <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-4 px-1 py-7 sm:grid-cols-[5rem_auto_1fr_auto] sm:gap-x-6 sm:py-8">
-      {/* The year is the anchor of each line; the period reads once, to
-          assistive tech, rather than twice on screen. */}
+      {/* The period reads once, to assistive tech, not twice on screen. */}
       <div className="col-start-1 row-start-1 flex flex-col">
         <span className="sr-only">{item.period}</span>
         <span
@@ -135,8 +134,7 @@ function Record({
 
   return (
     <motion.li variants={entry} className="group relative">
-      {/* The top line closes the column headings, so it is dropped on narrow
-          screens where those are gone and the list already carries a rule. */}
+      {/* Closes the column headings, so it goes where those do. */}
       <motion.span
         aria-hidden
         variants={rule}
@@ -145,7 +143,6 @@ function Record({
           first && "hidden sm:block",
         )}
       />
-      {/* Marks the hovered line without moving anything on the page. */}
       <span
         aria-hidden
         className="absolute inset-y-4 -left-3 w-px origin-top scale-y-0 rounded-full bg-gradient-to-b from-accent-400 to-cyan-400 transition-transform duration-300 group-hover:scale-y-100"
@@ -189,14 +186,9 @@ export function Education() {
           <Seal />
         </div>
 
-        {/*
-          Column headings stand over the grid only while it is a grid; the rule
-          below moves onto the list once they go. They carry no rule of their
-          own — the first row's brings up a single line beneath them, rather
-          than pinching the labels between two. The logo column is pinned to
-          the tile's own width — left on auto it collapses to nothing here,
-          since nothing sits in it, and the headings drift off their columns.
-        */}
+        {/* The logo column is pinned to the tile's width — left on auto it
+            collapses here, since nothing sits in it, and the headings drift
+            off their columns. */}
         <div
           aria-hidden
           className="hidden pb-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-500 sm:grid sm:grid-cols-[5rem_3rem_1fr_auto] sm:gap-x-6 sm:px-1"

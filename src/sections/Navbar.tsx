@@ -268,9 +268,8 @@ export function Navbar() {
                       }}
                       onBlur={() => setFocused(null)}
                       className={cn(
-                        // Tight by design: at ten items the row is only just
-                        // narrower than the dock, and any more padding pushes
-                        // the trailing button out through the capsule's edge.
+                        // Tight by design: more padding here and the row
+                        // outgrows the dock, pushing Resume past its edge.
                         "relative block rounded-full px-2.5 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
                         // The section you're in stays lit even while the pointer
                         // explores elsewhere — the pill says "pointer", the
@@ -314,8 +313,7 @@ export function Navbar() {
                 <Search className="h-4 w-4" aria-hidden />
                 <kbd className="font-mono text-xs">⌘K</kbd>
               </button>
-              {/* Capped: the dock leaves it only so much room before the pull
-                  would drag it across the capsule's border. */}
+              {/* Capped, or the pull drags it across the capsule's border. */}
               <Magnetic strength={0.25} max={8}>
                 <a
                   href={resumeHref}

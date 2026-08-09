@@ -43,9 +43,6 @@ jobs:
       # To also enforce visual regression in CI: generate Linux baselines once
       # (run `npx playwright test --update-snapshots` inside this same container),
       # commit the new *-linux.png files, and remove `--ignore-snapshots` below.
-      #
-      # Parallelism: each shard runs with 4 workers (see playwright.config.ts).
-      # Two shards × four workers cut wall-clock from ~10m serial to a few minutes.
       - run: npx playwright test --ignore-snapshots --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v4
         if: failure()

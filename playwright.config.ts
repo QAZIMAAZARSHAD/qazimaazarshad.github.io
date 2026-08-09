@@ -5,11 +5,8 @@ import { defineConfig, devices } from "@playwright/test";
  * Uses the Vite dev server (base "/"), reusing one if already running.
  */
 /**
- * Worker count. Override with PLAYWRIGHT_WORKERS.
- *
- * CI used to force 1 and the suite took 10m+; browsers spend most of that time
- * waiting on the intro / animations, so oversubscribing a 2-core runner is a
- * net win. Locally Playwright's default (half the CPUs) is fine.
+ * Override with PLAYWRIGHT_WORKERS. Most of a run is spent waiting on the
+ * intro and animations, so oversubscribing a small CI runner still pays.
  */
 const workers = process.env.PLAYWRIGHT_WORKERS
   ? Number(process.env.PLAYWRIGHT_WORKERS)

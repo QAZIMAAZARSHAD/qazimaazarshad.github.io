@@ -36,15 +36,4 @@ describe("content: achievementLinks", () => {
       }
     }
   });
-
-  it("LeetCode and HackerRank achievements link to their profiles", () => {
-    const leetcode = Object.entries(achievementLinks).find(([k]) =>
-      k.includes("LeetCode"),
-    );
-    const hackerrank = Object.entries(achievementLinks).find(([k]) =>
-      k.includes("HackerRank"),
-    );
-    expect(leetcode?.[1].href).toContain("leetcode.com");
-    expect(hackerrank?.[1].href).toContain("hackerrank.com");
-  });
 });

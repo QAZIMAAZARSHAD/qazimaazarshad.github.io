@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { staggerContainer, viewportOnce } from "@/lib/motion";
+import { layoutHonours, type Honour } from "@/lib/honours";
 import {
   achievements,
   achievementLinks,
   type CertificateItem,
 } from "@/data/content";
 import { certificates } from "@/data/certificates";
-import { AchievementCard } from "@/components/achievements/AchievementCard";
+import { MedalCard } from "@/components/achievements/MedalCard";
 import {
   CertificateLightbox,
   type LightboxSlide,
@@ -22,12 +23,12 @@ interface Selection {
 
 export function Achievements() {
   const [selected, setSelected] = useState<Selection | null>(null);
+  const placed = useMemo(() => layoutHonours(achievements), []);
 
-  // Resolve an achievement to its lightbox selection (or null when it has no
-  // viewable media). Single source of truth for both the click handler and the
-  // decision to render an interactive button, so they can't disagree.
-  const resolveSelection = (text: string): Selection | null => {
-    const link = achievementLinks[text];
+  // Shared by the click handler and the decision to render an interactive
+  // control, so the two can't disagree about what has viewable media.
+  const resolveSelection = (honour: Honour): Selection | null => {
+    const link = achievementLinks[honour.raw];
     if (!link) return null;
 
     const cert = link.certificateId
@@ -41,8 +42,8 @@ export function Achievements() {
 
     return {
       certificate: {
-        id: cert?.id ?? `achievement-${text}`,
-        title: text,
+        id: cert?.id ?? `achievement-${honour.raw}`,
+        title: honour.raw,
         issuer: cert?.issuer,
         category: "achievement",
         preview: slides[0].image,
@@ -56,21 +57,23 @@ export function Achievements() {
     <Section id="achievements">
       <SectionHeading kicker="Recognition" title="Awards & achievements" />
 
+      {/* Six columns so halves and thirds both divide evenly. */}
       <motion.ul
         variants={staggerContainer}
         initial="hidden"
         whileInView="show"
         viewport={viewportOnce}
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6"
       >
-        {achievements.map((achievement, index) => {
-          const link = achievementLinks[achievement];
-          const selection = resolveSelection(achievement);
+        {placed.map(({ honour, variant, span }) => {
+          const link = achievementLinks[honour.raw];
+          const selection = resolveSelection(honour);
           return (
-            <AchievementCard
-              key={achievement}
-              text={achievement}
-              index={index}
+            <MedalCard
+              key={honour.raw}
+              honour={honour}
+              variant={variant}
+              span={span}
               href={link?.href}
               onOpen={selection ? () => setSelected(selection) : undefined}
             />

@@ -11,11 +11,7 @@ interface MagneticProps {
   readonly className?: string;
   /** Fraction of the cursor offset the element follows (0–1). */
   readonly strength?: number;
-  /**
-   * Furthest the element may travel from its resting place, in px. Needed
-   * wherever it sits inside a bounded shape — unclamped, the pull carries it
-   * out through the container's edge.
-   */
+  /** Furthest it may travel, in px. Needed inside a bounded shape. */
   readonly max?: number;
 }
 
