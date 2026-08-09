@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { enterSite } from "./intro";
 
-// The counter is backed by CounterAPI.dev; we mock it so the test never touches
-// the live counter. The init flag opts localhost into counting (the component
+// The counter is backed by Abacus; we mock it so the test never touches the
+// live counter. The init flag opts localhost into counting (the component
 // otherwise skips local hosts so dev/CI never inflate the real total).
 // reduced-motion makes the count-up settle instantly.
 test.describe("Visit counter", () => {
@@ -15,13 +15,13 @@ test.describe("Visit counter", () => {
     });
   });
 
-  test("shows the running total from CounterAPI in the footer", async ({
+  test("shows the running total from the counter in the footer", async ({
     page,
   }) => {
-    await page.route("**/api.counterapi.dev/**", (route) =>
+    await page.route("**/abacus.jasoncameron.dev/**", (route) =>
       route.fulfill({
         contentType: "application/json",
-        body: JSON.stringify({ count: 12431, name: "visits" }),
+        body: JSON.stringify({ value: 12431 }),
       }),
     );
 
@@ -36,7 +36,7 @@ test.describe("Visit counter", () => {
   });
 
   test("stays hidden when the counter request fails", async ({ page }) => {
-    await page.route("**/api.counterapi.dev/**", (route) =>
+    await page.route("**/abacus.jasoncameron.dev/**", (route) =>
       route.fulfill({ status: 500, body: "" }),
     );
 

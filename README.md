@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-152_unit_·_98_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-188_unit_·_118_e2e-16a34a)
 
 <br/>
 
@@ -53,7 +53,7 @@ responsiveness test suite.
 | Styling   | **Tailwind CSS** (custom design tokens)                                       |
 | Animation | **Framer Motion**                                                             |
 | AI        | **WebLLM** — in-browser LLM (WebGPU) powering the "Ask my portfolio" chat     |
-| Counter   | **CounterAPI.dev** — footer visit counter (no account, no backend)            |
+| Counter   | **Abacus** — footer visit + love counters (no account, no backend)            |
 | Icons     | lucide-react + react-icons                                                    |
 | Linting   | **oxlint** — correctness, React, hooks, jsx-a11y, imports                     |
 | Testing   | **Vitest** + React Testing Library · **Playwright** (e2e, visual, responsive) |
@@ -72,9 +72,9 @@ npm run preview    # preview the production build
 ## 🧪 Testing
 
 ```bash
-npm test                 # 152 unit + component tests (Vitest)
+npm test                 # 188 unit + component tests (Vitest)
 npm run test:coverage    # unit tests with coverage
-npm run test:e2e         # 98 e2e, visual & responsiveness tests (Playwright)
+npm run test:e2e         # 118 e2e, visual & responsiveness tests (Playwright)
 npm run test:e2e:update  # regenerate visual baselines
 ```
 
@@ -100,7 +100,7 @@ src/
     command/          # CommandPalette (⌘K)
     ai/               # AiAssistant — in-browser "Ask my portfolio" chat
     certificates/     # CertificateCard, CertificateLightbox
-    analytics/        # VisitCounter (CounterAPI.dev)
+    analytics/        # VisitCounter (Abacus)
     …                 # hero / projects / skills / timeline / achievements / contact
   sections/           # Navbar, Hero, About, Experience, EarlierExperience, Projects,
                       # Skills, Education, Achievements, Certifications, Hobbies, Contact, Footer
@@ -127,12 +127,20 @@ Everything — profile, experience, projects, skills, education, achievements �
 `node scripts/generate-certificates.mjs`, which renders compact previews, keeps
 originals for real credentials, and rewrites `src/data/certificates.ts`.
 
-**Visit counter**: set `analytics.visitCounter` in `content.ts` to a
-CounterAPI.dev `"<namespace>/<key>"` path (empty disables it). It's skipped on
-`localhost` so local/CI runs never inflate the real total. The number
-undercounts: EasyPrivacy lists the domain as third-party, so blockers stop the
-request. Escaping that needs a first-party endpoint, which static Pages hosting
-can't provide — blocked visitors simply see no counter.
+**Counters**: set `analytics.visitCounter` / `analytics.loveCounter` in
+`content.ts` to an [Abacus](https://abacus.jasoncameron.dev/docs)
+`"<namespace>/<key>"` path (empty disables). Counting is skipped on `localhost`
+so local and CI runs never inflate the real totals.
+
+These ran on CounterAPI until it retired its unauthenticated v1 on 7 Aug 2026.
+The v2 replacement needs a bearer token on every call, which a static site can
+only ship in its own bundle, and its domain is on EasyPrivacy — so blockers were
+already hiding the count from a large share of visitors. Abacus needs no account
+and isn't on the list. Seed a total with
+`GET /create/<namespace>/<key>?initializer=<n>`, which returns an admin key
+**once**; keep it somewhere safe, as it's the only way to later reset or delete
+the counter. A counter expires six months after its last access, and any live
+traffic keeps pushing that out.
 
 ## 🔄 CI/CD
 

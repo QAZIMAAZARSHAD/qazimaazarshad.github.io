@@ -16,17 +16,17 @@ const loved = (page: Page) =>
 async function stub(page: Page, counts = 128) {
   const seen = { bumps: 0, mails: 0, notes: [] as string[] };
 
-  await page.route("**/api.counterapi.dev/**", async (route) => {
+  await page.route("**/abacus.jasoncameron.dev/**", async (route) => {
     // Scoped to the loves key: the visit counter shares this host and bumps on
-    // every load, so counting every /up here would count its traffic too.
+    // every load, so counting every /hit here would count its traffic too.
     const url = route.request().url();
-    const isBump = url.includes("/loves/up");
+    const isBump = url.includes("/hit/") && url.includes("/loves");
     if (isBump) seen.bumps += 1;
     // A bump answers with the total *after* incrementing, as the real API does
     // — the UI reconciles its optimistic guess against exactly this number.
     await route.fulfill({
       contentType: "application/json",
-      body: JSON.stringify({ count: isBump ? counts + 1 : counts }),
+      body: JSON.stringify({ value: isBump ? counts + 1 : counts }),
     });
   });
 
@@ -131,7 +131,7 @@ test.describe("Footer reaction", () => {
       ).__VISIT_COUNTER_TEST__ = true;
     });
     let attempted = 0;
-    await page.route("**/api.counterapi.dev/**", (route) => {
+    await page.route("**/abacus.jasoncameron.dev/**", (route) => {
       attempted += 1;
       return route.abort();
     });

@@ -79,10 +79,10 @@ test.describe("Footer signature", () => {
         window as unknown as { __VISIT_COUNTER_TEST__: boolean }
       ).__VISIT_COUNTER_TEST__ = true;
     });
-    await page.route("**/api.counterapi.dev/**", (route) =>
+    await page.route("**/abacus.jasoncameron.dev/**", (route) =>
       route.fulfill({
         contentType: "application/json",
-        body: JSON.stringify({ count: 12431 }),
+        body: JSON.stringify({ value: 12431 }),
       }),
     );
     await ready(page);

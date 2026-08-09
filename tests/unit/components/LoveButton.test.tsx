@@ -10,7 +10,7 @@ const relays = () => calls().filter((url) => url.includes("web3forms")).length;
 function mockFetch(count = 41) {
   const fetchMock = vi.fn(
     async () =>
-      new Response(JSON.stringify({ count }), {
+      new Response(JSON.stringify({ value: count }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       }),
@@ -62,8 +62,8 @@ describe("LoveButton", () => {
     expect(screen.getByPlaceholderText(/say something/i)).toBeInTheDocument();
   });
 
-  // The number is the feedback for the tap, and the request behind it is
-  // blocked for a good share of visitors — waiting on it would feel dead.
+  // The number is the feedback for the tap, so it must not wait on a round
+  // trip that a blocker or a slow network can hold open indefinitely.
   it("counts up without waiting for the network", () => {
     vi.stubGlobal(
       "fetch",
@@ -83,8 +83,8 @@ describe("LoveButton", () => {
       vi.fn(
         (url: string) =>
           new Promise<Response>((resolve) => {
-            if (String(url).endsWith("/up")) {
-              resolve(new Response(JSON.stringify({ count: 42 })));
+            if (String(url).includes("/hit/")) {
+              resolve(new Response(JSON.stringify({ value: 42 })));
             } else {
               settle = resolve;
             }
@@ -95,7 +95,7 @@ describe("LoveButton", () => {
     render(<LoveButton />);
     fireEvent.click(heart());
     // The read finally answers with the total from *before* the bump.
-    settle(new Response(JSON.stringify({ count: 41 })));
+    settle(new Response(JSON.stringify({ value: 41 })));
 
     await waitFor(() =>
       expect(screen.getByText(/42 loves/)).toBeInTheDocument(),
@@ -124,7 +124,7 @@ describe("LoveButton", () => {
     const { unmount } = render(<LoveButton />);
     await waitFor(() => screen.getByText(/41 loves/));
     fireEvent.click(heart());
-    const after = calls().filter((url) => url.endsWith("/up")).length;
+    const after = calls().filter((url) => url.includes("/hit/")).length;
     unmount();
 
     // A second visit finds it already given.
@@ -135,7 +135,7 @@ describe("LoveButton", () => {
       ).toBeInTheDocument(),
     );
     fireEvent.click(screen.getByRole("button", { name: /you loved this/i }));
-    expect(calls().filter((url) => url.endsWith("/up")).length).toBe(after);
+    expect(calls().filter((url) => url.includes("/hit/")).length).toBe(after);
   });
 
   it("relays the note that was written, and only once", async () => {

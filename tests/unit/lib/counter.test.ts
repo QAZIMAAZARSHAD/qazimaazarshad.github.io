@@ -4,11 +4,13 @@ import { bumpCount, countsForReal, readCount } from "@/lib/counter";
 const testFlag = () =>
   window as unknown as { __VISIT_COUNTER_TEST__?: boolean };
 
+const calledUrl = () => String(vi.mocked(globalThis.fetch).mock.calls[0][0]);
+
 beforeEach(() => {
   vi.stubGlobal(
     "fetch",
     vi.fn(
-      async () => new Response(JSON.stringify({ count: 7 }), { status: 200 }),
+      async () => new Response(JSON.stringify({ value: 7 }), { status: 200 }),
     ),
   );
 });
@@ -31,9 +33,7 @@ describe("counter", () => {
   it("increments once a test opts in", async () => {
     testFlag().__VISIT_COUNTER_TEST__ = true;
     expect(await bumpCount("ns/key")).toBe(7);
-    expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).toMatch(
-      /\/ns\/key\/up$/,
-    );
+    expect(calledUrl()).toMatch(/\/hit\/ns\/key$/);
   });
 
   // Reading changes nothing, but it is held to the same rule so that dev and
@@ -43,23 +43,13 @@ describe("counter", () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   });
 
-  it("reads without the /up that would move it", async () => {
+  // /hit creates and increments in one call, so a read that reached for it
+  // would inflate the total just by rendering the number.
+  it("reads through /get, never the /hit that would move it", async () => {
     testFlag().__VISIT_COUNTER_TEST__ = true;
     expect(await readCount("ns/key")).toBe(7);
-    expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).not.toMatch(
-      /\/up$/,
-    );
-  });
-
-  // Without the trailing slash the API answers 301, and that redirect carries
-  // no CORS header, so the browser drops the request. It reads fine from curl
-  // and silently fails in the page, which is how it reached production.
-  it("asks for the slashed path, so the read isn't lost to a redirect", async () => {
-    testFlag().__VISIT_COUNTER_TEST__ = true;
-    await readCount("ns/key");
-    expect(String(vi.mocked(globalThis.fetch).mock.calls[0][0])).toMatch(
-      /\/ns\/key\/$/,
-    );
+    expect(calledUrl()).toMatch(/\/get\/ns\/key$/);
+    expect(calledUrl()).not.toContain("/hit/");
   });
 
   it("returns null rather than throwing when it can't be reached", async () => {
@@ -69,6 +59,22 @@ describe("counter", () => {
       vi.fn(async () => {
         throw new Error("blocked");
       }),
+    );
+    await expect(readCount("ns/key")).resolves.toBeNull();
+  });
+
+  // A missing counter answers 404, which must read as "no number to show"
+  // rather than as a zero.
+  it("returns null when the counter isn't there", async () => {
+    testFlag().__VISIT_COUNTER_TEST__ = true;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(JSON.stringify({ error: "Key not found" }), {
+            status: 404,
+          }),
+      ),
     );
     await expect(readCount("ns/key")).resolves.toBeNull();
   });

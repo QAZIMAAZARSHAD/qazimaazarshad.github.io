@@ -1,6 +1,6 @@
-const BASE = "https://api.counterapi.dev/v1";
+const BASE = "https://abacus.jasoncameron.dev";
 
-/** CounterAPI returns { count: number }; keep only the digits defensively. */
+/** Abacus answers { value: number }; keep only the digits defensively. */
 function parseCount(raw: unknown): number | null {
   if (typeof raw !== "string" && typeof raw !== "number") return null;
   const digits = String(raw).replace(/\D/g, "");
@@ -25,29 +25,31 @@ export function countsForReal(): boolean {
  * otherwise every dev refresh and every e2e test calls out just to render a
  * number, which is exactly what happened before the guard was here rather than
  * at one call site.
- *
- * The trailing slash is load-bearing: without it the API answers 301, and that
- * redirect carries no access-control-allow-origin, so the browser abandons the
- * request before following it. Reads work from curl and fail in the page.
  */
 export async function readCount(path: string): Promise<number | null> {
   if (!path || !countsForReal()) return null;
   try {
-    const response = await fetch(`${BASE}/${path}/`);
+    const response = await fetch(`${BASE}/get/${path}`);
     if (!response.ok) return null;
-    return parseCount(((await response.json()) as { count?: unknown })?.count);
+    return parseCount(((await response.json()) as { value?: unknown })?.value);
   } catch {
     return null;
   }
 }
 
-/** Increment a counter and return the new total. Null if it can't be reached. */
+/**
+ * Increment a counter and return the new total. Null if it can't be reached.
+ *
+ * Creates the counter on first call, so a typo'd path silently starts a new
+ * total from 1 rather than failing — the seeded totals were made up front via
+ * /create, which is also the only way to get the admin key back.
+ */
 export async function bumpCount(path: string): Promise<number | null> {
   if (!path || !countsForReal()) return null;
   try {
-    const response = await fetch(`${BASE}/${path}/up`);
+    const response = await fetch(`${BASE}/hit/${path}`);
     if (!response.ok) return null;
-    return parseCount(((await response.json()) as { count?: unknown })?.count);
+    return parseCount(((await response.json()) as { value?: unknown })?.value);
   } catch {
     return null;
   }

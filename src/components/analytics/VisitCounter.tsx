@@ -7,13 +7,11 @@ const PATH = analytics.visitCounter;
 const COUNT_UP_MS = 1200;
 
 /**
- * Footer visit counter backed by CounterAPI.dev. Each real load bumps the total
- * and animates the number in.
+ * Footer visit counter backed by Abacus. Each real load bumps the total and
+ * animates the number in.
  *
- * Renders nothing until it resolves, or at all if the request fails — which is
- * the common case rather than the edge case, since blockers list the domain
- * (see the note on `analytics` in content.ts). Blocked visitors see no counter
- * instead of a broken one.
+ * Renders nothing until it resolves, and nothing at all if the request fails,
+ * so a blocked or down backend leaves a gap rather than a broken counter.
  */
 export function VisitCounter() {
   const [count, setCount] = useState<number | null>(null);

@@ -162,16 +162,23 @@ export const heroTaglines = [
 ];
 
 /**
- * Footer visit counter via CounterAPI.dev — "<namespace>/<key>", empty disables.
+ * Footer counters via Abacus — "<namespace>/<key>", empty disables.
  *
- * The total undercounts: EasyPrivacy carries `||counterapi.dev^$third-party`,
- * so most blockers stop the request. Only a first-party endpoint escapes that
- * rule, and static Pages hosting can't serve one — renaming the path or using
- * an image pixel wouldn't help, since the rule matches the domain.
+ * These moved off CounterAPI when it retired its unauthenticated v1 on 7 Aug
+ * 2026. Its v2 wants a bearer token on every call, which on a static site can
+ * only ship in the bundle for anyone to read and reset. Abacus needs no
+ * account, and its domain carries no EasyPrivacy rule where `counterapi.dev`
+ * did — so blockers no longer swallow most of the traffic.
+ *
+ * Visits were seeded to the last total observed on the old backend; the v1
+ * reads died with the writes, so it could not be migrated exactly.
+ *
+ * A counter expires six months after its last access, which any live traffic
+ * keeps pushing out. Only a site nobody visits for half a year would lose one.
  */
 export const analytics = {
   visitCounter: "qazimaazarshad-portfolio/visits",
-  /** Counter behind the footer's "loved it" heart. Same caveat as above. */
+  /** Counter behind the footer's "loved it" heart. */
   loveCounter: "qazimaazarshad-portfolio/loves",
 } as const;
 
