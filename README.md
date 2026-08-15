@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-188_unit_·_118_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-251_unit_·_135_e2e-16a34a)
 
 <br/>
 
@@ -33,14 +33,16 @@ responsiveness test suite.
 
 ## ✨ Highlights
 
-- **🚪 Entry sequence** — a loader, then a door you open. That click is the gesture browsers require before audio, so the greeting behind it can be scored: it says hello in a dozen languages and lands on yours, read from your browser
+- **🚪 Entry sequence** — a rebuilt progress-dial loader, then a door you open. That click is the gesture browsers require before audio, so the greeting behind it can be scored: it says hello in a dozen languages and lands on yours, read from your browser
 - **🤖 In-browser AI assistant** — "Ask my portfolio" runs a real LLM 100% client-side (WebLLM + WebGPU), grounded on my content — no backend, no keys
 - **Rich micro-interactions** — a custom trailing cursor, scramble-decode hero tagline, magnetic buttons, cursor spotlight on cards, scroll-drawn timeline, animated count-ups, section-heading underlines, tech marquee, side scroll-dots, cinematic hobby impacts, subtle parallax & confetti — all `prefers-reduced-motion` aware
+- **🕹 Synthwave party mode** — type ↑↑↓↓←→←→BA (or ⌘K → "synthwave", or `qma.party()` in the console) for a CRT-scanline neon theme, a retro sun-and-grid backdrop, pixel shades on the avatar, and a synthesized chiptune loop
+- **🕵️ Console easter egg** — open DevTools for a coloured QMA wordmark and `hireMaaz()` / `qma.*` helpers that celebrate, list skills & projects, and open the résumé
 - **📜 Certificates gallery** & **interactive projects** — filterable, searchable, with focus-trapped lightboxes/modals
 - **⌘K command palette** for keyboard-driven navigation
 - **🔍 "Google me"** — a mock search-results page mapping my presence across the web
 - **Morphing dock navbar** that collapses into a floating dock on scroll, and a **kinetic signature footer** whose wordmark is painted by your cursor
-- **Career-progression timeline** with live-computed tenure, plus a cursor-reactive animated canvas and polished dark theme
+- **Career-progression timeline** with live-computed tenure, a rewind **threshold** between work and learning years, medal-card achievements, orbital hobbies, and a polished dark theme
 - **Fully responsive & accessible** — keyboard-navigable, `prefers-reduced-motion` aware
 - **100% data-driven** and thoroughly tested (unit · e2e · visual)
 
@@ -53,6 +55,7 @@ responsiveness test suite.
 | Styling   | **Tailwind CSS** (custom design tokens)                                       |
 | Animation | **Framer Motion**                                                             |
 | AI        | **WebLLM** — in-browser LLM (WebGPU) powering the "Ask my portfolio" chat     |
+| Audio     | **Web Audio API** — synthesized guitar strum, chiptune party loop (no assets) |
 | Counter   | **Abacus** — footer visit + love counters (no account, no backend)            |
 | Icons     | lucide-react + react-icons                                                    |
 | Linting   | **oxlint** — correctness, React, hooks, jsx-a11y, imports                     |
@@ -72,15 +75,16 @@ npm run preview    # preview the production build
 ## 🧪 Testing
 
 ```bash
-npm test                 # 188 unit + component tests (Vitest)
+npm test                 # 251 unit + component tests (Vitest)
 npm run test:coverage    # unit tests with coverage
-npm run test:e2e         # 118 e2e, visual & responsiveness tests (Playwright)
+npm run test:e2e         # 135 e2e, visual & responsiveness tests (Playwright)
 npm run test:e2e:update  # regenerate visual baselines
 ```
 
 Visual baselines are committed for macOS (`*-darwin.png`). Specs that aren't about
 the entry sequence get past it with the shared `enterSite()` helper in
-`tests/e2e/intro.ts`.
+`tests/e2e/intro.ts`. E2E runs in parallel (sharded in CI) so the suite stays
+well under the old ten-minute wall.
 
 ## 📁 Structure
 
@@ -89,19 +93,24 @@ src/
   data/
     content.ts        # single source of truth for all content (typed)
     certificates.ts   # AUTO-GENERATED certificate data (see scripts/)
-  lib/                # utils, motion, sound, confetti, skillFilter, aiContext (AI grounding)
-  hooks/              # useActiveSection (scroll spy)
+  lib/                # utils, motion, sound, chiptune, confetti, consoleEgg,
+                      # synthwave, skillFilter, aiContext (AI grounding)
+  hooks/              # useActiveSection (scroll spy), useKonami
   components/
     ui/               # Section, SectionHeading, Reveal, TiltCard, SocialLinks, CountUp
     effects/          # Preloader, EntryDoor, Welcome, CustomCursor, HobbyImpact,
-                      # AnimatedBackground, ScrollProgress, SideNav, SpotlightEffect
-    footer/           # SignatureName (cursor-painted wordmark), FooterBackdrop
+                      # AnimatedBackground, ScrollProgress, SideNav, SpotlightEffect,
+                      # SynthwaveMode
+    hobbies/          # HobbyOrbital — glowing platforms with quip tooltips
+    footer/           # SignatureName, LoveButton, FooterBackdrop
     google/           # GoogleMe — mock search-results modal
     command/          # CommandPalette (⌘K)
     ai/               # AiAssistant — in-browser "Ask my portfolio" chat
     certificates/     # CertificateCard, CertificateLightbox
+    achievements/     # MedalCard — collectible honour cards
     analytics/        # VisitCounter (Abacus)
-    …                 # hero / projects / skills / timeline / achievements / contact
+    threshold/        # Threshold — rewind seam between work and learning
+    …                 # hero / projects / skills / timeline / contact
   sections/           # Navbar, Hero, About, Experience, EarlierExperience, Projects,
                       # Skills, Education, Achievements, Certifications, Hobbies, Contact, Footer
   App.tsx             # composition root
