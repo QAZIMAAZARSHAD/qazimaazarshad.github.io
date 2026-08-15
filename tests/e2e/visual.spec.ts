@@ -155,6 +155,15 @@ test("footer", async ({ page }) => {
 test.describe("mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
+  // The floating tech badges sit far enough outside the ring on a wide screen
+  // that the desktop baseline says nothing about them here, where the portrait
+  // shrinks and they can end up over the face.
+  test("hero (mobile)", async ({ page }) => {
+    const hero = page.locator("#hero");
+    await settleSection(page, hero);
+    await expect(hero).toHaveScreenshot("hero-mobile.png");
+  });
+
   test("footer (mobile)", async ({ page }) => {
     const footer = page.locator("footer");
     await hideHeader(page);

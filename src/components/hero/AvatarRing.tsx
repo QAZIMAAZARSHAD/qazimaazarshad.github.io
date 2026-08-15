@@ -34,7 +34,10 @@ const BADGES: TechBadge[] = [
   {
     label: "TypeScript",
     Icon: SiTypescript,
-    position: "-right-4 top-1/3 sm:-right-8",
+    // Sits at the circle's widest point, so on a narrow screen it reaches half
+    // way to the centre and lands across the face. Ride higher until there is
+    // room, where the edge curves away and it clears the portrait on its own.
+    position: "-right-4 top-[13%] sm:-right-8 sm:top-1/3",
     color: "text-accent-400",
     delay: -1.5,
     from: { x: -36, y: 16 },
