@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-/** Greetings flashed before the visitor's own language lands last. */
 const GREETINGS: Record<string, string> = {
   en: "Hello",
   hi: "नमस्ते",
@@ -23,10 +22,6 @@ const GREETINGS: Record<string, string> = {
   tr: "Merhaba",
 };
 
-/**
- * The flash order; the visitor's own greeting is appended last. Kept to twelve
- * so each one still gets ~240ms inside the shorter budget — enough to read.
- */
 const FLASH_ORDER = [
   "hi",
   "ur",
@@ -43,11 +38,6 @@ const FLASH_ORDER = [
 ];
 
 const RTL = new Set(["ar", "ur"]);
-/**
- * Scripts the display face can't render — Sora ships latin subsets only. Naming
- * the fallback keeps it deliberate, and its tight tracking is dropped because
- * it pinches joined scripts.
- */
 const NON_LATIN = new Set([
   "hi",
   "ur",
@@ -60,13 +50,9 @@ const NON_LATIN = new Set([
   "ar",
 ]);
 
-/** How long the curtain takes to part. Shared so the budget below stays true. */
 export const REVEAL_MS = 750;
-/** Total time the welcome screen is on screen, reveal included. */
 const WELCOME_MS = 4400;
-/** Of the remaining budget, how long the visitor's greeting holds once it lands. */
 const HOLD_MS = 1400;
-/** Reduced motion skips the flash, so it shouldn't sit on a static screen. */
 const HOLD_MS_REDUCED = 1200;
 
 interface Greeting {
@@ -88,13 +74,6 @@ interface WelcomeProps {
   readonly onDone: () => void;
 }
 
-/**
- * A burst of "hello" in a dozen languages that lands on the visitor's own,
- * resolved from their browser language. The flash is hidden from assistive
- * tech — narrating a dozen untagged scripts would queue announcements long
- * after the intro is gone — and only the greeting it settles on is announced.
- * Reduced motion skips the flash and shows the final greeting once.
- */
 export function Welcome({ onDone }: WelcomeProps) {
   const reduceMotion = useReducedMotion();
 
@@ -112,8 +91,6 @@ export function Welcome({ onDone }: WelcomeProps) {
   const settled = index === lastIndex;
   const greeting = sequence[index];
 
-  // Spread the flash across whatever the hold and the reveal leave behind, so
-  // the screen is gone at WELCOME_MS however many languages are shown.
   const stepMs = Math.round(
     (WELCOME_MS - REVEAL_MS - HOLD_MS) / Math.max(1, lastIndex),
   );
@@ -168,7 +145,6 @@ export function Welcome({ onDone }: WelcomeProps) {
       data-settled={settled}
       className="relative flex flex-col items-center gap-6 px-6 text-center"
     >
-      {/* Announce only what it lands on, not every frame of the flash. */}
       <output className="sr-only">
         {settled ? <span lang={greeting.code}>{greeting.text}</span> : ""}
       </output>

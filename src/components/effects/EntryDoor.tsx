@@ -4,22 +4,17 @@ import { cn } from "@/lib/utils";
 import { DoorBackdrop } from "./DoorBackdrop";
 import { DoorRoom } from "./DoorRoom";
 
-/** How far the door comes off the jamb on approach, and when opened. */
 const AJAR_DEG = -24;
 const OPEN_DEG = -88;
-/** How far the camera flies toward the doorway before the greeting takes over. */
 const PULL_SCALE = 13;
-/** Flight duration. Exported so the intro hands over exactly as it lands. */
 export const PULL_MS = 780;
 
-/** Swing, light spill, and the camera's flight through the doorway. */
 function doorState(opening: boolean, ajar: boolean, reduceMotion: boolean) {
   let swing = 0;
   if (reduceMotion) swing = 0;
   else if (opening) swing = OPEN_DEG;
   else if (ajar) swing = AJAR_DEG;
 
-  // Only ever seen before the flight starts, so there is no opening value.
   const spill = ajar ? "opacity-80" : "opacity-25";
 
   const pull = reduceMotion
@@ -34,19 +29,12 @@ function doorState(opening: boolean, ajar: boolean, reduceMotion: boolean) {
 
 interface EntryDoorProps {
   readonly onEnter: () => void;
-  /** True once opened — the door swings wide and the room floods out. */
   readonly opening: boolean;
   readonly buttonRef: RefObject<HTMLButtonElement | null>;
 }
 
-/**
- * The way in. Browsers won't play the greeting's music until the visitor has
- * interacted, so the gesture is made the point: a door that eases ajar as you
- * approach and swings open onto a lit room.
- */
 export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
   const reduceMotion = useReducedMotion();
-  // Apart, so a mouseleave can't unlight a door that is still focused.
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
 
@@ -60,14 +48,9 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // The door eases off the jamb on approach, and approach means the pointer.
-  // Focus lands here programmatically the moment the intro arrives, so treating
-  // that as approach left the door hanging open before anyone had touched it.
   const { swing, spill, pull } = doorState(opening, hovered, !!reduceMotion);
 
   return (
-    // Backdrop and bloom stay siblings of the animated column: a transformed
-    // ancestor becomes the containing block for full-screen descendants.
     <>
       <DoorBackdrop />
 
@@ -95,8 +78,6 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
               ease: [0.55, 0, 0.9, 0.35],
               times: reduceMotion ? undefined : [0, 0.25, 1],
             },
-            // Faded before it is fully scaled — the blow-up is the expensive
-            // frame, and paying for it at full opacity is the worst of both.
             opacity: {
               duration: PULL_MS / 1000,
               ease: "easeIn",
@@ -136,13 +117,6 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
                 reduceMotion={!!reduceMotion}
                 flightSeconds={PULL_MS / 1000}
               />
-              {/* The glow the room spills around the frame once it's ajar. */}
-              {/* Unmounted for the flight rather than faded: a 64px blur
-                  re-rasterised at 13x is the costliest thing on screen, and by
-                  then the room's own light covers the spill. Fading it instead
-                  left a hard-edged plate behind, because filter is not a
-                  transitioned property and vanished a frame ahead of the
-                  opacity. */}
               {!opening && (
                 <span
                   aria-hidden

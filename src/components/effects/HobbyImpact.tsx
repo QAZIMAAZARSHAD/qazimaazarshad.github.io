@@ -3,11 +3,7 @@ import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { asset, cn } from "@/lib/utils";
 
-/**
- * Timing constants (ms). SHAKE_MS must stay in sync with the `qma-shake`
- * animation duration in index.css. LIFETIME must outlast the longest
- * transition (the impact word: WORD_DELAY + WORD_DURATION).
- */
+// SHAKE_MS must stay in sync with `qma-shake` in index.css.
 const SHAKE_DELAY = 1150;
 const SHAKE_MS = 520;
 const WORD_DELAY = 1.1;
@@ -15,18 +11,12 @@ const WORD_DURATION = 2.6;
 const LIFETIME = Math.round((WORD_DELAY + WORD_DURATION) * 1000) + 300; // 4000
 const LIFETIME_REDUCED = 2300;
 
-/** A themed, cinematic reaction fired when a hobby chip is clicked. */
 export interface HobbyEffect {
-  /** Emoji projectile — the fallback when no `image` is set or it fails to load. */
   projectile: string;
-  /** Optional custom image (asset path) that rushes in instead of the emoji. */
   image?: string;
-  /** Comic-style impact word shown at screen center. */
   word: string;
-  /** Accent color for the flash, speed lines, and word glow. */
   color: string;
   shake?: boolean;
-  /** Music chip only: Hobbies plays a synthesized guitar strum on click. */
   sound?: boolean;
 }
 
@@ -38,19 +28,11 @@ interface HobbyImpactProps {
 
 const easeOut: [number, number, number, number] = [0.16, 0.84, 0.44, 1];
 
-/**
- * Full-screen hobby reaction: a projectile rushes the viewer from the chip that
- * was clicked, landing in a flash of speed lines, a comic word, and an optional
- * page shake. Portalled so nothing clips it; auto-dismisses via onDone.
- */
 export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
   const reduceMotion = useReducedMotion();
   const cx = window.innerWidth / 2;
   const cy = window.innerHeight / 2;
 
-  // Cap how big the projectile grows so it fills the screen dramatically on
-  // desktop but never overflows small screens. Base sizes: ~112px image, ~60px
-  // emoji; target peak ≈ 1.2× the smaller viewport edge, clamped to [3.5, 9].
   const projectileBase = effect.image ? 112 : 60;
   const targetPeak = Math.min(window.innerWidth, window.innerHeight) * 1.2;
   const peakScale = Math.max(3.5, Math.min(9, targetPeak / projectileBase));
@@ -58,12 +40,9 @@ export function HobbyImpact({ effect, origin, onDone }: HobbyImpactProps) {
 
   const [imageFailed, setImageFailed] = useState(false);
 
-  // Keep onDone stable so re-renders of the parent can't restart the timeline.
   const onDoneRef = useRef(onDone);
   onDoneRef.current = onDone;
 
-  // Longer catchphrases — or ones with a long single word that can't wrap
-  // small (e.g. "Mahishmati") — scale down so they stay on screen.
   const longestWord = Math.max(
     ...effect.word.split(/\s+/).map((w) => w.length),
   );

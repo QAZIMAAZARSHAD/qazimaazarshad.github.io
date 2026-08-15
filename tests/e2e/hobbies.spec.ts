@@ -12,12 +12,12 @@ test.describe("Hobbies — cinematic click effects", () => {
     await page.locator("#hobbies").scrollIntoViewIfNeeded();
   });
 
-  test("clicking a hobby chip fires a themed impact word that then clears", async ({
+  test("clicking a hobby fires a themed impact word that then clears", async ({
     page,
   }) => {
     await page
       .locator("#hobbies")
-      .getByRole("button", { name: /badminton/i })
+      .getByRole("button", { name: /^badminton:/i })
       .click();
 
     const word = page.getByText("Smash!", { exact: true });
@@ -27,37 +27,21 @@ test.describe("Hobbies — cinematic click effects", () => {
     await expect(word).toBeHidden({ timeout: 6000 });
   });
 
-  test.describe("tooltip clamping on a narrow screen", () => {
-    test.use({ viewport: { width: 360, height: 720 } });
-
-    test("an edge chip's tooltip appears on hover and stays within the viewport", async ({
-      page,
-    }) => {
-      // Movies is the first (left-edge) chip — its quip used to clip.
-      const movies = page
-        .locator("#hobbies")
-        .getByRole("button", { name: /^movies —/i });
-      await movies.hover();
-
-      const tip = page.locator('div[role="tooltip"]');
-      await expect(tip).toBeVisible();
-      await expect(tip).toContainText("Beta, tumse na ho payega.");
-
-      const box = await tip.boundingBox();
-      expect(box).not.toBeNull();
-      expect(box!.x).toBeGreaterThanOrEqual(0);
-      expect(box!.x + box!.width).toBeLessThanOrEqual(360);
-
-      // Clicking the chip dismisses the tooltip immediately.
-      await movies.click();
-      await expect(tip).toBeHidden();
-    });
+  test("each hobby shows a label and a blurb", async ({ page }) => {
+    const hobbies = page.locator("#hobbies");
+    await expect(hobbies.getByText("Movies", { exact: true })).toBeVisible();
+    await expect(
+      hobbies.getByText("Exploring stories & worlds on screen."),
+    ).toBeVisible();
+    await expect(
+      hobbies.getByText(/hobbies don.t just fill time/i),
+    ).toBeVisible();
   });
 
-  test("the Food chip renders a custom image icon", async ({ page }) => {
+  test("the Food hobby renders a custom image icon", async ({ page }) => {
     const foodIcon = page
       .locator("#hobbies")
-      .getByRole("button", { name: /food/i })
+      .getByRole("button", { name: /^food:/i })
       .locator("img");
     await expect(foodIcon).toHaveAttribute("src", /samosa/);
     await expect(foodIcon).toHaveJSProperty("complete", true);
@@ -71,7 +55,7 @@ test.describe("Hobbies — cinematic click effects", () => {
     }) => {
       await page
         .locator("#hobbies")
-        .getByRole("button", { name: /^movies —/i })
+        .getByRole("button", { name: /^movies:/i })
         .click();
 
       const projectile = page.locator('img[src*="bahubali"]');
@@ -85,7 +69,7 @@ test.describe("Hobbies — cinematic click effects", () => {
     test("shows the word but no projectile image", async ({ page }) => {
       await page
         .locator("#hobbies")
-        .getByRole("button", { name: /^movies —/i })
+        .getByRole("button", { name: /^movies:/i })
         .click();
 
       await expect(page.getByText("Jai", { exact: false })).toBeVisible();

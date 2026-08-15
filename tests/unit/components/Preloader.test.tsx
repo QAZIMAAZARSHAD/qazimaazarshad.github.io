@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act, fireEvent } from "@testing-library/react";
 import { Preloader } from "@/components/effects/Preloader";
+import { HOLD_MS } from "@/components/effects/LoaderStage";
 
 /**
  * The door exists so the visitor's click can start the music — browsers refuse
@@ -46,25 +47,23 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-/** Run the loader out so the door is on screen. */
-function toDoor() {
-  render(<Preloader />);
-  act(() => {
-    vi.advanceTimersByTime(3_000);
-  });
-}
-
 /**
  * Step the clock in slices. The intro's phases chain off one another, and each
  * act() boundary flushes one link of that chain — a single large advance would
  * leave the rest pending.
  */
-function runClock(total: number, slice = 1_000) {
+function runClock(total: number, slice = 500) {
   for (let elapsed = 0; elapsed < total; elapsed += slice) {
     act(() => {
       vi.advanceTimersByTime(slice);
     });
   }
+}
+
+/** Run the loader out, hold and all, so the door is on screen. */
+function toDoor() {
+  render(<Preloader />);
+  runClock(HOLD_MS + 2_000);
 }
 
 describe("Preloader audio", () => {

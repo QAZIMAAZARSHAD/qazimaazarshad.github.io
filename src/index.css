@@ -80,6 +80,56 @@
   }
 }
 
+/* A highlight glints across the accent word of the hero name once it lands.
+   Drawn on a pseudo-element so the word is not repeated in the document — the
+   glyphs have to be there to clip the gradient to, and a second copy in the
+   markup would land in the h1's text. */
+@keyframes qma-sheen {
+  from {
+    background-position: 210% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+.qma-sheen::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    105deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.9) 50%,
+    transparent 58%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: qma-sheen 1.5s ease-in-out 1.15s 1 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .qma-sheen::after {
+    display: none;
+  }
+}
+
+@keyframes qma-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.qma-spin-slow {
+  animation: qma-spin 22s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .qma-spin-slow {
+    animation: none;
+  }
+}
+
 /* Tech marquee loop (used via [animation:qma-marquee_...] in TechMarquee) */
 @keyframes qma-marquee {
   from {

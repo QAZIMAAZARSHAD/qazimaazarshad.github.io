@@ -10,24 +10,10 @@ import { asset, cn } from "@/lib/utils";
 
 const NAV_IDS = navSections.map((s) => s.id);
 
-/**
- * Scroll-spy targets. Kept module-level (not rebuilt per render) because
- * `useActiveSection` keys its IntersectionObserver on this array's identity —
- * an inline array would tear the observer down and rebuild it on every render,
- * leaving the header lagging behind the side-rail dots.
- *
- * The hero is included so that, while it is in view, `active === "hero"` and no
- * nav item (none of which use the "hero" id) is highlighted.
- */
 const SPY_IDS = ["hero", ...NAV_IDS];
 
-/** Shared spring for the indicator pill as it glides between items. */
 const PILL_SPRING = { type: "spring", stiffness: 420, damping: 34 } as const;
 
-/**
- * True only for focus that should be visibly indicated (keyboard, not a click).
- * Guarded because selector engines without `:focus-visible` support throw.
- */
 function isKeyboardFocus(el: Element): boolean {
   try {
     return el.matches(":focus-visible");
@@ -48,12 +34,8 @@ export function Navbar() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
-  // The pill follows the pointer while hovering and falls back to the section
-  // you're actually reading — one indicator doing both jobs.
   const highlighted = hovered ?? focused ?? active;
 
-  // Docked = the floating capsule. The drawer needs the full-width bar back,
-  // so opening the menu returns the header to its expanded shape.
   const docked = scrolled && !menuOpen;
 
   // `preventScroll` is critical: without it, returning focus to the top-of-page
@@ -64,10 +46,6 @@ export function Navbar() {
     toggleRef.current?.focus({ preventScroll: true });
   }, []);
 
-  // Mobile nav taps: close the drawer, release the body scroll-lock, then
-  // scroll to the target ourselves. Doing it manually (instead of relying on
-  // the native anchor jump) avoids the race where the lock is still active
-  // when the browser tries to scroll — which left navigation broken on mobile.
   const goToSection = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
       e.preventDefault();
@@ -93,9 +71,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Crossing to the desktop layout hides the drawer and its toggle, so the
-  // state has to be dropped too — otherwise the header stays stuck undocked
-  // with no visible way to dismiss it.
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1280px)");
     const onChange = () => {
@@ -173,8 +148,6 @@ export function Navbar() {
         menuOpen && "border-b border-white/10 bg-ink-950/95 backdrop-blur-xl",
       )}
     >
-      {/* Fades page content out as it scrolls behind the floating dock, so it
-          never shows through the gap above it. */}
       <span
         aria-hidden
         className={cn(
@@ -183,17 +156,12 @@ export function Navbar() {
         )}
       />
 
-      {/* At rest the outer wrapper adds no inset, so the dock's own padding
-          matches `container-page` and the header lines up with every section.
-          Docked, the inset moves outward to float the capsule off the edges. */}
       <div
         className={cn(
           "transition-[padding] duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)]",
           docked ? "px-5 pt-3 sm:px-8" : "px-0 pt-0",
         )}
       >
-        {/* The shape-shift: an airy full-width bar at rest, contracting into a
-            floating glass dock once the page scrolls. */}
         <div
           data-testid="nav-dock"
           data-docked={docked}
@@ -241,9 +209,6 @@ export function Navbar() {
               </span>
             </a>
 
-            {/* Pointer-only: it releases the hover highlight when the mouse
-            leaves the list. Keyboard users drive the same highlight through
-            focus, so there is nothing to mirror here. */}
             {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
             <ul
               className="hidden items-center xl:flex"
@@ -268,12 +233,7 @@ export function Navbar() {
                       }}
                       onBlur={() => setFocused(null)}
                       className={cn(
-                        // Tight by design: more padding here and the row
-                        // outgrows the dock, pushing Resume past its edge.
                         "relative block rounded-full px-2.5 py-2 text-sm font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60",
-                        // The section you're in stays lit even while the pointer
-                        // explores elsewhere — the pill says "pointer", the
-                        // standalone beam below says "you are here".
                         isLit || isActive ? "text-white" : "text-ink-400",
                       )}
                     >
@@ -313,7 +273,6 @@ export function Navbar() {
                 <Search className="h-4 w-4" aria-hidden />
                 <kbd className="font-mono text-xs">⌘K</kbd>
               </button>
-              {/* Capped, or the pull drags it across the capsule's border. */}
               <Magnetic strength={0.25} max={8}>
                 <a
                   href={resumeHref}

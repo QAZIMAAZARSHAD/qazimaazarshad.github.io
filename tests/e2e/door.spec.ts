@@ -19,6 +19,43 @@ test.describe("Entry door", () => {
     await expect(page.getByTestId("welcome")).toHaveCount(0);
   });
 
+  /**
+   * The loader shortens its hold under automation, or every test in the suite
+   * would pay four seconds to get through the front door. Spoofing the flag
+   * away is the only way to see the hold a real visitor gets.
+   */
+  test("holds a real visitor for its full four seconds", async ({ page }) => {
+    await page.addInitScript(() =>
+      Object.defineProperty(navigator, "webdriver", { get: () => false }),
+    );
+    await page.goto("/", { waitUntil: "commit" });
+    await expect(page.getByText("Loading")).toBeVisible({ timeout: 10_000 });
+
+    // Three seconds in — measured from before the loader's own clock starts,
+    // so this is an under-estimate of its elapsed time either way.
+    await page.waitForTimeout(3_000); // NOSONAR — the hold is the assertion
+    await expect(page.getByText("Loading")).toBeVisible();
+    await expect(door(page)).toHaveCount(0);
+
+    // And it lets go on its own, without anything else happening.
+    await expect(door(page)).toBeVisible({ timeout: 8_000 });
+  });
+
+  test("counts up to a full ring before it hands over", async ({ page }) => {
+    await page.addInitScript(() =>
+      Object.defineProperty(navigator, "webdriver", { get: () => false }),
+    );
+    await page.goto("/", { waitUntil: "commit" });
+
+    const count = page.getByTestId("loader-count");
+    await expect(count).toBeVisible({ timeout: 10_000 });
+
+    // Sampled rather than pinned to "000": the ring is already moving by the
+    // time the first assertion lands.
+    expect(Number(await count.textContent())).toBeLessThan(100);
+    await expect(count).toHaveText("100", { timeout: 8_000 });
+  });
+
   test("takes focus so it can be opened without a mouse", async ({ page }) => {
     await page.goto("/", { waitUntil: "commit" });
     await expect(door(page)).toBeFocused({ timeout: 10_000 });

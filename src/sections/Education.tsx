@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 
 const EASE = [0.21, 0.47, 0.32, 0.98] as const;
 
-/** Rules draw themselves in, one line at a time, as the record scrolls in. */
 const sheet: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.16, delayChildren: 0.1 } },
@@ -26,15 +25,10 @@ const rule: Variants = {
   show: { scaleX: 1, transition: { duration: 0.9, ease: EASE } },
 };
 
-/** Every four-digit year in a period string, oldest first. */
 function yearsIn(period: string): string[] {
   return [...period.matchAll(/\d{4}/g)].map((m) => m[0]);
 }
 
-/**
- * The span the record covers, read off the entries rather than written down
- * twice — a new qualification widens it on its own.
- */
 function recordSpan(items: readonly EducationItem[]): string | null {
   const years = items.flatMap((item) => yearsIn(item.period)).sort();
   if (years.length === 0) return null;
@@ -43,10 +37,6 @@ function recordSpan(items: readonly EducationItem[]): string | null {
   return first === last ? first : `${first} — ${last}`;
 }
 
-/**
- * A personal mark rather than an institutional one — the same monogram that
- * sits at the end of the corridor behind the door.
- */
 function Seal() {
   return (
     <span
@@ -71,7 +61,6 @@ function Record({
 
   const body = (
     <div className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-4 px-1 py-7 sm:grid-cols-[5rem_auto_1fr_auto] sm:gap-x-6 sm:py-8">
-      {/* The period reads once, to assistive tech, not twice on screen. */}
       <div className="col-start-1 row-start-1 flex flex-col">
         <span className="sr-only">{item.period}</span>
         <span
@@ -111,7 +100,6 @@ function Record({
         </p>
       </div>
 
-      {/* Unlabelled: a CGPA or a percentage says what it is on its own. */}
       <span className="col-start-3 row-start-1 justify-self-end whitespace-nowrap font-mono text-sm font-semibold text-accent-200 transition-colors duration-300 group-hover:text-white sm:col-start-4 sm:text-base">
         {item.score}
       </span>
@@ -134,7 +122,6 @@ function Record({
 
   return (
     <motion.li variants={entry} className="group relative">
-      {/* Closes the column headings, so it goes where those do. */}
       <motion.span
         aria-hidden
         variants={rule}
