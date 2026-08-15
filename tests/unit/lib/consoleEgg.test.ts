@@ -67,6 +67,7 @@ describe("installConsoleEgg", () => {
       "contact",
       "help",
       "hire",
+      "party",
       "projects",
       "resume",
       "skills",

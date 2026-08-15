@@ -6,6 +6,7 @@ import {
   socials,
 } from "@/data/content";
 import { celebrateBig, reducedMotion } from "@/lib/confetti";
+import { toggleSynthwave } from "@/lib/synthwave";
 import { asset } from "@/lib/utils";
 
 const ART = [
@@ -47,8 +48,11 @@ function help(): string {
       `%c  qma.skills()    %cwhat I build with\n` +
       `%c  qma.projects()  %ca few things I've shipped\n` +
       `%c  qma.contact()   %cevery way to reach me\n` +
-      `%c  qma.resume()    %copens the PDF`,
+      `%c  qma.resume()    %copens the PDF\n` +
+      `%c  qma.party()     %csynthwave mode — or type ↑↑↓↓←→←→BA on the page`,
     LABEL,
+    BODY,
+    CODE,
     BODY,
     CODE,
     BODY,
@@ -62,6 +66,11 @@ function help(): string {
     BODY,
   );
   return "↑ pick one";
+}
+
+function party(): string {
+  toggleSynthwave();
+  return "Nice. Escape puts it back.";
 }
 
 function skills(): string {
@@ -141,7 +150,15 @@ function hire(): string {
   return `Seriously though — ${profile.email}`;
 }
 
-const qma = { help, hire, skills, projects: listProjects, contact, resume };
+const qma = {
+  help,
+  hire,
+  skills,
+  projects: listProjects,
+  contact,
+  resume,
+  party,
+};
 
 declare global {
   interface Window {

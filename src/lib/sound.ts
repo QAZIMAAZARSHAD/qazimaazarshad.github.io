@@ -1,15 +1,4 @@
-let ctx: AudioContext | null = null;
-
-function getCtx(): AudioContext | null {
-  if (typeof window === "undefined") return null;
-  const AC =
-    window.AudioContext ??
-    (window as unknown as { webkitAudioContext?: typeof AudioContext })
-      .webkitAudioContext;
-  if (!AC) return null;
-  ctx ??= new AC();
-  return ctx;
-}
+import { getAudioContext } from "@/lib/audio";
 
 /** Open-string frequencies of a standard-tuned guitar: E2 A2 D3 G3 B3 E4. */
 const GUITAR_OPEN = [82.41, 110.0, 146.83, 196.0, 246.94, 329.63];
@@ -43,7 +32,7 @@ function pluck(
  * unavailable.
  */
 export function playStrum(): void {
-  const ac = getCtx();
+  const ac = getAudioContext();
   if (!ac) return;
   if (ac.state === "suspended") ac.resume().catch(() => {});
 

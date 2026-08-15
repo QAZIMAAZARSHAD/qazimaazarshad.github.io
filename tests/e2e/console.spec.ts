@@ -46,6 +46,7 @@ test("the advertised commands all exist and answer", async ({ page }) => {
     "contact",
     "help",
     "hire",
+    "party",
     "projects",
     "resume",
     "skills",

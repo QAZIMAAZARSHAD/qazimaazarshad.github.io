@@ -27,6 +27,7 @@ import {
   Check,
   ExternalLink,
   CommandIcon,
+  Radio,
 } from "lucide-react";
 import {
   FaGithub,
@@ -44,6 +45,7 @@ import {
   SiLinktree,
 } from "react-icons/si";
 import { navSections, profile, socials } from "@/data/content";
+import { toggleSynthwave } from "@/lib/synthwave";
 import { asset, cn } from "@/lib/utils";
 
 type IconComp = ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
@@ -166,6 +168,18 @@ export function CommandPalette() {
         icon: Mail,
         keywords: "contact mail reach",
         perform: () => openExternal(`mailto:${profile.email}`),
+      },
+      {
+        id: "synthwave",
+        title: "Toggle synthwave mode",
+        group: "Actions",
+        icon: Radio,
+        keywords: "konami retro crt neon party chiptune secret cheat code",
+        hint: "↑↑↓↓←→←→BA",
+        perform: () => {
+          setOpen(false);
+          toggleSynthwave();
+        },
       },
     ];
 

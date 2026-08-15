@@ -7,6 +7,7 @@ import { CommandPalette } from "@/components/command/CommandPalette";
 import { AiAssistant } from "@/components/ai/AiAssistant";
 import { SpotlightEffect } from "@/components/effects/SpotlightEffect";
 import { CustomCursor } from "@/components/effects/CustomCursor";
+import { SynthwaveMode } from "@/components/effects/SynthwaveMode";
 import { SideNav } from "@/components/effects/SideNav";
 import { Threshold } from "@/components/threshold/Threshold";
 import { Navbar } from "@/sections/Navbar";
@@ -32,6 +33,7 @@ export default function App() {
         <AiAssistant />
         <SpotlightEffect />
         <CustomCursor />
+        <SynthwaveMode />
         <SideNav />
         <AnimatedBackground />
         <ScrollProgress />

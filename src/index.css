@@ -247,6 +247,117 @@ html.qma-cursor-active [contenteditable="true"] {
   }
 }
 
+/* Synthwave party mode (Konami code).
+
+   Everything is painted by fixed overlays that blend with the page rather than
+   by a filter on a wrapper: a filtered ancestor becomes the containing block
+   for its fixed descendants, which would drop the navbar, side rail and cursor
+   out of the viewport as soon as the mode turned on. */
+.qma-crt {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.42) 0px,
+    rgba(0, 0, 0, 0.42) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.qma-neon-wash {
+  mix-blend-mode: overlay;
+  background:
+    radial-gradient(
+      80% 55% at 50% 0%,
+      rgba(255, 62, 205, 0.5),
+      transparent 70%
+    ),
+    linear-gradient(
+      165deg,
+      rgba(255, 62, 205, 0.42),
+      rgba(120, 40, 255, 0.28) 45%,
+      rgba(0, 232, 255, 0.42)
+    );
+}
+
+.qma-sun {
+  background: linear-gradient(180deg, #ffd166 0%, #ff5fa8 55%, #b026ff 100%);
+  box-shadow: 0 0 60px 14px rgba(255, 95, 168, 0.28);
+  /* Slits across the lower half only, which is what makes it read as the
+     genre's sun rather than a plain gradient disc. */
+  -webkit-mask-image:
+    linear-gradient(to bottom, #000 0 46%, transparent 46%, transparent 100%),
+    repeating-linear-gradient(to bottom, #000 0 7px, transparent 7px 11px);
+  mask-image:
+    linear-gradient(to bottom, #000 0 46%, transparent 46%, transparent 100%),
+    repeating-linear-gradient(to bottom, #000 0 7px, transparent 7px 11px);
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
+
+.qma-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 62, 205, 0.85) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 232, 255, 0.7) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(190px) rotateX(72deg);
+  transform-origin: 50% 0%;
+  filter: drop-shadow(0 0 6px rgba(255, 62, 205, 0.5));
+}
+
+@keyframes qma-grid-run {
+  to {
+    background-position: 0 64px;
+  }
+}
+
+@keyframes qma-crt-flicker {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .qma-grid {
+    animation: qma-grid-run 1.6s linear infinite;
+  }
+  .qma-crt {
+    animation: qma-crt-flicker 4s ease-in-out infinite;
+  }
+}
+
+html[data-synthwave] h1,
+html[data-synthwave] h2,
+html[data-synthwave] h3 {
+  text-shadow:
+    0 0 6px rgba(255, 62, 205, 0.55),
+    0 0 24px rgba(0, 232, 255, 0.32);
+}
+
+html[data-synthwave] .glass {
+  border-color: rgba(255, 62, 205, 0.32);
+  box-shadow: 0 0 26px rgba(255, 62, 205, 0.12);
+}
+
+/* The horizontal centring lives here rather than on a Tailwind utility: this
+   rule sets `transform` outright, which would overwrite -translate-x-1/2 and
+   leave the shades hanging off the side of the face. */
+.qma-shades {
+  opacity: 0;
+  transform: translate(-50%, -260%);
+  transition:
+    opacity 0.25s ease,
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html[data-synthwave] .qma-shades {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

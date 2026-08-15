@@ -69,6 +69,26 @@ const AT = {
   badgeStep: 0.08,
 } as const;
 
+/** Dropped in by synthwave mode; positioned over the eyes in the portrait. */
+function PixelShades() {
+  return (
+    <svg
+      aria-hidden
+      data-testid="pixel-shades"
+      viewBox="0 0 32 10"
+      shapeRendering="crispEdges"
+      className="qma-shades pointer-events-none absolute left-[49%] top-[29%] w-[34%]"
+    >
+      <rect x="0" y="1" width="32" height="2" fill="#0b0b12" />
+      <rect x="1" y="3" width="12" height="6" fill="#0b0b12" />
+      <rect x="19" y="3" width="12" height="6" fill="#0b0b12" />
+      <rect x="13" y="4" width="6" height="2" fill="#0b0b12" />
+      <rect x="2" y="4" width="4" height="2" fill="#2de2ff" opacity="0.75" />
+      <rect x="20" y="4" width="4" height="2" fill="#ff3ecd" opacity="0.75" />
+    </svg>
+  );
+}
+
 export function AvatarRing() {
   const reduce = useReducedMotion() ?? false;
   const entered = useHasEntered();
@@ -245,6 +265,8 @@ export function AvatarRing() {
             transition={{ duration: 1.1, delay: AT.scan, ease: "easeInOut" }}
           />
         )}
+
+        <PixelShades />
       </motion.div>
 
       {!reduce && (
