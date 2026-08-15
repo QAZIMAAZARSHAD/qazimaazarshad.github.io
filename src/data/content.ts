@@ -1,15 +1,10 @@
-/**
- * Single source of truth for all portfolio content. Every section reads from
- * here; nothing is hard-coded in the views.
- */
-
 import { completedYearsSince } from "@/lib/utils";
 
 /**
  * Professional start (R&D MDM team). Drives the dynamic "years of experience".
  * Dated to the day so the count turns on the anniversary, not on 1 August.
  */
-export const CAREER_START = "22 Aug 2022";
+const CAREER_START = "22 Aug 2022";
 export const experienceYears = completedYearsSince(CAREER_START);
 
 export type SocialId =

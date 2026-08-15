@@ -3,23 +3,14 @@ import { useInView, useReducedMotion } from "framer-motion";
 
 interface CountUpProps {
   readonly value: number;
-  /** Rendered before the number (e.g. "$"). */
   readonly prefix?: string;
-  /** Rendered after the number (e.g. "+"). */
   readonly suffix?: string;
   readonly className?: string;
   readonly durationMs?: number;
 }
 
-/** Cubic ease-out — fast start, gentle settle. */
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
-/**
- * Animates an integer to `value` — from 0 the first time it scrolls into view,
- * and from the previous value whenever `value` changes afterward (so it also
- * animates on filter/search changes). Honors prefers-reduced-motion by snapping
- * to the final value. Formatted with `toLocaleString()`.
- */
 export function CountUp({
   value,
   prefix = "",

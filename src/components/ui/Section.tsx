@@ -7,10 +7,6 @@ interface SectionProps {
   children: ReactNode;
 }
 
-/**
- * Consistent section wrapper: vertical rhythm + scroll-margin so anchor
- * navigation lands below the fixed navbar.
- */
 export function Section({ id, className, children }: SectionProps) {
   return (
     <section id={id} className={cn("scroll-mt-24 py-20 sm:py-28", className)}>

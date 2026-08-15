@@ -46,7 +46,6 @@ import {
 import { navSections, profile, socials } from "@/data/content";
 import { asset, cn } from "@/lib/utils";
 
-/** Any lucide-react or react-icons component (both accept className + aria-hidden). */
 type IconComp = ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
 
 interface Command {

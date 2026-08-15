@@ -2,7 +2,6 @@ import { reactionKey } from "@/data/content";
 
 const ENDPOINT = "https://api.web3forms.com/submit";
 
-/** One love per browser. Repeat visits see the heart already filled. */
 const STORE_KEY = "qma:loved";
 
 export function hasLoved(): boolean {
@@ -38,7 +37,6 @@ export async function sendLove(note?: string): Promise<boolean> {
     // Web3Forms drops the submission if this is filled, which only a bot does.
     botcheck: "",
     message: note?.trim() || "No note left.",
-    // Enough context that the mail is worth opening twice.
     arrived_from: document.referrer || "direct",
     screen: `${window.innerWidth}x${window.innerHeight}`,
     at: new Date().toString(),

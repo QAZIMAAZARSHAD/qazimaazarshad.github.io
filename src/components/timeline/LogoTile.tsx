@@ -1,16 +1,11 @@
 import { asset, cn } from "@/lib/utils";
 
 interface LogoTileProps {
-  /** Raw content path, e.g. "images/experience/infa.png". Wrapped with asset(). */
   src: string;
   alt: string;
   className?: string;
 }
 
-/**
- * A rounded, light "chip" that holds an organisation / institution logo so
- * dark-on-transparent marks stay legible against the ink background.
- */
 export function LogoTile({ src, alt, className }: Readonly<LogoTileProps>) {
   return (
     <div

@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
 
-/**
- * Tracks which section id is currently in view, for nav highlighting.
- * Picks the entry closest to the top of the viewport among the intersecting ones.
- */
 export function useActiveSection(ids: readonly string[]): string {
   const [active, setActive] = useState<string>("");
 

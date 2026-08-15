@@ -227,7 +227,6 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
           </button>
         </div>
 
-        {/* Decorative tab row (visual flavour only) */}
         <div
           aria-hidden="true"
           className="flex items-center gap-5 border-b border-white/10 px-5 pt-3 font-mono text-xs text-ink-500 sm:px-6"

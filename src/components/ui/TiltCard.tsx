@@ -14,10 +14,6 @@ interface TiltCardProps {
   max?: number;
 }
 
-/**
- * Pointer-reactive 3D tilt wrapper. Disabled gracefully on touch/keyboard —
- * it simply renders its children with no transform when not hovered.
- */
 export function TiltCard({ children, className, max = 8 }: TiltCardProps) {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);

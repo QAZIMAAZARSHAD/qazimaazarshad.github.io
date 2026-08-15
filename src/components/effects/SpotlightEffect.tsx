@@ -1,9 +1,5 @@
 import { useEffect } from "react";
 
-/**
- * One global pointer listener that gives every `.spotlight` element a
- * cursor-following radial glow via CSS variables — no per-card JS or state.
- */
 export function SpotlightEffect() {
   useEffect(() => {
     let raf = 0;

@@ -9,20 +9,10 @@ import { cn } from "@/lib/utils";
 const COUNTER = analytics.loveCounter;
 const NOTE_LIMIT = 140;
 
-/** Petals thrown out when the heart is tapped. */
 const BURST = [-52, -26, 0, 26, 52];
 
 type Stage = "idle" | "loved" | "thanked";
 
-/**
- * The footer's reaction: a heart that anyone can tap, and a line they can leave
- * if they want to say more. The tap relays to my inbox through Web3Forms —
- * there is no backend here — and bumps a public count so the number means
- * something to whoever reads it next.
- *
- * Everything about it degrades quietly. No access key means no email but a
- * working counter; a blocked counter means no number but a working heart.
- */
 export function LoveButton() {
   const reduceMotion = useReducedMotion();
   const [stage, setStage] = useState<Stage>("idle");
@@ -67,7 +57,6 @@ export function LoveButton() {
     void bumpCount(COUNTER).then((total) => {
       if (total !== null) setCount(total);
     });
-    // Let them say more, if they want to.
     focusTimer.current = window.setTimeout(() => noteRef.current?.focus(), 400);
   };
 
@@ -121,7 +110,6 @@ export function LoveButton() {
             />
           </motion.span>
 
-          {/* Petals, thrown once per tap. */}
           {!reduceMotion && burst > 0 && (
             <span aria-hidden className="pointer-events-none absolute inset-0">
               {BURST.map((angle) => (
@@ -157,7 +145,6 @@ export function LoveButton() {
         </p>
       </div>
 
-      {/* Only after the tap: a line, if they have one. */}
       <AnimatePresence>
         {stage === "loved" && (
           <motion.form

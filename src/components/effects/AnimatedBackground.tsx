@@ -6,18 +6,10 @@ import {
   useSpring,
 } from "framer-motion";
 
-/**
- * Fixed, full-viewport animated backdrop:
- *  - CSS aurora blobs (cheap, GPU-composited)
- *  - a lightweight canvas particle constellation that gently drifts and
- *    links nearby nodes, with a soft parallax toward the pointer.
- * Fully disabled for users who prefer reduced motion.
- */
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = useReducedMotion();
 
-  // Subtle pointer parallax for the aurora blobs.
   const parallaxX = useMotionValue(0);
   const parallaxY = useMotionValue(0);
   const blobX = useSpring(parallaxX, { stiffness: 40, damping: 20, mass: 0.6 });

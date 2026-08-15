@@ -19,10 +19,6 @@ function clamp(value: number, limit: number): number {
   return Math.min(Math.max(value, -limit), limit);
 }
 
-/**
- * Wraps an element so it springs toward the cursor while hovered — a subtle
- * "magnetic" pull. Disabled entirely under prefers-reduced-motion.
- */
 export function Magnetic({
   children,
   className,

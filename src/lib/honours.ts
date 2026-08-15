@@ -4,7 +4,7 @@
  * is keyed by them.
  */
 
-export type MarkKind = "medal" | "rank" | "place";
+type MarkKind = "medal" | "rank" | "place";
 
 export type Tier = "gold" | "silver" | "bronze" | "accent";
 
@@ -20,10 +20,10 @@ export interface Honour {
   readonly group: HonourGroupId;
 }
 
-export type Level =
+type Level =
   "School" | "District" | "University" | "National" | "International";
 
-export type HonourGroupId = "olympiads" | "competitions" | "sport";
+type HonourGroupId = "olympiads" | "competitions" | "sport";
 
 export interface HonourGroup {
   readonly id: HonourGroupId;
@@ -103,7 +103,6 @@ function describe(raw: string): Omit<Honour, "group"> {
     return { raw, markKind: "place", mark: place[0], tier, title, level };
   }
 
-  // "Winner" and any other first-place phrasing.
   return { raw, markKind: "place", mark: "Won", tier: "gold", title, level };
 }
 
@@ -123,7 +122,7 @@ export function toHonourGroups(achievements: readonly string[]): HonourGroup[] {
   });
 }
 
-export function toHonourList(achievements: readonly string[]): Honour[] {
+function toHonourList(achievements: readonly string[]): Honour[] {
   return toHonourGroups(achievements).flatMap((group) => [...group.honours]);
 }
 

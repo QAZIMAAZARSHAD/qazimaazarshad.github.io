@@ -8,13 +8,8 @@ import { Reveal } from "@/components/ui/Reveal";
 import { CountUp } from "@/components/ui/CountUp";
 import { fadeUp, staggerContainer, viewportOnce } from "@/lib/motion";
 
-/** One accent icon per "about" bullet, cycled if the list grows. */
 const BULLET_ICONS: LucideIcon[] = [Sparkles, Check, Users, Zap];
 
-/**
- * Renders a stat value, counting up any leading integer (e.g. "4+" → 4 + "+")
- * while leaving purely non-numeric values ("Full-stack") untouched.
- */
 function StatValue({ value }: { readonly value: string }) {
   const digits = /^\d+/.exec(value)?.[0];
   if (!digits) return <>{value}</>;

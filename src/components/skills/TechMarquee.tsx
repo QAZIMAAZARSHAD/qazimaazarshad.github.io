@@ -17,18 +17,16 @@ const chipClickable = cn(
   "focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
 );
 
-/** Left/right edge fade so chips dissolve into the background at the rails. */
 const fadeMask =
   "linear-gradient(to right, transparent, black 10%, black 90%, transparent)";
 
 interface TechChipProps {
   readonly skill: string;
-  /** Duplicated copies are hidden from AT and taken out of the tab order. */
+  /** Duplicate marquee copies stay out of AT and the tab order. */
   readonly duplicate?: boolean;
   readonly className?: string;
 }
 
-/** Clickable only when the skill maps to real projects; otherwise display-only. */
 function TechChip({ skill, duplicate, className }: TechChipProps) {
   if (!isSkillFilterable(skill)) {
     return (
@@ -54,11 +52,6 @@ function TechChip({ skill, duplicate, className }: TechChipProps) {
   );
 }
 
-/**
- * Infinite, seamlessly-looping horizontal strip of tech chips (rendered twice
- * and translated by one copy's width). Pauses on hover, fades at both edges,
- * and degrades to a static wrapped row under prefers-reduced-motion.
- */
 export function TechMarquee() {
   const reduceMotion = useReducedMotion();
 

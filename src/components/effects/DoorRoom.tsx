@@ -34,7 +34,6 @@ export function DoorRoom({
       aria-hidden
       className="absolute inset-0 overflow-hidden rounded-2xl bg-gradient-to-b from-white via-cyan-100 to-accent-200"
     >
-      {/* Light pooling out of the far end. */}
       <span className="absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_46%,#fff_0%,rgba(255,255,255,0.65)_35%,transparent_72%)]" />
 
       <motion.span
@@ -54,13 +53,11 @@ export function DoorRoom({
           />
         ))}
 
-        {/* The mark at the end of it, which the camera passes through. */}
         <span className="absolute inset-0 grid scale-[0.32] place-items-center font-display text-[2.75rem] font-extrabold tracking-tight text-accent-900">
           QMA
         </span>
       </motion.span>
 
-      {/* A warm floor catching the light, to give the corridor a bottom. */}
       <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-accent-300/70 to-transparent" />
     </span>
   );

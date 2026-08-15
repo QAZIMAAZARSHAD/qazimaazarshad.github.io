@@ -17,7 +17,6 @@ import { cn } from "@/lib/utils";
 
 type Filter = ProjectCategory | "All";
 
-/** How many project cards to show before the visitor expands the rest. */
 const INITIAL_COUNT = 6;
 
 export function Projects() {

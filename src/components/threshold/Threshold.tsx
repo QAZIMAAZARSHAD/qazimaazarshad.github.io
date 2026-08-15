@@ -9,18 +9,9 @@ import {
 import { ChevronDown, Undo2 } from "lucide-react";
 import { earliestYear } from "@/data/content";
 
-/** The stretch of scroll over which the year winds back. */
 const REWIND_FROM = 0.18;
 const REWIND_TO = 0.62;
 
-/**
- * The seam between the working life above and everything that led to it below.
- *
- * Scrolling into it winds a year counter backwards from now to the earliest
- * date the content below can support, over a floor that recedes to a horizon —
- * so the separation is something you travel through rather than a rule on the
- * page. Under reduced motion it simply arrives at the far year.
- */
 export function Threshold() {
   const ref = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
@@ -45,7 +36,6 @@ export function Threshold() {
     if (!reduceMotion) setYear(Math.round(value));
   });
 
-  // The horizon opens as the seam arrives, and the floor runs under you.
   const horizon = useTransform(scrollYProgress, [0, 0.35], [0.15, 1]);
   const travel = useTransform(scrollYProgress, [0, 1], ["0px", "512px"]);
 

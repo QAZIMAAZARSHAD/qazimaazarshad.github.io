@@ -13,11 +13,6 @@ const DOT_GRID = {
 const HORIZON =
   "radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.42), rgba(34,211,238,0.13) 42%, transparent 72%)";
 
-/**
- * Decorative atmosphere behind the footer: a masked dot grid, a glowing horizon
- * rising from the bottom edge, and two slowly drifting aurora orbs. Purely
- * ornamental (aria-hidden) and static under reduced motion.
- */
 export function FooterBackdrop() {
   const reduceMotion = useReducedMotion();
   // Gated on visibility — the footer is off-screen for most of a visit, so

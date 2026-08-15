@@ -11,19 +11,12 @@ const DOT_GRID = {
     "radial-gradient(ellipse 65% 55% at 50% 50%, #000 5%, transparent 72%)",
 };
 
-/** A glow that follows the pointer, so the dark isn't inert before the click. */
 const TORCH =
   "radial-gradient(520px circle at var(--dx, 50%) var(--dy, 45%), rgba(99,102,241,0.20), rgba(34,211,238,0.06) 40%, transparent 68%)";
 
-/** Darkens the edges so everything reads as one focal point. */
 const VIGNETTE =
   "radial-gradient(ellipse at center, transparent 35%, rgba(2,6,23,0.75) 100%)";
 
-/**
- * The atmosphere behind the entry door: a masked dot grid, drifting aurora, a
- * torch that tracks the pointer, and a vignette pulling the eye to the middle.
- * Purely decorative, and still under reduced motion.
- */
 export function DoorBackdrop() {
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);

@@ -5,12 +5,6 @@ import { cn } from "@/lib/utils";
 
 const NAV_IDS = navSections.map((s) => s.id);
 
-/**
- * Desktop-only vertical scroll-dots rail pinned to the right edge. One dot per
- * `navSections` entry; the active section's dot is enlarged and accent-colored.
- * Sits below the command palette / AI panel (z-30). Reduced motion → instant
- * scroll and no transitions.
- */
 export function SideNav() {
   const active = useActiveSection(NAV_IDS);
   const reduceMotion = useReducedMotion();
