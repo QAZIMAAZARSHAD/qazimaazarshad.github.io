@@ -15,6 +15,7 @@ export type SocialId =
   | "hackerrank"
   | "twitter"
   | "instagram"
+  | "threads"
   | "facebook"
   | "linktree"
   | "medium"
@@ -229,6 +230,11 @@ export const socials: SocialLink[] = [
     id: "instagram",
     label: "Instagram",
     href: "https://www.instagram.com/qazimaazarshad/",
+  },
+  {
+    id: "threads",
+    label: "Threads",
+    href: "https://www.threads.com/@qazimaazarshad",
   },
   {
     id: "facebook",
