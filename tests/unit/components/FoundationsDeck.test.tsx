@@ -166,17 +166,28 @@ describe("FoundationsDeck", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("closes with a span and focus-area pills", () => {
+  it("closes with a span and thematic focus-area pills", () => {
     setup();
     // Spans the earliest and latest year across every period.
     expect(screen.getByText("Active Years").previousSibling).toHaveTextContent(
       "2020–2022",
     );
-    // Every focus area present in the deck earns a pill.
     const focusAreas = screen.getByText("Focus Areas")
       .nextSibling as HTMLElement;
-    expect(within(focusAreas).getByText("Externship")).toBeInTheDocument();
-    expect(within(focusAreas).getByText("Community")).toBeInTheDocument();
-    expect(within(focusAreas).getByText("Ambassador")).toBeInTheDocument();
+    for (const label of [
+      "Leadership",
+      "Friends",
+      "Learnings",
+      "Fun",
+      "Campaigns",
+      "Event Management",
+      "Sales",
+      "Marketing",
+      "Ideas",
+      "Influencer",
+      "Open Source",
+    ]) {
+      expect(within(focusAreas).getByText(label)).toBeInTheDocument();
+    }
   });
 });

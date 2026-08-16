@@ -25,7 +25,7 @@ import {
   FolderGit2,
   GitPullRequest,
   Globe,
-  GraduationCap,
+  Compass,
   Megaphone,
   Rocket,
   Sparkles,
@@ -440,50 +440,75 @@ function FilterBar({
 }
 
 /**
+ * Thematic chips for the summary — the chapter's flavour, not the filter
+ * buckets. Spelling is intentional: casual nouns that read as the chapter's
+ * texture rather than job titles.
+ */
+const FOCUS_THEMES = [
+  {
+    label: "Leadership",
+    pill: "border-accent-400/30 bg-accent-500/10 text-accent-200",
+  },
+  {
+    label: "Friends",
+    pill: "border-fuchsia-400/30 bg-fuchsia-500/10 text-fuchsia-200",
+  },
+  {
+    label: "Learnings",
+    pill: "border-cyan-400/30 bg-cyan-500/10 text-cyan-200",
+  },
+  { label: "Fun", pill: "border-amber-400/30 bg-amber-500/10 text-amber-200" },
+  {
+    label: "Campaigns",
+    pill: "border-emerald-400/30 bg-emerald-500/10 text-emerald-200",
+  },
+  {
+    label: "Event Management",
+    pill: "border-indigo-400/30 bg-indigo-500/10 text-indigo-200",
+  },
+  { label: "Sales", pill: "border-rose-400/30 bg-rose-500/10 text-rose-200" },
+  { label: "Marketing", pill: "border-sky-400/30 bg-sky-500/10 text-sky-200" },
+  {
+    label: "Ideas",
+    pill: "border-violet-400/30 bg-violet-500/10 text-violet-200",
+  },
+  {
+    label: "Influencer",
+    pill: "border-orange-400/30 bg-orange-500/10 text-orange-200",
+  },
+  {
+    label: "Open Source",
+    pill: "border-lime-400/30 bg-lime-500/10 text-lime-200",
+  },
+] as const;
+
+/**
  * A closing note rather than a scoreboard: the years actively spanned and the
- * focus areas explored — a mix of figure and qualitative pills instead of a
- * wall of roll-up counts.
+ * flavour of the chapter — thematic pills instead of a wall of roll-up counts.
  */
 function SummaryBar({ items }: { readonly items: readonly ExperienceItem[] }) {
-  const { span, disciplines } = useMemo(() => {
+  const span = useMemo(() => {
     const years = items
       .flatMap((item) => item.period.match(/\d{4}/g) ?? [])
       .map(Number);
-    const activeYears = years.length
-      ? `${Math.min(...years)}–${Math.max(...years)}`
-      : "—";
-
-    const order: CategoryId[] = [
-      "Open Source",
-      "Externship",
-      "Ambassador",
-      "Community",
-    ];
-    const present = new Set(items.map((item) => categoryOf(item.type).id));
-
-    return {
-      span: activeYears,
-      disciplines: order
-        .filter((id) => present.has(id))
-        .map((id) => CATEGORIES[id]),
-    };
+    return years.length ? `${Math.min(...years)}–${Math.max(...years)}` : "—";
   }, [items]);
 
   return (
     <div className="mt-10 flex flex-col gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:flex-row sm:items-center sm:gap-8 sm:p-6">
-      <div className="flex items-center gap-3.5 sm:max-w-[14rem]">
+      <div className="flex items-center gap-3.5 sm:max-w-[16rem]">
         <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent-500/20 to-cyan-500/20 ring-1 ring-white/10">
-          <GraduationCap className="h-5 w-5 text-accent-300" aria-hidden />
+          <Compass className="h-5 w-5 text-accent-300" aria-hidden />
         </span>
         <p className="text-sm font-medium leading-snug text-ink-200">
-          Built strong foundations.{" "}
-          <span className="text-ink-400">Grew with real impact.</span>
+          Before the title.{" "}
+          <span className="text-ink-400">The chapter that still shows.</span>
         </p>
       </div>
 
       <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:items-center sm:justify-end sm:gap-8">
-        <div className="flex flex-col gap-0.5">
-          <span className="bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
+        <div className="flex shrink-0 flex-col gap-0.5">
+          <span className="whitespace-nowrap bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
             {span}
           </span>
           <span className="text-[11px] uppercase tracking-wide text-ink-400">
@@ -491,21 +516,20 @@ function SummaryBar({ items }: { readonly items: readonly ExperienceItem[] }) {
           </span>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex min-w-0 flex-col gap-1.5">
           <span className="text-[11px] uppercase tracking-wide text-ink-400">
             Focus Areas
           </span>
           <ul className="flex flex-wrap gap-1.5">
-            {disciplines.map((c) => (
+            {FOCUS_THEMES.map((theme) => (
               <li
-                key={c.id}
+                key={theme.label}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
-                  c.pill,
+                  "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium",
+                  theme.pill,
                 )}
               >
-                <c.Icon className="h-3 w-3" aria-hidden />
-                {c.id}
+                {theme.label}
               </li>
             ))}
           </ul>
