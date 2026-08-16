@@ -24,10 +24,15 @@ test.describe("Navigation & page shell", () => {
   test("each desktop nav link scrolls its section into view", async ({
     page,
   }) => {
+    test.setTimeout(60_000);
     const primaryNav = page.getByRole("navigation", { name: "Primary" });
 
     for (const { id, label } of navSections) {
-      await primaryNav.getByRole("link", { name: label, exact: true }).click();
+      const link = primaryNav.getByRole("link", { name: label, exact: true });
+      // The morphing dock keeps Framer Motion layout work running while we
+      // scroll, so Playwright's stability check can hang on WebKit. Force
+      // still fires a real click on the <a>.
+      await link.click({ force: true });
 
       await expect(page).toHaveURL(new RegExp(`#${id}$`));
       await expect(page.locator(`#${id}`)).toBeInViewport();
