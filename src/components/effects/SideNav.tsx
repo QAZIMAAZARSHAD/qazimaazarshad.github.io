@@ -18,9 +18,11 @@ export function SideNav() {
   };
 
   return (
+    // The page column is max-w-6xl, so below ~1250px the rail has nowhere to sit
+    // that isn't on top of a card. Wait for xl rather than overlap the content.
     <nav
       aria-label="Section navigation"
-      className="fixed right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-4 lg:flex"
+      className="fixed right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-4 xl:flex"
     >
       {navSections.map((section) => {
         const isActive = active === section.id;

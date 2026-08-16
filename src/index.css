@@ -358,6 +358,123 @@ html[data-synthwave] .qma-shades {
   transform: translate(-50%, 0);
 }
 
+/* Brand pedestal in the experience timeline: a solid slab built from six faces
+   in a preserve-3d parent, with the perspective one level up so the near edge
+   bulges as it comes round. Both broad faces carry the logo, so a full turn
+   never shows the brand mirrored, and the four rims give it thickness — without
+   them it passes through side-on as a paper-thin sliver.
+
+   The half-extents have to be absolute lengths (translateZ ignores
+   percentages), so they track the w-20/h-20 the tile is rendered at. */
+.qma-coin {
+  perspective: 620px;
+  --coin-half: 40px;
+  --coin-depth: 13px;
+}
+
+.qma-coin-spin {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  transform-style: preserve-3d;
+  /* Held slightly off-axis so the turn reads as an object on a plinth rather
+     than a flat card flipping. */
+  transform: rotateX(-9deg);
+}
+
+.qma-coin-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(calc(var(--coin-depth) / 2));
+}
+
+.qma-coin-face--back {
+  transform: rotateY(180deg) translateZ(calc(var(--coin-depth) / 2));
+}
+
+/* Rims stop short of the corners by the face's border radius, so they sit on
+   the straight run of each side and never poke out past the rounding. They are
+   pitched well below the white of the faces — matched in brightness they read
+   as a flap hinged off the front rather than as the slab's own thickness. */
+.qma-coin-rim {
+  position: absolute;
+  border-radius: 3px;
+  /* Every rim is built facing outward, so culling backfaces is what keeps the
+     far side of the slab from being painted over the near one — depth sorting
+     alone does not reliably hide it. */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: linear-gradient(to bottom, #aab3c6, #7b8496);
+}
+
+.qma-coin-rim--left,
+.qma-coin-rim--right {
+  top: 8px;
+  height: calc(100% - 16px);
+  left: 50%;
+  width: var(--coin-depth);
+  margin-left: calc(var(--coin-depth) / -2);
+}
+
+.qma-coin-rim--right {
+  transform: rotateY(90deg) translateZ(var(--coin-half));
+}
+
+.qma-coin-rim--left {
+  transform: rotateY(-90deg) translateZ(var(--coin-half));
+}
+
+.qma-coin-rim--top,
+.qma-coin-rim--bottom {
+  left: 8px;
+  width: calc(100% - 16px);
+  top: 50%;
+  height: var(--coin-depth);
+  margin-top: calc(var(--coin-depth) / -2);
+}
+
+.qma-coin-rim--top {
+  transform: rotateX(90deg) translateZ(var(--coin-half));
+}
+
+.qma-coin-rim--bottom {
+  transform: rotateX(-90deg) translateZ(var(--coin-half));
+}
+
+@keyframes qma-coin-turn {
+  from {
+    transform: rotateX(-9deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-9deg) rotateY(360deg);
+  }
+}
+
+/* Runs on the same 6s clock as the float, so the pool tightens exactly as the
+   tile reaches the top of its drift. */
+@keyframes qma-coin-shadow {
+  0%,
+  100% {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) scaleX(0.78);
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .qma-coin-spin {
+    animation: qma-coin-turn 18s linear infinite;
+  }
+  .qma-coin-shadow {
+    animation: qma-coin-shadow 6s ease-in-out infinite;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

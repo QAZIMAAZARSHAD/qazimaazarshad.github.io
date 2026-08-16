@@ -106,10 +106,11 @@ test.describe("Footer signature", () => {
   //
   // Two things are being held at once, and the tighter one is the wrap. The
   // type is sized in vw against a column that loses a fixed inset, so the
-  // narrow end of the lg range is where the name comes closest to spilling onto
-  // a second line; 1150 and 1200 are there for that. Asserting the line count
-  // also stops the clearance check passing for the wrong reason: a wrapped name
-  // is short, so it clears the rail easily while looking nothing like intended.
+  // narrow end of this range is where the name comes closest to spilling onto
+  // a second line; 1150 and 1200 are there for that, and stay covered even
+  // though the rail itself only appears from xl. Asserting the line count also
+  // stops the clearance check passing for the wrong reason: a wrapped name is
+  // short, so it clears the rail easily while looking nothing like intended.
   for (const width of [1025, 1150, 1200, 1280, 1440, 1600, 1920]) {
     test(`stays on one line and clears the scroll-dots rail at ${width}px`, async ({
       page,
@@ -130,17 +131,24 @@ test.describe("Footer signature", () => {
         if (words.length === 0) return null;
         const boxes = words.map((w) => w.getBoundingClientRect());
 
+        // The rail only renders from xl up; below that there is nothing to
+        // clear, and a display:none node would measure as a box at the origin.
+        const railShown = getComputedStyle(rail).display !== "none";
+
         return {
           lines: new Set(boxes.map((b) => Math.round(b.top))).size,
-          clearance:
-            rail.getBoundingClientRect().left -
-            Math.max(...boxes.map((b) => b.right)),
+          clearance: railShown
+            ? rail.getBoundingClientRect().left -
+              Math.max(...boxes.map((b) => b.right))
+            : null,
         };
       });
 
       expect(measured, "rail and wordmark both present").not.toBeNull();
       expect(measured!.lines, "wordmark stays on one line").toBe(1);
-      expect(measured!.clearance).toBeGreaterThan(16);
+      if (measured!.clearance !== null) {
+        expect(measured!.clearance).toBeGreaterThan(16);
+      }
     });
   }
 
