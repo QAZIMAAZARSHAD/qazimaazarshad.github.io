@@ -3,6 +3,22 @@ import { enterSite } from "./intro";
 // Playwright does not resolve the "@/" alias, so import via a relative path.
 import { navSections } from "../../src/data/content";
 
+/**
+ * Everything on this page waits on the app bundle, which on a phone is seconds
+ * of nothing. The markup carries its own spinner so the wait reads as loading
+ * rather than broken, and React clears it on mount.
+ */
+test("the shell paints a spinner before the bundle, then hands over", async ({
+  page,
+}) => {
+  const html = await (await page.request.get("/")).text();
+  expect(html).toContain('id="boot"');
+
+  await page.goto("/");
+  await expect(page.getByTestId("preloader")).toBeAttached();
+  await expect(page.locator("#boot")).toHaveCount(0);
+});
+
 test.describe("Navigation & page shell", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");

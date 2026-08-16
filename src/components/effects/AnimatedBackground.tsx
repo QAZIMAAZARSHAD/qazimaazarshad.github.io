@@ -1,14 +1,11 @@
 import { useEffect, useRef } from "react";
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useAmbientMotion } from "@/hooks/useAmbientMotion";
+import { cn } from "@/lib/utils";
 
 export function AnimatedBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const reduceMotion = useReducedMotion();
+  const ambient = useAmbientMotion();
 
   const parallaxX = useMotionValue(0);
   const parallaxY = useMotionValue(0);
@@ -16,7 +13,7 @@ export function AnimatedBackground() {
   const blobY = useSpring(parallaxY, { stiffness: 40, damping: 20, mass: 0.6 });
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (!ambient) return;
     const MAX = 15;
     const onMove = (e: PointerEvent) => {
       parallaxX.set((e.clientX / window.innerWidth - 0.5) * 2 * MAX);
@@ -24,13 +21,12 @@ export function AnimatedBackground() {
     };
     window.addEventListener("pointermove", onMove);
     return () => window.removeEventListener("pointermove", onMove);
-  }, [reduceMotion, parallaxX, parallaxY]);
+  }, [ambient, parallaxX, parallaxY]);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (prefersReduced) return;
+    // The constellation exists to be pushed around by a cursor. On a phone
+    // nothing can reach it, so it is a permanent rAF loop for no return.
+    if (!ambient) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -141,7 +137,7 @@ export function AnimatedBackground() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerout", onLeave);
     };
-  }, []);
+  }, [ambient]);
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -150,18 +146,27 @@ export function AnimatedBackground() {
       <motion.div
         className="absolute inset-0"
         style={
-          reduceMotion
-            ? undefined
-            : { x: blobX, y: blobY, willChange: "transform" }
+          ambient ? { x: blobX, y: blobY, willChange: "transform" } : undefined
         }
       >
-        <div className="absolute -left-40 -top-40 h-[38rem] w-[38rem] rounded-full bg-accent-600/20 blur-[120px] animate-float" />
         <div
-          className="absolute -right-32 top-1/3 h-[32rem] w-[32rem] rounded-full bg-cyan-500/15 blur-[120px] animate-float"
+          className={cn(
+            "absolute -left-40 -top-40 h-[38rem] w-[38rem] rounded-full bg-accent-600/20 blur-[120px]",
+            ambient && "animate-float",
+          )}
+        />
+        <div
+          className={cn(
+            "absolute -right-32 top-1/3 h-[32rem] w-[32rem] rounded-full bg-cyan-500/15 blur-[120px]",
+            ambient && "animate-float",
+          )}
           style={{ animationDelay: "-2s" }}
         />
         <div
-          className="absolute bottom-0 left-1/3 h-[30rem] w-[30rem] rounded-full bg-accent-400/10 blur-[120px] animate-float"
+          className={cn(
+            "absolute bottom-0 left-1/3 h-[30rem] w-[30rem] rounded-full bg-accent-400/10 blur-[120px]",
+            ambient && "animate-float",
+          )}
           style={{ animationDelay: "-4s" }}
         />
       </motion.div>

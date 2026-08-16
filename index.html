@@ -99,15 +99,72 @@
       }
     </script>
 
+    <meta name="theme-color" content="#020617" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fetched at the same priority as a stylesheet, but applied without
+         blocking the first paint: a render-blocking third-party sheet holds the
+         whole page back by a full round trip on a phone. `display=swap` already
+         covers the gap with a fallback face. -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      />
+    </noscript>
+
+    <style>
+      /* Drawn from the HTML alone, before the app bundle lands. Without it the
+         screen is empty for however long the network takes, which reads as
+         broken rather than loading. React clears #root as it mounts, so the
+         loader takes over from here with no extra wiring. */
+      html,
+      body {
+        margin: 0;
+        background: #020617;
+      }
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      #boot span {
+        height: 3rem;
+        width: 3rem;
+        border-radius: 9999px;
+        border: 2px solid rgba(129, 140, 248, 0.18);
+        border-top-color: #818cf8;
+        animation: boot-spin 0.9s linear infinite;
+      }
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #boot span {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="boot" aria-hidden="true"><span></span></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

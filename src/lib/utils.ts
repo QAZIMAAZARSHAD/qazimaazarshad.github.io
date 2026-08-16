@@ -15,6 +15,16 @@ export function asset(path: string): string {
   return `${base}${path.replace(/^\//, "")}`;
 }
 
+/**
+ * True for a real mouse or trackpad. Effects that only exist to answer a
+ * hovering pointer are dead weight on a touchscreen, where they still spend
+ * the compositor budget, so they check this before starting.
+ */
+export function hasFinePointer(): boolean {
+  if (typeof window === "undefined" || !window.matchMedia) return false;
+  return window.matchMedia("(pointer: fine)").matches;
+}
+
 const MONTH_ABBR = [
   "jan",
   "feb",

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useAmbientMotion } from "@/hooks/useAmbientMotion";
 
 const DOT_GRID = {
   backgroundImage:
@@ -19,6 +20,7 @@ const VIGNETTE =
 
 export function DoorBackdrop() {
   const reduceMotion = useReducedMotion();
+  const ambient = useAmbientMotion();
   const ref = useRef<HTMLDivElement>(null);
 
   // Pointer → CSS vars via rAF, so tracking never re-renders React.
@@ -62,7 +64,7 @@ export function DoorBackdrop() {
           background:
             "radial-gradient(circle, rgba(129,140,248,0.22), transparent 65%)",
         }}
-        animate={reduceMotion ? undefined : { x: [0, 60, 0], y: [0, -40, 0] }}
+        animate={ambient ? { x: [0, 60, 0], y: [0, -40, 0] } : undefined}
         transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
@@ -71,7 +73,7 @@ export function DoorBackdrop() {
           background:
             "radial-gradient(circle, rgba(34,211,238,0.18), transparent 65%)",
         }}
-        animate={reduceMotion ? undefined : { x: [0, -50, 0], y: [0, 45, 0] }}
+        animate={ambient ? { x: [0, -50, 0], y: [0, 45, 0] } : undefined}
         transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
       />
 

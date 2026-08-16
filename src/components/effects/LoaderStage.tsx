@@ -6,6 +6,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { profile } from "@/data/content";
+import { useAmbientMotion } from "@/hooks/useAmbientMotion";
 import { cn } from "@/lib/utils";
 
 // Short hold under Playwright — the suite enters through this on every test.
@@ -37,6 +38,9 @@ interface LoaderStageProps {
 
 export function LoaderStage({ onDone }: LoaderStageProps) {
   const reduce = useReducedMotion() ?? false;
+  // The dial itself is cheap SVG and keeps animating everywhere; only the
+  // blurred scenery behind it is worth parking on a phone.
+  const ambient = useAmbientMotion();
   const [pct, setPct] = useState(0);
   const [sealed, setSealed] = useState(false);
   const arc = useMotionValue(0);
@@ -108,7 +112,7 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
       exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.12 }}
       transition={{ duration: 0.45, ease: "easeIn" }}
     >
-      <Scenery reduce={reduce} sealed={sealed} />
+      <Scenery reduce={reduce || !ambient} sealed={sealed} />
 
       <div className="relative flex flex-col items-center">
         <div className="relative h-[min(80vw,26rem)] w-[min(80vw,26rem)]">

@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useAmbientMotion } from "@/hooks/useAmbientMotion";
 
 const DOT_GRID = {
   backgroundImage:
@@ -14,11 +15,11 @@ const HORIZON =
   "radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.42), rgba(34,211,238,0.13) 42%, transparent 72%)";
 
 export function FooterBackdrop() {
-  const reduceMotion = useReducedMotion();
+  const ambient = useAmbientMotion();
   // Gated on visibility — the footer is off-screen for most of a visit, so
   // there's no reason to keep the drift running the whole session.
   const drift = (x: number[], y: number[], duration: number) =>
-    reduceMotion
+    !ambient
       ? undefined
       : {
           whileInView: { x, y },
