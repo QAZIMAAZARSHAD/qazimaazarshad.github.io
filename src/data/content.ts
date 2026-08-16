@@ -426,7 +426,7 @@ export const earlierExperience: ExperienceItem[] = [
     role: "Campus Ambassador",
     organization: "Bosch Global Software Technologies",
     type: "Ambassador",
-    period: "Jul 2021 — Present",
+    period: "Jul 2021 — Jul 2022",
     description:
       "Campus representative for Bosch Global Software Technologies — a Robert Bosch subsidiary and leading global provider of engineering, IT & business solutions.",
     image: "images/experience/bosch.jpg",
@@ -533,7 +533,7 @@ export const earlierExperience: ExperienceItem[] = [
     role: "Event Coordinator",
     organization: "MegaMinds Student Organization",
     type: "Community",
-    period: "Aug 2019 — Present",
+    period: "Aug 2019 — Mar 2022",
     description:
       "Planned tech workshops, seminars & social events as event manager, anchor, and marketing head — leading teams of 25+.",
     image: "images/experience/mega.jpg",
