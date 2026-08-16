@@ -753,22 +753,22 @@ export function FoundationsDeck({
           </motion.div>
         </div>
 
-        <div className="mt-7 flex items-center justify-center gap-3 sm:gap-6">
+        <div className="mt-8 flex items-center justify-center gap-4 sm:gap-7">
           <button
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous role"
-            className="glass glass-hover grid h-10 w-10 shrink-0 place-items-center rounded-full text-ink-200 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60"
+            className="glass glass-hover grid h-12 w-12 shrink-0 place-items-center rounded-full text-ink-200 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60 sm:h-14 sm:w-14"
           >
-            <ChevronLeft className="h-4 w-4" aria-hidden />
+            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden />
           </button>
 
-          <div className="flex min-w-0 flex-col items-center gap-2.5">
+          <div className="flex min-w-0 flex-col items-center gap-3">
             <div
               ref={railRef}
               role="tablist"
               aria-label="Choose a role"
-              className="flex items-center gap-[2px] sm:gap-[3px]"
+              className="flex items-center gap-[3px] sm:gap-1.5"
             >
               {visible.map((item, index) => (
                 <button
@@ -782,21 +782,26 @@ export function FoundationsDeck({
                   tabIndex={index === front ? 0 : -1}
                   onClick={() => setFront(index)}
                   onKeyDown={onRailKeyDown}
-                  className="group grid h-4 place-items-center rounded outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+                  className="group grid h-6 place-items-center rounded outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
                 >
                   <span
                     className={cn(
-                      "h-1 rounded-full transition-all duration-300",
+                      "h-1.5 rounded-full transition-all duration-300",
                       index === front
-                        ? cn("w-4 sm:w-6", categoryOf(item.type).tick)
-                        : "w-1.5 bg-white/20 group-hover:bg-white/40 sm:w-2",
+                        ? cn("w-5 sm:w-8", categoryOf(item.type).tick)
+                        : "w-1.5 bg-white/25 group-hover:bg-white/50 sm:w-2.5",
                     )}
                   />
                 </button>
               ))}
             </div>
-            <p aria-hidden className="font-mono text-[11px] text-ink-400">
-              {String(front + 1).padStart(2, "0")}
+            <p
+              aria-hidden
+              className="font-mono text-sm tabular-nums tracking-wide text-ink-300"
+            >
+              <span className="font-semibold text-white">
+                {String(front + 1).padStart(2, "0")}
+              </span>
               <span className="text-ink-600"> / </span>
               {String(count).padStart(2, "0")}
             </p>
@@ -806,9 +811,9 @@ export function FoundationsDeck({
             type="button"
             onClick={() => go(1)}
             aria-label="Next role"
-            className="glass glass-hover grid h-10 w-10 shrink-0 place-items-center rounded-full text-ink-200 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60"
+            className="glass glass-hover grid h-12 w-12 shrink-0 place-items-center rounded-full text-ink-200 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60 sm:h-14 sm:w-14"
           >
-            <ChevronRight className="h-4 w-4" aria-hidden />
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden />
           </button>
         </div>
 
