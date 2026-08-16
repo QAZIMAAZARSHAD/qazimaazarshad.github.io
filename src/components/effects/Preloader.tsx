@@ -173,6 +173,7 @@ export function Preloader() {
           animate="idle"
         >
           <motion.div
+            data-testid="curtain-top"
             className="absolute inset-x-0 top-0 h-1/2 bg-ink-950"
             variants={{
               idle: { y: "0%" },
@@ -181,6 +182,7 @@ export function Preloader() {
             transition={curtain}
           />
           <motion.div
+            data-testid="curtain-bottom"
             className="absolute inset-x-0 bottom-0 h-1/2 bg-ink-950"
             variants={{
               idle: { y: "0%" },

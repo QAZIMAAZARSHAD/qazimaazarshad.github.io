@@ -179,7 +179,11 @@ export function AnimatedBackground() {
         }}
       />
 
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+      <canvas
+        ref={canvasRef}
+        data-testid="constellation"
+        className="absolute inset-0 h-full w-full"
+      />
 
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-ink-950" />
     </div>
