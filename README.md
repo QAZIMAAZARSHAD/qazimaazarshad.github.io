@@ -13,7 +13,7 @@
 ![Vite](https://img.shields.io/badge/Vite-build-646CFF?logo=vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38BDF8?logo=tailwindcss&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/Framer_Motion-animation-0055FF?logo=framer&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-251_unit_·_135_e2e-16a34a)
+![Tests](https://img.shields.io/badge/tests-273_unit_·_140_e2e-16a34a)
 
 <br/>
 
@@ -38,13 +38,15 @@ responsiveness test suite.
 - **Rich micro-interactions** — a custom trailing cursor, scramble-decode hero tagline, magnetic buttons, cursor spotlight on cards, scroll-drawn timeline, animated count-ups, section-heading underlines, tech marquee, side scroll-dots, cinematic hobby impacts, subtle parallax & confetti — all `prefers-reduced-motion` aware
 - **🕹 Synthwave party mode** — type ↑↑↓↓←→←→BA (or ⌘K → "synthwave", or `qma.party()` in the console) for a CRT-scanline neon theme, a retro sun-and-grid backdrop, pixel shades on the avatar, and a synthesized chiptune loop
 - **🕵️ Console easter egg** — open DevTools for a coloured QMA wordmark and `hireMaaz()` / `qma.*` helpers that celebrate, list skills & projects, and open the résumé
-- **📜 Certificates gallery** & **interactive projects** — filterable, searchable, with focus-trapped lightboxes/modals
+- **💼 Experience rail** — glowing circular brand nodes that float and turn as 3D slabs, with date pills and role durations computed live
+- **🃏 Foundations deck** — early roles as a filterable 3D coverflow: one spotlit card with metrics, neighbours falling away behind it, and a thematic focus-area summary beneath
+- **📜 Certificates gallery** & **interactive projects** — shared filter toolbar, searchable, with focus-trapped lightboxes/modals
 - **⌘K command palette** for keyboard-driven navigation
 - **🔍 "Google me"** — a mock search-results page mapping my presence across the web
 - **Morphing dock navbar** that collapses into a floating dock on scroll, and a **kinetic signature footer** whose wordmark is painted by your cursor
-- **Career-progression timeline** with live-computed tenure, a rewind **threshold** between work and learning years, medal-card achievements, orbital hobbies, and a polished dark theme
-- **Fully responsive & accessible** — keyboard-navigable, `prefers-reduced-motion` aware
-- **100% data-driven** and thoroughly tested (unit · e2e · visual)
+- **Career arc** — live-computed tenure, a rewind **threshold** between work and learning years, transcript-style education, medal-card achievements, orbital hobbies, and a polished dark theme
+- **Fully responsive & accessible** — skip link, keyboard-navigable modals, `prefers-reduced-motion` aware
+- **100% data-driven** and thoroughly tested (unit · e2e · visual · cross-browser)
 
 ## 🛠 Tech stack
 
@@ -75,16 +77,17 @@ npm run preview    # preview the production build
 ## 🧪 Testing
 
 ```bash
-npm test                 # 251 unit + component tests (Vitest)
+npm test                 # 273 unit + component tests (Vitest)
 npm run test:coverage    # unit tests with coverage
-npm run test:e2e         # 135 e2e, visual & responsiveness tests (Playwright)
+npm run test:e2e         # ~140 Chromium e2e / visual / responsive tests (Playwright)
 npm run test:e2e:update  # regenerate visual baselines
 ```
 
-Visual baselines are committed for macOS (`*-darwin.png`). Specs that aren't about
-the entry sequence get past it with the shared `enterSite()` helper in
-`tests/e2e/intro.ts`. E2E runs in parallel (sharded in CI) so the suite stays
-well under the old ten-minute wall.
+Visual baselines are committed for macOS (`*-darwin.png`) and enforced in a dedicated
+macOS CI job. Linux Chromium shards run functional specs with snapshots ignored;
+Firefox and WebKit smoke a navigation / responsive / contact / mobile / foundations
+subset. Specs that aren't about the entry sequence get past it with the shared
+`enterSite()` helper in `tests/e2e/intro.ts`. E2E runs in parallel (sharded in CI).
 
 ## 📁 Structure
 
@@ -94,13 +97,15 @@ src/
     content.ts        # single source of truth for all content (typed)
     certificates.ts   # AUTO-GENERATED certificate data (see scripts/)
   lib/                # utils, motion, sound, chiptune, confetti, consoleEgg,
-                      # synthwave, skillFilter, aiContext (AI grounding)
+                      # synthwave, skillFilter, aiContext, focus (modal traps)
   hooks/              # useActiveSection (scroll spy), useKonami
   components/
-    ui/               # Section, SectionHeading, Reveal, TiltCard, SocialLinks, CountUp
+    ui/               # Section, SectionHeading, Reveal, TiltCard, SocialLinks,
+                      # CountUp, FilterToolbar, TruncatedText
     effects/          # Preloader, EntryDoor, Welcome, CustomCursor, HobbyImpact,
                       # AnimatedBackground, ScrollProgress, SideNav, SpotlightEffect,
                       # SynthwaveMode
+    foundations/      # FoundationsDeck — 3D coverflow for earlier roles
     hobbies/          # HobbyOrbital — glowing platforms with quip tooltips
     footer/           # SignatureName, LoveButton, FooterBackdrop
     google/           # GoogleMe — mock search-results modal
@@ -110,7 +115,8 @@ src/
     achievements/     # MedalCard — collectible honour cards
     analytics/        # VisitCounter (Abacus)
     threshold/        # Threshold — rewind seam between work and learning
-    …                 # hero / projects / skills / timeline / contact
+    timeline/         # Experience rail + LogoTile brand slabs
+    …                 # hero / projects / skills / contact
   sections/           # Navbar, Hero, About, Experience, EarlierExperience, Projects,
                       # Skills, Education, Achievements, Certifications, Hobbies, Contact, Footer
   App.tsx             # composition root
@@ -155,10 +161,13 @@ traffic keeps pushing that out.
 
 Two GitHub Actions workflows run automatically:
 
-- **`ci.yml`** — on every push and pull request: format check, lint, type-check +
-  build, unit tests (Vitest), and the Playwright e2e suite. Visual baselines are
-  committed for macOS, so pixel comparisons are skipped on Linux CI while every
-  functional test still runs.
+- **`ci.yml`** — on every push and pull request:
+  - **Build & unit** — format check, lint, type-check + build, Vitest
+  - **E2E Chromium** — Playwright functional suite, sharded on Linux (visual
+    snapshots ignored; pixels differ from the committed Darwin baselines)
+  - **Visual regression** — macOS job enforcing `*-chromium-darwin.png` baselines
+  - **Cross-browser smoke** — Firefox + WebKit subset (navigation, responsive,
+    contact, mobile, foundations)
 - **`deploy.yml`** — on every push to `main`: builds and deploys to **GitHub Pages**
   at [qazimaazarshad.github.io](https://qazimaazarshad.github.io/) (Pages source is
   "GitHub Actions").
@@ -178,7 +187,8 @@ npm run preview
 [Portfolio](https://qazimaazarshad.github.io/) ·
 [LinkedIn](https://www.linkedin.com/in/qazimaazarshad/) ·
 [GitHub](https://github.com/QAZIMAAZARSHAD) ·
-[LeetCode](https://leetcode.com/qazimaazarshad/)
+[LeetCode](https://leetcode.com/qazimaazarshad/) ·
+[Threads](https://www.threads.com/@qazimaazarshad)
 
 ## 📄 License
 
