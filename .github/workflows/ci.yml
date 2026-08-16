@@ -29,6 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.61.1-jammy
+    # Firefox (and some container setups) refuse to launch unless $HOME is
+    # owned by the process user — Actions mounts /github/home as uid 1001.
+    env:
+      HOME: /root
     strategy:
       fail-fast: false
       matrix:
@@ -77,6 +81,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.61.1-jammy
+    env:
+      HOME: /root
+      # WebKit under 4 workers was starving the intro door click in CI.
+      PLAYWRIGHT_WORKERS: "2"
     strategy:
       fail-fast: false
       matrix:

@@ -46,7 +46,9 @@ function enterSite() {
  * regressions across the app shell.
  */
 describe("App", () => {
-  it("mounts the whole page without crashing", () => {
+  // Fake timers + the full entry walk (loader → door → greeting) need more
+  // than Vitest's 5s default under a busy CI runner.
+  it("mounts the whole page without crashing", { timeout: 15_000 }, () => {
     render(<App />);
     enterSite();
 
@@ -62,18 +64,22 @@ describe("App", () => {
 
   // The intro paints over the page, so the page has to leave the accessibility
   // tree too — otherwise a screen reader can browse content nobody can see.
-  it("keeps the page out of reach until the intro finishes", () => {
-    const { container } = render(<App />);
+  it(
+    "keeps the page out of reach until the intro finishes",
+    { timeout: 15_000 },
+    () => {
+      const { container } = render(<App />);
 
-    const main = container.querySelector("main") as HTMLElement;
-    expect(main).toHaveAttribute("aria-hidden", "true");
-    expect(main.inert).toBe(true);
+      const main = container.querySelector("main") as HTMLElement;
+      expect(main).toHaveAttribute("aria-hidden", "true");
+      expect(main.inert).toBe(true);
 
-    enterSite();
+      enterSite();
 
-    expect(main).not.toHaveAttribute("aria-hidden");
-    expect(main.inert).toBe(false);
-  });
+      expect(main).not.toHaveAttribute("aria-hidden");
+      expect(main.inert).toBe(false);
+    },
+  );
 
   it("renders all primary section landmarks", () => {
     const { container } = render(<App />);

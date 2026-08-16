@@ -20,9 +20,13 @@ export async function enterSite(
 
   if (options.keyboard) {
     // Never touches the pointer, for specs asserting on pointer-driven state.
+    await door.focus();
     await page.keyboard.press("Enter");
   } else {
-    await door.click({ timeout: 15_000 });
+    // WebKit in CI often times out on a normal click: the ajar 3D swing moves
+    // the hit target under Playwright's actionability check. Force still
+    // dispatches a real click event onto the button.
+    await door.click({ timeout: 15_000, force: true });
   }
 
   // Only the greeting can be skipped, so wait for it before cutting through.
