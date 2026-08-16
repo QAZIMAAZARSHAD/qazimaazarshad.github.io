@@ -151,7 +151,7 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
             </span>
           </button>
 
-          <p className="relative max-w-sm font-mono text-[11px] lowercase tracking-[0.2em] text-ink-500">
+          <p className="relative max-w-sm font-mono text-[11px] lowercase tracking-[0.2em] text-ink-400">
             and I&rsquo;ll say hello back
           </p>
         </motion.div>

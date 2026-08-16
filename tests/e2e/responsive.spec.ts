@@ -6,7 +6,7 @@ import { enterSite } from "./intro";
  *
  * For each viewport we assert there is no horizontal overflow, that the
  * navbar switches between the mobile hamburger and the desktop inline links
- * at the `xl` (1280px) breakpoint, that the hero name renders, and we capture
+ * at the 1180px dock breakpoint, that the hero name renders, and we capture
  * a hero-section element screenshot for a visual record across dimensions.
  */
 
@@ -26,9 +26,10 @@ const VIEWPORTS: Viewport[] = [
   { name: "desktop-fhd", width: 1920, height: 1080 },
 ];
 
-// The Navbar hides the desktop links (`hidden ... xl:flex`) and shows the
-// hamburger (`xl:hidden`) below the 1280px `xl` breakpoint.
-const XL_BREAKPOINT = 1280;
+// Matches Navbar's `min-[1180px]:` desktop dock (not Tailwind `xl` / 1280 —
+// WebKit's scrollbar would otherwise leave 1280 CSS-px windows on the mobile
+// chrome).
+const DESKTOP_NAV_BREAKPOINT = 1180;
 
 test.beforeEach(async ({ page }) => {
   // Reduced motion disables the canvas particles + freezes CSS animations.
@@ -59,7 +60,7 @@ for (const viewport of VIEWPORTS) {
       .getByRole("navigation", { name: "Primary" })
       .getByRole("link", { name: "About", exact: true });
 
-    if (viewport.width < XL_BREAKPOINT) {
+    if (viewport.width < DESKTOP_NAV_BREAKPOINT) {
       await expect(hamburger).toBeVisible();
       await expect(desktopLink).toBeHidden();
     } else {

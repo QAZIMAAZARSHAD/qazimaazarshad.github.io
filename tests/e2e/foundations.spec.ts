@@ -18,6 +18,10 @@ test.describe("Foundations — earlier experience certificates", () => {
       .getByRole("button", { name: /certificate/i })
       .first();
     await expect(certButton).toBeVisible();
+    await expect(certButton).toBeEnabled();
+    // Wait for the deck settle before clicking — WebKit under parallel load
+    // otherwise occasionally misses the portaled lightbox open.
+    await expect(front(page)).toBeVisible();
     await certButton.click();
 
     const dialog = page.getByRole("dialog");
@@ -83,5 +87,20 @@ test.describe("Foundations — the deck", () => {
       .locator('#earlier [role="tab"]')
       .evaluateAll((els) => els.filter((el) => el.tabIndex === 0).length);
     expect(tabbable).toBe(1);
+  });
+
+  test("a focus-area filter re-slices the deck", async ({ page }) => {
+    const ticks = page.locator('#earlier [role="tab"]');
+    const total = await ticks.count();
+
+    await page
+      .locator("#earlier")
+      .getByRole("button", { name: /^Community/ })
+      .click();
+
+    const communityCount = await ticks.count();
+    expect(communityCount).toBeGreaterThan(0);
+    expect(communityCount).toBeLessThan(total);
+    await expect(front(page)).toHaveAttribute("aria-selected", "true");
   });
 });

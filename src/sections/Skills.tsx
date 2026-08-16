@@ -19,7 +19,7 @@ export function Skills() {
 
       <Reveal className="mb-10">
         <div className="flex flex-col gap-3">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-500">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-400">
             Top skills
           </span>
           <div className="flex flex-wrap gap-2.5">
@@ -61,7 +61,7 @@ export function Skills() {
 
       <Reveal className="mt-10">
         <div className="flex flex-col gap-3">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-500">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-400">
             Everything in the toolbox
           </span>
           <TechMarquee />

@@ -1,8 +1,6 @@
 import {
   Code2,
   LayoutDashboard,
-  Database,
-  BrainCircuit,
   Binary,
   Wrench,
   Server,
@@ -14,8 +12,6 @@ import {
 const skillIconMap: Record<string, LucideIcon> = {
   Code2,
   LayoutDashboard,
-  Database,
-  BrainCircuit,
   Binary,
   Wrench,
   Server,

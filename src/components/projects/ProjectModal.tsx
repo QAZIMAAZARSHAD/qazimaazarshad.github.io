@@ -3,15 +3,13 @@ import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { Calendar, ExternalLink, Tag, X } from "lucide-react";
 import type { ProjectItem } from "@/data/content";
+import { trapFocus } from "@/lib/focus";
 import { asset } from "@/lib/utils";
 
 interface ProjectModalProps {
   readonly project: ProjectItem;
   readonly onClose: () => void;
 }
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -52,30 +50,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
         onClose();
         return;
       }
-
-      if (event.key !== "Tab") return;
-
-      const dialog = dialogRef.current;
-      if (!dialog) return;
-
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-
-      if (event.shiftKey) {
-        if (active === first || !dialog.contains(active)) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else if (active === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      trapFocus(event, dialogRef.current);
     };
 
     document.addEventListener("keydown", handleKeyDown);

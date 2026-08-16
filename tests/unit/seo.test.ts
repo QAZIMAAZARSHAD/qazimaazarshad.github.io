@@ -17,6 +17,7 @@ describe("SEO: index.html head", () => {
     expect(html).toContain('property="og:image"');
     expect(html).toContain('property="og:url"');
     expect(html).toContain('name="twitter:card"');
+    expect(html).toContain('name="twitter:image:alt"');
     expect(html).toContain('name="robots"');
   });
 

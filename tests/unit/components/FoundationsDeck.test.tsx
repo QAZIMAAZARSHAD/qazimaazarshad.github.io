@@ -9,10 +9,15 @@ const items: ExperienceItem[] = [
     role: "First Role",
     organization: "Org One",
     type: "Externship",
-    period: "Jan 2021 — Feb 2021",
-    description: "The first one.",
+    period: "Jan 2020 — Feb 2020",
+    description: "Shipped 150+ things across 4 projects.",
     image: "images/experience/one.png",
     certificate: "certificates/files/one.pdf",
+    featured: true,
+    metrics: [
+      { value: "150+", label: "Issues Resolved" },
+      { value: "4", label: "Projects" },
+    ],
   },
   {
     role: "Second Role",
@@ -21,14 +26,22 @@ const items: ExperienceItem[] = [
     period: "Mar 2021 — Apr 2021",
     description: "The second one.",
     image: "images/experience/two.png",
+    metrics: [
+      { value: "200+", label: "Peers Reached" },
+      { value: "2", label: "Events Run" },
+    ],
   },
   {
     role: "Third Role",
     organization: "Org Three",
     type: "Ambassador",
-    period: "May 2021 — Jun 2021",
+    period: "May 2022 — Jun 2022",
     description: "The third one.",
     image: "images/experience/three.png",
+    metrics: [
+      { value: "5+", label: "Campaigns" },
+      { value: "1 yr", label: "Tenure" },
+    ],
   },
 ];
 
@@ -113,5 +126,57 @@ describe("FoundationsDeck", () => {
     expect(
       screen.getByText("1 of 3: First Role at Org One"),
     ).toBeInTheDocument();
+  });
+
+  it("shows the spotlight role's metrics and a Featured badge", () => {
+    setup();
+    expect(screen.getByText("Featured")).toBeInTheDocument();
+    // The "150+" value also appears highlighted in the copy and rolled up in
+    // the summary, which is exactly the grounded-number behaviour we want.
+    expect(screen.getByText("Issues Resolved")).toBeInTheDocument();
+    expect(screen.getByText("Projects")).toBeInTheDocument();
+    expect(screen.getAllByText("150+").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("filters the deck to a single focus area", async () => {
+    const { user } = setup();
+    await user.click(screen.getByRole("button", { name: /^Externship/ }));
+
+    expect(screen.getAllByRole("tab")).toHaveLength(1);
+    expect(selectedTab()).toHaveAccessibleName(/First Role/);
+    expect(
+      screen.getByText("1 of 1: First Role at Org One"),
+    ).toBeInTheDocument();
+  });
+
+  it("only offers chips for focus areas that are present", () => {
+    setup();
+    expect(
+      screen.getByRole("button", { name: /^Externship/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Community/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Ambassador/ }),
+    ).toBeInTheDocument();
+    // No open-source role in the fixture, so no such chip.
+    expect(
+      screen.queryByRole("button", { name: /^Open Source/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("closes with a span and focus-area pills", () => {
+    setup();
+    // Spans the earliest and latest year across every period.
+    expect(screen.getByText("Active Years").previousSibling).toHaveTextContent(
+      "2020–2022",
+    );
+    // Every focus area present in the deck earns a pill.
+    const focusAreas = screen.getByText("Focus Areas")
+      .nextSibling as HTMLElement;
+    expect(within(focusAreas).getByText("Externship")).toBeInTheDocument();
+    expect(within(focusAreas).getByText("Community")).toBeInTheDocument();
+    expect(within(focusAreas).getByText("Ambassador")).toBeInTheDocument();
   });
 });

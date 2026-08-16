@@ -9,6 +9,7 @@ import {
   isPersonalQuestion,
 } from "@/lib/aiContext";
 import { profile } from "@/data/content";
+import { trapFocus } from "@/lib/focus";
 import { cn } from "@/lib/utils";
 
 /**
@@ -53,6 +54,9 @@ export function AiAssistant() {
   const engineRef = useRef<MLCEngineInterface | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
@@ -62,8 +66,21 @@ export function AiAssistant() {
 
   useEffect(() => {
     if (!open) return;
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
+    requestAnimationFrame(() => closeButtonRef.current?.focus());
+    return () => {
+      previouslyFocused.current?.focus?.({ preventScroll: true });
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      trapFocus(e, dialogRef.current);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -192,7 +209,9 @@ export function AiAssistant() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={dialogRef}
             role="dialog"
+            aria-modal="true"
             aria-label="Ask my portfolio — AI assistant"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -215,6 +234,7 @@ export function AiAssistant() {
                 </div>
               </div>
               <button
+                ref={closeButtonRef}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close assistant"
@@ -324,7 +344,7 @@ function LoadPanel({
             />
           </div>
           <p
-            className="mt-2 line-clamp-2 font-mono text-[11px] text-ink-500"
+            className="mt-2 line-clamp-2 font-mono text-[11px] text-ink-400"
             title={progressText || "Preparing…"}
           >
             {progressText || "Preparing…"}
@@ -340,7 +360,7 @@ function LoadPanel({
             <Sparkles className="h-4 w-4" aria-hidden />
             Start chat
           </button>
-          <p className="font-mono text-[10px] uppercase tracking-wider text-ink-500">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-ink-400">
             {MODEL_SIZE_LABEL}
           </p>
           {status === "error" && (
@@ -427,7 +447,7 @@ function Conversation({
         );
       })}
       {generating && messages[messages.length - 1]?.content !== "" && (
-        <span className="self-start px-1 text-[11px] text-ink-500">
+        <span className="self-start px-1 text-[11px] text-ink-400">
           generating…
         </span>
       )}

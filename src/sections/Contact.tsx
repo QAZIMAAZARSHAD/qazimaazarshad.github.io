@@ -69,7 +69,7 @@ export function Contact() {
               <CopyEmailButton email={profile.email} />
             </motion.div>
 
-            <motion.p variants={fadeUp} className="mt-6 text-sm text-ink-500">
+            <motion.p variants={fadeUp} className="mt-6 text-sm text-ink-400">
               or write directly to{" "}
               <a
                 href={`mailto:${profile.email}`}
@@ -83,7 +83,7 @@ export function Contact() {
               variants={fadeUp}
               className="mt-10 flex flex-col items-center gap-4"
             >
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-500">
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-400">
                 Find me elsewhere
               </span>
               <SocialLinks className="justify-center" />

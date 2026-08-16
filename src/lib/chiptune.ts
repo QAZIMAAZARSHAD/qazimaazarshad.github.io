@@ -137,7 +137,3 @@ export function stopChiptune(): void {
   node.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.35);
   window.setTimeout(() => node.disconnect(), 500);
 }
-
-export function isChiptunePlaying(): boolean {
-  return timer !== 0;
-}

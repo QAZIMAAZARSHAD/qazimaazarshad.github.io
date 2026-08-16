@@ -209,11 +209,11 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
                 <span data-testid="loader-count">
                   {String(pct).padStart(3, "0")}
                 </span>
-                <span className="align-super text-[0.32em] text-ink-500">
+                <span className="align-super text-[0.32em] text-ink-400">
                   %
                 </span>
               </span>
-              <output className="mt-4 font-mono text-[10px] uppercase tracking-[0.42em] text-ink-500 sm:text-[11px]">
+              <output className="mt-4 font-mono text-[10px] uppercase tracking-[0.42em] text-ink-400 sm:text-[11px]">
                 Loading
               </output>
             </div>

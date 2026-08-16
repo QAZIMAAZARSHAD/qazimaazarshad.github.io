@@ -163,6 +163,31 @@ describe("content: earlierExperience", () => {
       }
     }
   });
+
+  it("roles either skip metrics or carry two to four", () => {
+    for (const item of earlierExperience) {
+      const metrics = item.metrics ?? [];
+      // A role may opt out of metrics entirely; when it has them, it must
+      // read as a strip of two to four.
+      if (metrics.length === 0) continue;
+      expect(metrics.length, `metric count for ${item.role}`).toBeGreaterThan(
+        1,
+      );
+      expect(metrics.length, `metric count for ${item.role}`).toBeLessThan(5);
+      for (const metric of metrics) {
+        expect(metric.value.trim(), `value for ${item.role}`).not.toBe("");
+        expect(metric.label.trim(), `label for ${item.role}`).not.toBe("");
+      }
+      // Labels key the metric icons, so duplicates would collide.
+      expect(new Set(metrics.map((m) => m.label)).size).toBe(metrics.length);
+    }
+  });
+
+  it("spotlights exactly one role, and it leads the deck", () => {
+    const featured = earlierExperience.filter((item) => item.featured);
+    expect(featured).toHaveLength(1);
+    expect(earlierExperience[0]).toBe(featured[0]);
+  });
 });
 
 describe("content: certificates", () => {

@@ -46,6 +46,7 @@ import {
   SiLinktree,
 } from "react-icons/si";
 import { navSections, profile, socials } from "@/data/content";
+import { trapFocus } from "@/lib/focus";
 import { toggleSynthwave } from "@/lib/synthwave";
 import { asset, cn } from "@/lib/utils";
 
@@ -98,6 +99,7 @@ export function CommandPalette() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -240,6 +242,20 @@ export function CommandPalette() {
   }, [open]);
 
   useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+        return;
+      }
+      trapFocus(e, dialogRef.current);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, close]);
+
+  useEffect(() => {
     return () => {
       if (copyTimer.current) clearTimeout(copyTimer.current);
     };
@@ -251,10 +267,7 @@ export function CommandPalette() {
   }, []);
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      e.preventDefault();
-      close();
-    } else if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       setActiveIndex((i) => Math.min(i + 1, filtered.length - 1));
     } else if (e.key === "ArrowUp") {
@@ -279,6 +292,7 @@ export function CommandPalette() {
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={dialogRef}
           className="fixed inset-0 z-[90] flex items-start justify-center p-4 pt-[12vh]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -329,7 +343,7 @@ export function CommandPalette() {
                   if (items.length === 0) return null;
                   return (
                     <div key={group} className="mb-1">
-                      <p className="px-3 pb-1 pt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-ink-500">
+                      <p className="px-3 pb-1 pt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-ink-400">
                         {group}
                       </p>
                       {items.map((cmd) => {
@@ -365,7 +379,7 @@ export function CommandPalette() {
                             </span>
                             {isActive && (
                               <CornerDownLeft
-                                className="h-3.5 w-3.5 text-ink-500"
+                                className="h-3.5 w-3.5 text-ink-400"
                                 aria-hidden
                               />
                             )}
@@ -378,7 +392,7 @@ export function CommandPalette() {
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2.5 text-[11px] text-ink-500">
+            <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2.5 text-[11px] text-ink-400">
               <span className="inline-flex items-center gap-1.5">
                 <CommandIcon className="h-3 w-3" aria-hidden />
                 <span className="font-mono">Command palette</span>

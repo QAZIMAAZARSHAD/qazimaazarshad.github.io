@@ -164,7 +164,7 @@ export function MedalCard({
         <HintIcon
           aria-hidden
           className={cn(
-            "h-4 w-4 shrink-0 text-ink-500 transition-colors duration-300 group-hover:text-accent-300",
+            "h-4 w-4 shrink-0 text-ink-400 transition-colors duration-300 group-hover:text-accent-300",
             featured && "absolute right-4 top-4",
           )}
         />

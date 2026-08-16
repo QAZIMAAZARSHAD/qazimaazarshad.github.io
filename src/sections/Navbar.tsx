@@ -199,7 +199,7 @@ export function Navbar() {
               </span>
               <span
                 className={cn(
-                  "hidden overflow-hidden whitespace-nowrap font-display font-semibold text-white transition-all duration-500 sm:block xl:hidden",
+                  "hidden overflow-hidden whitespace-nowrap font-display font-semibold text-white transition-all duration-500 sm:block min-[1180px]:hidden",
                   docked
                     ? "max-w-0 text-sm opacity-0"
                     : "max-w-[16rem] text-base opacity-100",
@@ -211,7 +211,7 @@ export function Navbar() {
 
             {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
             <ul
-              className="hidden items-center xl:flex"
+              className="hidden items-center min-[1180px]:flex"
               onMouseLeave={() => setHovered(null)}
             >
               {navSections.map((section) => {
@@ -263,7 +263,7 @@ export function Navbar() {
               })}
             </ul>
 
-            <div className="hidden items-center gap-3 xl:flex">
+            <div className="hidden items-center gap-3 min-[1180px]:flex">
               <button
                 type="button"
                 onClick={openPalette}
@@ -288,7 +288,7 @@ export function Navbar() {
               </Magnetic>
             </div>
 
-            <div className="flex items-center gap-2 xl:hidden">
+            <div className="flex items-center gap-2 min-[1180px]:hidden">
               <button
                 type="button"
                 onClick={openPalette}
@@ -326,7 +326,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="overflow-hidden border-t border-white/10 xl:hidden"
+            className="overflow-hidden border-t border-white/10 min-[1180px]:hidden"
           >
             <div className="container-page flex max-h-[calc(100dvh-4rem)] flex-col gap-2 overflow-y-auto py-5">
               <ul className="flex flex-col">

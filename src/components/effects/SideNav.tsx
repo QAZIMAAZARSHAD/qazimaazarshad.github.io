@@ -19,10 +19,12 @@ export function SideNav() {
 
   return (
     // The page column is max-w-6xl, so below ~1250px the rail has nowhere to sit
-    // that isn't on top of a card. Wait for xl rather than overlap the content.
+    // that isn't on top of a card. Use 1260 rather than Tailwind's xl (1280):
+    // WebKit includes the classic scrollbar in the media-query viewport, so a
+    // 1280 CSS-px window reports ~1270 and would otherwise hide the rail.
     <nav
       aria-label="Section navigation"
-      className="fixed right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-4 xl:flex"
+      className="fixed right-5 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-4 min-[1260px]:flex"
     >
       {navSections.map((section) => {
         const isActive = active === section.id;

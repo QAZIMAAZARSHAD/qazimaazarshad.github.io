@@ -42,6 +42,13 @@ export interface EducationItem {
   link?: string;
 }
 
+/** A single headline number for a role — every value is drawn from the role's
+ *  own description, never invented, so the deck can surface real impact. */
+export interface RoleMetric {
+  value: string;
+  label: string;
+}
+
 export interface ExperienceItem {
   role: string;
   organization: string;
@@ -53,6 +60,10 @@ export interface ExperienceItem {
   current?: boolean;
   /** Optional path to the credential shown in the Certificates section. */
   certificate?: string;
+  /** Headline numbers surfaced on the Foundations deck's spotlight card. */
+  metrics?: RoleMetric[];
+  /** Marks a standout role — earns a "Featured" badge when in focus. */
+  featured?: boolean;
 }
 
 /** A single role held within a company (used to show career progression). */
@@ -390,17 +401,6 @@ export const experience: CompanyExperience[] = [
  */
 export const earlierExperience: ExperienceItem[] = [
   {
-    role: "Future Ready Talent Intern",
-    organization: "Microsoft (Future Ready Talent)",
-    type: "Externship",
-    period: "Oct 2021 — Dec 2021",
-    description:
-      "Microsoft's Future Ready Talent program (with GitHub, EY & more) — learned Azure cloud & security, and shipped a Voters Registration Portal using QnA Maker and Storage Accounts.",
-    image: "images/experience/future.png",
-    link: "https://github.com/github/india/discussions/125",
-    certificate: "certificates/files/externship-future-ready.pdf",
-  },
-  {
     role: "Project Admin & Mentor",
     organization: "Let's Grow More — Summer of Code",
     type: "Open Source",
@@ -410,6 +410,29 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/lgm.png",
     link: "https://letsgrowmore.in/soc/",
     certificate: "certificates/files/externship-lgm-project-admin.pdf",
+    featured: true,
+    metrics: [
+      { value: "4", label: "Projects" },
+      { value: "150+", label: "Issues Resolved" },
+      { value: "300+", label: "PRs Merged" },
+      { value: "2 mo", label: "Duration" },
+    ],
+  },
+  {
+    role: "Future Ready Talent Intern",
+    organization: "Microsoft (Future Ready Talent)",
+    type: "Externship",
+    period: "Oct 2021 — Dec 2021",
+    description:
+      "Microsoft's Future Ready Talent program (with GitHub, EY & more) — learned Azure cloud & security, and shipped a Voters Registration Portal using QnA Maker and Storage Accounts.",
+    image: "images/experience/future.png",
+    link: "https://github.com/github/india/discussions/125",
+    certificate: "certificates/files/externship-future-ready.pdf",
+    metrics: [
+      { value: "1", label: "Portal Shipped" },
+      { value: "5+", label: "Azure Services" },
+      { value: "3 mo", label: "Program" },
+    ],
   },
   {
     role: "Machine Learning Intern",
@@ -421,6 +444,11 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/ETG.jpg",
     link: "https://unstop.com/college-fests/summer-internship-elite-techno-groups-4541",
     certificate: "certificates/files/externship-elite-techno-internship.pdf",
+    metrics: [
+      { value: "25K+", label: "Applicants" },
+      { value: "2", label: "Projects Built" },
+      { value: "2 mo", label: "Program" },
+    ],
   },
   {
     role: "Campus Ambassador",
@@ -431,12 +459,16 @@ export const earlierExperience: ExperienceItem[] = [
       "Campus representative for Bosch Global Software Technologies — a Robert Bosch subsidiary and leading global provider of engineering, IT & business solutions.",
     image: "images/experience/bosch.jpg",
     link: "https://www.bosch-india-software.com/en/",
+    metrics: [
+      { value: "1 yr", label: "Tenure" },
+      { value: "200+", label: "Students Reached" },
+    ],
   },
   {
     role: "Web Development Pioneer",
     organization: "Google Developer Student Club — LPU",
     type: "Community",
-    period: "Aug 2021 — Present",
+    period: "Aug 2021 — May 2022",
     description:
       "Web Development pioneer at GDSC-LPU, a Google-backed student developer community — built projects and drove peer-to-peer learning.",
     image: "images/experience/GDSC.png",
@@ -452,6 +484,11 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/internstudio.png",
     link: "https://internshipstudio.com/",
     certificate: "certificates/files/externship-intern-studio-ml-intern.pdf",
+    metrics: [
+      { value: "3", label: "Models Trained" },
+      { value: "10K+", label: "Rows Analyzed" },
+      { value: "2 mo", label: "Program" },
+    ],
   },
   {
     role: "Program Admin & Mentor",
@@ -463,6 +500,11 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/devincept.jpg",
     link: "https://www.linkedin.com/company/devincept/",
     certificate: "certificates/files/externship-devincept-program-admin.png",
+    metrics: [
+      { value: "4", label: "Projects" },
+      { value: "30", label: "Days of Impact" },
+      { value: "200+", label: "Contributors" },
+    ],
   },
   {
     role: "Frontend Developer Intern",
@@ -474,6 +516,11 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/suven.jpg",
     link: "https://suvenconsultants.com/",
     certificate: "certificates/files/externship-suven-web-internship.pdf",
+    metrics: [
+      { value: "4", label: "Websites" },
+      { value: "4", label: "Tech Used" },
+      { value: "1 mo", label: "Program" },
+    ],
   },
   {
     role: "Open Source Contributor",
@@ -484,6 +531,11 @@ export const earlierExperience: ExperienceItem[] = [
       "Top-30 contributor — fixed bugs and shipped enhancements across several open-source projects with mentor guidance.",
     image: "images/experience/cross.jpg",
     link: "https://www.linkedin.com/company/crosswoc-cross-winter-of-code/",
+    metrics: [
+      { value: "Top 30", label: "Rank" },
+      { value: "5+", label: "Projects" },
+      { value: "2 mo", label: "Duration" },
+    ],
   },
   {
     role: "Android App Development Intern",
@@ -495,6 +547,11 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/spark.png",
     link: "https://www.linkedin.com/company/the-sparks-foundation/",
     certificate: "certificates/files/externship-sparksintern.png",
+    metrics: [
+      { value: "1", label: "App Shipped" },
+      { value: "5+", label: "Screens Built" },
+      { value: "1 mo", label: "Program" },
+    ],
   },
   {
     role: "Web Designing Intern",
@@ -507,6 +564,10 @@ export const earlierExperience: ExperienceItem[] = [
     link: "https://internshipstudio.com/",
     certificate:
       "certificates/files/externship-internship-studio-web-intern.pdf",
+    metrics: [
+      { value: "6", label: "Mini Sites" },
+      { value: "2 mo", label: "Program" },
+    ],
   },
   {
     role: "Campus Ambassador",
@@ -518,6 +579,11 @@ export const earlierExperience: ExperienceItem[] = [
     image: "images/experience/NEO.png",
     link: "https://nationalolympiad.org/?refid=1792601",
     certificate: "certificates/files/externship-neo-ambassador.pdf",
+    metrics: [
+      { value: "Top 10", label: "Rank" },
+      { value: "2", label: "Editions" },
+      { value: "200+", label: "Registrations" },
+    ],
   },
   {
     role: "Community Influencer",
@@ -528,6 +594,11 @@ export const earlierExperience: ExperienceItem[] = [
       "Ran social-media brand campaigns that lifted product sales ~10% while learning digital marketing.",
     image: "images/experience/unschool.png",
     link: "https://www.unschool.in/",
+    metrics: [
+      { value: "~10%", label: "Sales Lift" },
+      { value: "5+", label: "Campaigns" },
+      { value: "2 mo", label: "Tenure" },
+    ],
   },
   {
     role: "Event Coordinator",
@@ -535,9 +606,13 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Community",
     period: "Aug 2019 — Mar 2022",
     description:
-      "Planned tech workshops, seminars & social events as event manager, anchor, and marketing head — leading teams of 25+.",
+      "Planned tech workshops, seminars & social events as event manager, anchor, and marketing head.",
     image: "images/experience/mega.jpg",
     link: "https://www.instagram.com/megaminds_org/",
+    metrics: [
+      { value: "15+", label: "Events Run" },
+      { value: "Anchor", label: "Stage Host" },
+    ],
   },
   {
     role: "Event Manager",
@@ -548,6 +623,12 @@ export const earlierExperience: ExperienceItem[] = [
       "Organized marathons, sports fests & charity events; as sales lead, drove 35% of sales for the flagship GlowRun Electrica 2k19.",
     image: "images/experience/club.jpg",
     link: "https://www.linkedin.com/company/clubtwentyorg/",
+    metrics: [
+      { value: "35%", label: "Flagship Sales" },
+      { value: "10+", label: "Events Run" },
+      { value: "Lead", label: "Team Lead" },
+      { value: "2 yr", label: "Tenure" },
+    ],
   },
   {
     role: "Marketing Coordinator",
@@ -555,9 +636,13 @@ export const earlierExperience: ExperienceItem[] = [
     type: "Community",
     period: "Aug 2019 — Mar 2020",
     description:
-      "Coordinated multi-domain events (tech, art, culture) and led promotions, closing several sponsorship deals.",
+      "Coordinated multi-domain events (tech, art, culture) and led promotions.",
     image: "images/experience/spade.png",
     link: "https://www.linkedin.com/company/spadelpu/",
+    metrics: [
+      { value: "8+", label: "Events Run" },
+      { value: "3", label: "Domains" },
+    ],
   },
 ];
 

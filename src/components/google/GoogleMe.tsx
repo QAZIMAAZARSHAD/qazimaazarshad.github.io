@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ExternalLink, Search, X } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { profile, socials, education, experienceYears } from "@/data/content";
+import { trapFocus } from "@/lib/focus";
 import { asset } from "@/lib/utils";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 
@@ -11,9 +12,6 @@ const SITE_URL = "https://qazimaazarshad.github.io/";
 const GOOGLE_SEARCH = `https://www.google.com/search?q=${encodeURIComponent(
   profile.name,
 )}`;
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 const socialHref = (id: string) =>
   socials.find((s) => s.id === id)?.href ?? SITE_URL;
@@ -154,23 +152,7 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
         onClose();
         return;
       }
-      if (event.key !== "Tab") return;
-      const dialog = dialogRef.current;
-      if (!dialog) return;
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const active = document.activeElement;
-      if (event.shiftKey && (active === first || !dialog.contains(active))) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      trapFocus(event, dialogRef.current);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
@@ -212,7 +194,7 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
               className="ml-0.5 h-4 w-px animate-pulse bg-accent-300"
               aria-hidden
             />
-            <span className="ml-auto text-xs text-ink-500" aria-hidden>
+            <span className="ml-auto text-xs text-ink-400" aria-hidden>
               🔍
             </span>
           </div>
@@ -229,7 +211,7 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
 
         <div
           aria-hidden="true"
-          className="flex items-center gap-5 border-b border-white/10 px-5 pt-3 font-mono text-xs text-ink-500 sm:px-6"
+          className="flex items-center gap-5 border-b border-white/10 px-5 pt-3 font-mono text-xs text-ink-400 sm:px-6"
         >
           {["All", "Images", "News", "Videos", "About"].map((tab, i) => (
             <span
@@ -246,7 +228,7 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
         </div>
 
         <div className="max-h-[70vh] overflow-y-auto p-5 sm:p-6">
-          <p className="mb-5 font-mono text-xs text-ink-500">
+          <p className="mb-5 font-mono text-xs text-ink-400">
             About 42,700 results for “{profile.name}” (0.38 seconds)
           </p>
 
@@ -310,14 +292,14 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
               <dl className="mt-4 flex flex-col gap-2 border-t border-white/10 pt-4 text-sm">
                 {KNOWLEDGE_FACTS.filter((f) => f.value).map((fact) => (
                   <div key={fact.label} className="flex gap-2">
-                    <dt className="shrink-0 text-ink-500">{fact.label}:</dt>
+                    <dt className="shrink-0 text-ink-400">{fact.label}:</dt>
                     <dd className="text-ink-200">{fact.value}</dd>
                   </div>
                 ))}
               </dl>
 
               <div className="mt-4 border-t border-white/10 pt-4">
-                <p className="mb-2 font-mono text-xs uppercase tracking-wide text-ink-500">
+                <p className="mb-2 font-mono text-xs uppercase tracking-wide text-ink-400">
                   Profiles
                 </p>
                 <SocialLinks
@@ -335,7 +317,7 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
         </div>
 
         <div className="flex items-center justify-between gap-3 border-t border-white/10 bg-white/[0.02] p-5 sm:p-6">
-          <p className="text-xs text-ink-500">
+          <p className="text-xs text-ink-400">
             A playful preview — try the real thing <span aria-hidden>👇</span>
           </p>
           <a

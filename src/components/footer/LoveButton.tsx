@@ -137,7 +137,7 @@ export function LoveButton() {
           {count !== null && (
             <span
               data-testid="love-count"
-              className="tabular-nums text-ink-500"
+              className="tabular-nums text-ink-400"
             >
               {count.toLocaleString()} {count === 1 ? "love" : "loves"}
             </span>

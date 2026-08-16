@@ -3,10 +3,8 @@ import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import { Download, ExternalLink, FileWarning, X } from "lucide-react";
 import type { CertificateItem } from "@/data/content";
+import { trapFocus } from "@/lib/focus";
 import { asset, cn } from "@/lib/utils";
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 
 /** One viewable image, optionally with its own downloadable original. */
 export interface LightboxSlide {
@@ -78,28 +76,7 @@ export function CertificateLightbox({
         onClose();
         return;
       }
-      if (event.key !== "Tab") return;
-
-      const dialog = dialogRef.current;
-      if (!dialog) return;
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
-      if (focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const focused = document.activeElement;
-
-      if (event.shiftKey) {
-        if (focused === first || !dialog.contains(focused)) {
-          event.preventDefault();
-          last.focus();
-        }
-      } else if (focused === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      trapFocus(event, dialogRef.current);
     };
 
     document.addEventListener("keydown", handleKeyDown);

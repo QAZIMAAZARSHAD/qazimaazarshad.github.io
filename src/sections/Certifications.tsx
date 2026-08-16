@@ -1,11 +1,10 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, SearchX, X } from "lucide-react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { EmptyFilterState, FilterToolbar } from "@/components/ui/FilterToolbar";
 import { CertificateCard } from "@/components/certificates/CertificateCard";
 import { CertificateLightbox } from "@/components/certificates/CertificateLightbox";
-import { CountUp } from "@/components/ui/CountUp";
 import {
   certificateCategories,
   type CertificateCategory,
@@ -13,7 +12,6 @@ import {
 } from "@/data/content";
 import { certificates } from "@/data/certificates";
 import { staggerContainer } from "@/lib/motion";
-import { cn } from "@/lib/utils";
 
 type Filter = CertificateCategory | "all";
 const PAGE_SIZE = 12;
@@ -44,8 +42,8 @@ export function Certifications() {
   const shown = filtered.slice(0, visible);
   const remaining = filtered.length - shown.length;
 
-  const changeCategory = (category: Filter) => {
-    setActiveCategory(category);
+  const changeCategory = (category: string) => {
+    setActiveCategory(category as Filter);
     setVisible(PAGE_SIZE);
   };
   const changeQuery = (value: string) => {
@@ -66,83 +64,24 @@ export function Certifications() {
         description="A big archive from my college and self-learning years — courses & MOOCs, externships, competition wins, and community participation. Filter or search to explore."
       />
 
-      <div className="mb-8 flex flex-col gap-5">
-        <fieldset className="m-0 flex flex-wrap gap-2 border-0 p-0">
-          <legend className="sr-only">Filter certificates by category</legend>
-          {certificateCategories.map(({ id, label }) => {
-            const isActive = id === activeCategory;
-            const count = counts[id] ?? 0;
-            if (id !== "all" && count === 0) return null;
-            return (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => changeCategory(id)}
-                className={cn(
-                  "inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2.5 font-mono text-xs font-medium transition-all duration-300",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950",
-                  isActive
-                    ? "bg-gradient-to-r from-accent-500 to-cyan-500 text-white shadow-lg shadow-accent-500/25"
-                    : "glass glass-hover text-ink-300 hover:text-white",
-                )}
-              >
-                {label}
-                <span
-                  className={cn(
-                    "rounded-full px-1.5 py-0.5 text-[10px]",
-                    isActive ? "bg-white/20" : "bg-white/[0.06] text-ink-400",
-                  )}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </fieldset>
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="glass glass-hover relative flex items-center rounded-2xl sm:max-w-sm sm:flex-1">
-            <Search
-              className="pointer-events-none absolute left-4 h-4 w-4 text-ink-400"
-              aria-hidden="true"
-            />
-            <input
-              type="text"
-              value={query}
-              onChange={(event) => changeQuery(event.target.value)}
-              placeholder="Search by title or issuer…"
-              aria-label="Search certificates"
-              className="w-full rounded-2xl bg-transparent py-3 pl-11 pr-12 text-sm text-ink-200 placeholder:text-ink-500 focus:outline-none"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => changeQuery("")}
-                aria-label="Clear search"
-                className="absolute right-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-ink-400 transition-colors duration-300 hover:text-white"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-            )}
-          </div>
-
-          <p className="font-mono text-xs text-ink-400">
-            <span data-testid="certificates-count" aria-hidden="true">
-              <CountUp
-                value={filtered.length}
-                durationMs={500}
-                className="text-accent-300"
-              />{" "}
-              {filtered.length === 1 ? "certificate" : "certificates"}
-            </span>
-            <output className="sr-only">
-              {filtered.length}{" "}
-              {filtered.length === 1 ? "certificate" : "certificates"}
-            </output>
-          </p>
-        </div>
-      </div>
+      <FilterToolbar
+        legend="Filter certificates by category"
+        chips={certificateCategories.map(({ id, label }) => ({
+          id,
+          label,
+          count: counts[id] ?? 0,
+        }))}
+        activeId={activeCategory}
+        onCategoryChange={changeCategory}
+        query={query}
+        onQueryChange={changeQuery}
+        searchPlaceholder="Search by title or issuer…"
+        searchAriaLabel="Search certificates"
+        resultCount={filtered.length}
+        resultNoun={{ singular: "certificate", plural: "certificates" }}
+        countTestId="certificates-count"
+        hideEmpty
+      />
 
       {filtered.length > 0 ? (
         <>
@@ -167,7 +106,7 @@ export function Certifications() {
               <button
                 type="button"
                 onClick={() => setVisible((v) => v + PAGE_SIZE)}
-                className="glass glass-hover inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-xs font-medium uppercase tracking-wider text-ink-200 transition-all hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
+                className="glass glass-hover inline-flex items-center gap-1.5 rounded-full px-6 py-3 font-mono text-xs font-medium uppercase tracking-wider text-ink-200 transition-all hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
               >
                 Show more{" "}
                 <span className="text-accent-300">({remaining} left)</span>
@@ -176,21 +115,10 @@ export function Certifications() {
           )}
         </>
       ) : (
-        <div className="glass flex flex-col items-center gap-4 rounded-3xl px-6 py-16 text-center">
-          <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
-            <SearchX className="h-6 w-6 text-accent-300" aria-hidden="true" />
-          </span>
-          <p className="font-display text-lg font-semibold text-white">
-            No certificates found
-          </p>
-          <button
-            type="button"
-            onClick={clearFilters}
-            className="mt-1 inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-accent-500 to-cyan-500 px-5 py-2.5 font-mono text-sm font-medium text-white shadow-lg shadow-accent-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-accent-500/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950"
-          >
-            Clear filters
-          </button>
-        </div>
+        <EmptyFilterState
+          title="No certificates found"
+          onClear={clearFilters}
+        />
       )}
 
       <AnimatePresence>

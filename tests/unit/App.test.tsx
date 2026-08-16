@@ -55,6 +55,9 @@ describe("App", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /skip to content/i }),
+    ).toHaveAttribute("href", "#main");
   });
 
   // The intro paints over the page, so the page has to leave the accessibility

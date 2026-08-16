@@ -72,7 +72,7 @@ function Record({
         {started && (
           <span
             aria-hidden
-            className="mt-1.5 font-mono text-[0.7rem] uppercase tracking-widest text-ink-500"
+            className="mt-1.5 font-mono text-[0.7rem] uppercase tracking-widest text-ink-400"
           >
             from {started}
           </span>
@@ -165,7 +165,7 @@ export function Education() {
             <p className="font-mono text-xs uppercase tracking-[0.25em] text-ink-400">
               Transcript
             </p>
-            <p className="mt-1.5 font-mono text-[0.7rem] text-ink-500">
+            <p className="mt-1.5 font-mono text-[0.7rem] text-ink-400">
               {education.length} {education.length === 1 ? "record" : "records"}
               {span && ` · ${span}`}
             </p>
@@ -178,7 +178,7 @@ export function Education() {
             off their columns. */}
         <div
           aria-hidden
-          className="hidden pb-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-500 sm:grid sm:grid-cols-[5rem_3rem_1fr_auto] sm:gap-x-6 sm:px-1"
+          className="hidden pb-4 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-ink-400 sm:grid sm:grid-cols-[5rem_3rem_1fr_auto] sm:gap-x-6 sm:px-1"
         >
           <span>Year</span>
           <span className="col-start-3">Qualification</span>
