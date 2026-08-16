@@ -25,16 +25,7 @@ function fadeOutAndStop(audio: HTMLAudioElement) {
   }, 40);
 }
 
-interface PreloaderProps {
-  /**
-   * Whether the page behind the intro has rendered. It mounts a frame late, so
-   * the pass that hides it from assistive tech has to run again once it is
-   * actually there.
-   */
-  readonly pageMounted?: boolean;
-}
-
-export function Preloader({ pageMounted = true }: PreloaderProps) {
+export function Preloader() {
   const [phase, setPhase] = useState<Phase>("loading");
   const reduceMotion = useReducedMotion();
   const markEntered = useMarkEntered();
@@ -150,7 +141,7 @@ export function Preloader({ pageMounted = true }: PreloaderProps) {
         el.removeAttribute("aria-hidden");
       }
     };
-  }, [phase, pageMounted]);
+  }, [phase]);
 
   useEffect(() => {
     if (phase !== "done") return;

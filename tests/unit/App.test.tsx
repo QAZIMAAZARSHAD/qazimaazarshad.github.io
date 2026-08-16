@@ -19,17 +19,6 @@ function advanceUntil(done: () => boolean, budget = 12_000) {
   if (!done()) throw new Error("intro did not reach the expected state");
 }
 
-/**
- * Let the frames pass that the page body waits on. It mounts behind the intro
- * rather than alongside it, so that the first paint is one dial instead of the
- * whole site.
- */
-function paint() {
-  act(() => {
-    vi.advanceTimersByTime(50);
-  });
-}
-
 /** Walk the real entry flow: loader → open the door → skip the greeting. */
 function enterSite() {
   advanceUntil(
@@ -80,7 +69,6 @@ describe("App", () => {
     { timeout: 15_000 },
     () => {
       const { container } = render(<App />);
-      paint();
 
       const main = container.querySelector("main") as HTMLElement;
       expect(main).toHaveAttribute("aria-hidden", "true");
@@ -93,23 +81,8 @@ describe("App", () => {
     },
   );
 
-  // Regression: the loader used to start its count on mount, which on a slow
-  // phone was several seconds after the page was asked for — so its first
-  // painted frame was already at 100%. The intro has to reach the screen on its
-  // own, ahead of everything it covers.
-  it("raises the intro before mounting the page behind it", () => {
-    const { container } = render(<App />);
-
-    expect(screen.getByTestId("preloader")).toBeInTheDocument();
-    expect(container.querySelector("main")).toBeNull();
-
-    paint();
-    expect(container.querySelector("main")).not.toBeNull();
-  });
-
   it("renders all primary section landmarks", () => {
     const { container } = render(<App />);
-    paint();
     for (const id of [
       "about",
       "experience",

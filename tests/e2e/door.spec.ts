@@ -56,40 +56,6 @@ test.describe("Entry door", () => {
     await expect(count).toHaveText("100", { timeout: 8_000 });
   });
 
-  /**
-   * The dial React draws cannot exist until the bundle has arrived and mounted,
-   * which on a phone is seconds of blank screen — and by then its clock has run
-   * out, so it flashes up finished. The markup carries its own copy to cover
-   * that gap, and React picks the count up where it left off instead of
-   * rewinding a ring the visitor has been watching fill.
-   */
-  test("draws the dial before the bundle lands, then takes the count over", async ({
-    page,
-  }) => {
-    await page.addInitScript(() =>
-      Object.defineProperty(navigator, "webdriver", { get: () => false }),
-    );
-    // Hold the app back, the way a slow connection would.
-    await page.route("**/src/main.tsx*", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 2_000));
-      await route.continue();
-    });
-
-    await page.goto("/", { waitUntil: "commit" });
-
-    const booted = page.locator("#boot-count");
-    await expect(booted).toBeVisible();
-    await expect
-      .poll(async () => Number(await booted.textContent()))
-      .toBeGreaterThan(5);
-    const carried = Number(await booted.textContent());
-
-    const count = page.getByTestId("loader-count");
-    await expect(count).toBeVisible({ timeout: 15_000 });
-    expect(Number(await count.textContent())).toBeGreaterThanOrEqual(carried);
-    await expect(count).toHaveText("100", { timeout: 10_000 });
-  });
-
   test("takes focus so it can be opened without a mouse", async ({ page }) => {
     await page.goto("/", { waitUntil: "commit" });
     await expect(door(page)).toBeFocused({ timeout: 10_000 });

@@ -1,5 +1,4 @@
 import { MotionConfig } from "framer-motion";
-import { useAfterPaint } from "@/hooks/useAfterPaint";
 import { AnimatedBackground } from "@/components/effects/AnimatedBackground";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { Preloader } from "@/components/effects/Preloader";
@@ -26,10 +25,6 @@ import { Contact } from "@/sections/Contact";
 import { Footer } from "@/sections/Footer";
 
 export default function App() {
-  // The intro goes up on its own first; everything it covers follows a frame
-  // later, so the first paint costs one dial rather than the whole page.
-  const painted = useAfterPaint();
-
   return (
     <MotionConfig reducedMotion="user">
       <IntroProvider>
@@ -39,36 +34,32 @@ export default function App() {
         >
           Skip to content
         </a>
-        <Preloader pageMounted={painted} />
-        {painted && (
-          <>
-            <CommandPalette />
-            <AiAssistant />
-            <SpotlightEffect />
-            <CustomCursor />
-            <SynthwaveMode />
-            <SideNav />
-            <AnimatedBackground />
-            <ScrollProgress />
-            <Navbar />
-            <main id="main">
-              <Hero />
-              <About />
-              <Experience />
-              <Skills />
-              {/* Everything below the threshold is learning rather than work. */}
-              <Threshold />
-              <EarlierExperience />
-              <Projects />
-              <Education />
-              <Achievements />
-              <Certifications />
-              <Hobbies />
-              <Contact />
-            </main>
-            <Footer />
-          </>
-        )}
+        <Preloader />
+        <CommandPalette />
+        <AiAssistant />
+        <SpotlightEffect />
+        <CustomCursor />
+        <SynthwaveMode />
+        <SideNav />
+        <AnimatedBackground />
+        <ScrollProgress />
+        <Navbar />
+        <main id="main">
+          <Hero />
+          <About />
+          <Experience />
+          <Skills />
+          {/* Everything below the threshold is learning rather than work. */}
+          <Threshold />
+          <EarlierExperience />
+          <Projects />
+          <Education />
+          <Achievements />
+          <Certifications />
+          <Hobbies />
+          <Contact />
+        </main>
+        <Footer />
       </IntroProvider>
     </MotionConfig>
   );
