@@ -507,13 +507,23 @@ function SummaryBar({ items }: { readonly items: readonly ExperienceItem[] }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-6 sm:flex-row sm:items-center sm:justify-end sm:gap-8">
-        <div className="flex shrink-0 flex-col gap-0.5">
-          <span className="whitespace-nowrap bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
-            {span}
-          </span>
-          <span className="text-[11px] uppercase tracking-wide text-ink-400">
-            Active Years
-          </span>
+        <div className="flex shrink-0 items-end gap-6 sm:gap-8">
+          <div className="flex flex-col gap-0.5">
+            <span className="whitespace-nowrap bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
+              {items.length}
+            </span>
+            <span className="text-[11px] uppercase tracking-wide text-ink-400">
+              Exp
+            </span>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <span className="whitespace-nowrap bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
+              {span}
+            </span>
+            <span className="text-[11px] uppercase tracking-wide text-ink-400">
+              Active Years
+            </span>
+          </div>
         </div>
 
         <div className="flex min-w-0 flex-col gap-1.5">

@@ -166,8 +166,9 @@ describe("FoundationsDeck", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("closes with a span and thematic focus-area pills", () => {
+  it("closes with a count, a span and thematic focus-area pills", () => {
     setup();
+    expect(screen.getByText("Exp").previousSibling).toHaveTextContent("3");
     // Spans the earliest and latest year across every period.
     expect(screen.getByText("Active Years").previousSibling).toHaveTextContent(
       "2020–2022",
