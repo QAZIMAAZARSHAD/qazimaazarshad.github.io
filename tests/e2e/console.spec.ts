@@ -7,6 +7,15 @@ function transcript(page: Page): string[] {
   return lines;
 }
 
+/**
+ * Wait for the page behind the intro, which mounts a frame after it. Counting
+ * canvases before that lands would miss the animated backdrop and read the
+ * confetti's own canvas as one that was already there.
+ */
+async function pageBehindIntro(page: Page): Promise<void> {
+  await page.locator("main").waitFor({ state: "attached" });
+}
+
 test("greets anyone who opens the console, and says what to run", async ({
   page,
 }) => {
@@ -23,6 +32,7 @@ test("hireMaaz() throws confetti and hands back a way to reach me", async ({
   page,
 }) => {
   await page.goto("/");
+  await pageBehindIntro(page);
   const before = await page.locator("canvas").count();
 
   const returned = await page.evaluate(() => window.hireMaaz!());
@@ -60,6 +70,7 @@ test("skips the confetti for anyone who asked for less motion", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await pageBehindIntro(page);
   const before = await page.locator("canvas").count();
 
   const lines = transcript(page);

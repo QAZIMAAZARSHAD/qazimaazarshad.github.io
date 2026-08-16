@@ -126,10 +126,16 @@
     </noscript>
 
     <style>
-      /* Drawn from the HTML alone, before the app bundle lands. Without it the
-         screen is empty for however long the network takes, which reads as
-         broken rather than loading. React clears #root as it mounts, so the
-         loader takes over from here with no extra wiring. */
+      /* The loader, drawn from the HTML alone.
+         
+         Everything below is a copy of the dial in LoaderStage.tsx, which cannot
+         appear until the bundle has downloaded, parsed, and mounted — seconds of
+         blank screen on a phone, and then a dial that has already run out its
+         clock. This one is up as soon as the markup lands and animates on the
+         compositor, so it keeps turning even while the main thread is busy
+         mounting the page. React takes the count over mid-flight from
+         `__qmaBootAt` and clears #root as it renders, so the swap is invisible.
+         Keep the two in step. */
       html,
       body {
         margin: 0;
@@ -140,22 +146,157 @@
         inset: 0;
         display: grid;
         place-items: center;
+        overflow: hidden;
+        font-family: "Sora", system-ui, sans-serif;
       }
-      #boot span {
-        height: 3rem;
-        width: 3rem;
+      #boot .glow {
+        position: absolute;
+        height: 44rem;
+        width: 44rem;
         border-radius: 9999px;
-        border: 2px solid rgba(129, 140, 248, 0.18);
-        border-top-color: #818cf8;
-        animation: boot-spin 0.9s linear infinite;
+        background: rgba(79, 70, 229, 0.3);
+        filter: blur(150px);
+      }
+      #boot .haze {
+        position: absolute;
+        height: 20rem;
+        width: 20rem;
+        border-radius: 9999px;
+        background: rgba(6, 182, 212, 0.25);
+        filter: blur(120px);
+      }
+      #boot .vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 50% 46%,
+          transparent 24%,
+          rgba(2, 6, 23, 0.8) 72%
+        );
+      }
+      #boot .stack {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #boot .dial {
+        position: relative;
+        height: min(80vw, 26rem);
+        width: min(80vw, 26rem);
+      }
+      #boot .pulse {
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        border: 1px solid rgba(129, 140, 248, 0.25);
+        opacity: 0;
+        animation: boot-pulse 3.2s ease-out infinite;
+      }
+      #boot .pulse:nth-child(2) {
+        animation-delay: 1.05s;
+      }
+      #boot .pulse:nth-child(3) {
+        animation-delay: 2.1s;
+      }
+      #boot svg {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        transform: rotate(-90deg);
+      }
+      #boot .rim {
+        transform-origin: 100px 100px;
+        animation: boot-spin 22s linear infinite;
+      }
+      #boot .head {
+        position: absolute;
+        inset: 0;
+      }
+      #boot .head span {
+        position: absolute;
+        left: 50%;
+        top: 7%;
+        height: 0.625rem;
+        width: 0.625rem;
+        border-radius: 9999px;
+        background: #22d3ee;
+        box-shadow: 0 0 16px 4px rgba(34, 211, 238, 0.7);
+        transform: translate(-50%, -50%);
+      }
+      #boot .readout {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      #boot .readout div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #boot .count {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: clamp(2.5rem, 9vw, 5rem);
+        font-weight: 700;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        background: linear-gradient(to right, #818cf8, #a5b4fc, #22d3ee);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      #boot .pc {
+        font-size: 0.32em;
+        vertical-align: super;
+        color: #94a3b8;
+      }
+      #boot .label {
+        margin-top: 1rem;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.42em;
+        color: #94a3b8;
+      }
+      #boot .name {
+        margin-top: 2.5rem;
+        display: flex;
+        font-size: clamp(0.7rem, 3vw, 1.15rem);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.42em;
+        color: #334155;
+      }
+      #boot .name .lit {
+        color: #fff;
+        text-shadow: 0 0 18px rgba(129, 140, 248, 0.85);
+      }
+      #boot .name i {
+        width: 0.7em;
       }
       @keyframes boot-spin {
         to {
           transform: rotate(360deg);
         }
       }
+      @keyframes boot-pulse {
+        0% {
+          transform: scale(0.72);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1.35);
+          opacity: 0;
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
-        #boot span {
+        #boot .rim,
+        #boot .pulse {
           animation: none;
         }
       }
@@ -163,8 +304,160 @@
   </head>
   <body>
     <div id="root">
-      <div id="boot" aria-hidden="true"><span></span></div>
+      <div id="boot" aria-hidden="true">
+        <span class="glow"></span>
+        <span class="haze"></span>
+        <span class="vignette"></span>
+        <div class="stack">
+          <div class="dial">
+            <span class="pulse"></span>
+            <span class="pulse"></span>
+            <span class="pulse"></span>
+            <svg viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="boot-arc" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#818cf8" />
+                  <stop offset="100%" stop-color="#22d3ee" />
+                </linearGradient>
+                <mask id="boot-sweep">
+                  <circle
+                    id="boot-ticks"
+                    cx="100"
+                    cy="100"
+                    r="71"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="22"
+                    stroke-dasharray="446.11"
+                    stroke-dashoffset="446.11"
+                  />
+                </mask>
+              </defs>
+              <circle
+                class="rim"
+                cx="100"
+                cy="100"
+                r="97"
+                fill="none"
+                stroke="rgba(129,140,248,0.25)"
+                stroke-width="1"
+                stroke-dasharray="2 12"
+              />
+              <circle
+                cx="100"
+                cy="100"
+                r="86"
+                fill="none"
+                stroke="rgba(255,255,255,0.07)"
+                stroke-width="2"
+              />
+              <circle
+                cx="100"
+                cy="100"
+                r="71"
+                fill="none"
+                stroke="rgba(255,255,255,0.11)"
+                stroke-width="7"
+                stroke-dasharray="1.5 7"
+              />
+              <circle
+                cx="100"
+                cy="100"
+                r="71"
+                fill="none"
+                stroke="#a5b4fc"
+                stroke-width="7"
+                stroke-dasharray="1.5 7"
+                mask="url(#boot-sweep)"
+              />
+              <circle
+                id="boot-arc-line"
+                cx="100"
+                cy="100"
+                r="86"
+                fill="none"
+                stroke="url(#boot-arc)"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-dasharray="540.35"
+                stroke-dashoffset="540.35"
+              />
+            </svg>
+            <div class="head" id="boot-head"><span></span></div>
+            <div class="readout">
+              <div>
+                <span class="count"
+                  ><span id="boot-count">000</span
+                  ><span class="pc">%</span></span
+                >
+                <span class="label">Loading</span>
+              </div>
+            </div>
+          </div>
+          <p class="name" id="boot-name"></p>
+        </div>
+      </div>
     </div>
+    <script>
+      // Same curve as progressAt() in LoaderStage.tsx: 4s to fill, but held at
+      // 92% until the page is ready, so a slow load never reads as finished.
+      (function () {
+        window.__qmaBootAt = Date.now();
+
+        var boot = document.getElementById("boot");
+        var arc = document.getElementById("boot-arc-line");
+        var ticks = document.getElementById("boot-ticks");
+        var head = document.getElementById("boot-head");
+        var count = document.getElementById("boot-count");
+        var name = document.getElementById("boot-name");
+
+        var letters = "QAZI MAAZ ARSHAD".split("");
+        var spans = letters.map(function (ch) {
+          var el = document.createElement(ch === " " ? "i" : "span");
+          el.textContent = ch === " " ? "" : ch;
+          name.appendChild(el);
+          return el;
+        });
+
+        var start = window.__qmaBootAt;
+        var frame = 0;
+
+        function tick() {
+          // React has taken over: #boot is gone from the document.
+          if (!boot.isConnected) return;
+
+          var elapsed = Date.now() - start;
+          var timed = Math.min(elapsed / 4000, 1);
+          var p =
+            document.readyState === "complete"
+              ? timed
+              : elapsed <= 4000
+                ? Math.min(timed, 0.92)
+                : 0.92 + 0.07 * (1 - Math.exp(-(elapsed - 4000) / 4000));
+
+          // The last percent belongs to the real loader, so the ring is never
+          // seen full by one dial and unfinished by the other.
+          p = Math.min(p, 0.99);
+          window.__qmaBootPct = p;
+
+          arc.setAttribute("stroke-dashoffset", 540.35 * (1 - p));
+          ticks.setAttribute("stroke-dashoffset", 446.11 * (1 - p));
+          head.style.transform = "rotate(" + p * 360 + "deg)";
+          count.textContent = String(Math.round(p * 100)).padStart(3, "0");
+
+          for (var i = 0; i < spans.length; i++) {
+            if (p >= (i + 1) / spans.length) spans[i].className = "lit";
+          }
+
+          frame = requestAnimationFrame(tick);
+        }
+
+        tick();
+        window.addEventListener("pagehide", function () {
+          cancelAnimationFrame(frame);
+        });
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

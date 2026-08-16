@@ -76,6 +76,48 @@ describe("LoaderStage", () => {
     expect(shown).toBeLessThanOrEqual(100);
   });
 
+  /**
+   * index.html draws this same dial while the bundle is still on the wire, so
+   * by the time React gets here the visitor has been watching a ring fill for
+   * seconds. Starting a fresh count would rewind it in front of them.
+   */
+  describe("taking over from the dial in the markup", () => {
+    const boot = window as { __qmaBootAt?: number; __qmaBootPct?: number };
+
+    afterEach(() => {
+      delete boot.__qmaBootAt;
+      delete boot.__qmaBootPct;
+    });
+
+    it("picks the count up where the markup left it", () => {
+      boot.__qmaBootAt = Date.now() - HOLD_MS / 2;
+      boot.__qmaBootPct = 0.46;
+
+      render(<LoaderStage onDone={vi.fn()} />);
+
+      // On the first frame, before any of its own timing has run.
+      expect(screen.getByTestId("loader-count")).toHaveTextContent("046");
+    });
+
+    it("never walks the count backwards", () => {
+      // A page that is ready: the markup's dial ran to its 99% ceiling while
+      // this one, fresh, would have every reason to think it is barely started.
+      boot.__qmaBootAt = Date.now();
+      boot.__qmaBootPct = 0.99;
+
+      render(<LoaderStage onDone={vi.fn()} />);
+      const count = screen.getByTestId("loader-count");
+
+      runClock(HOLD_MS / 4);
+      expect(Number(count.textContent)).toBeGreaterThanOrEqual(99);
+    });
+
+    it("counts from its own mount when there is no dial to inherit", () => {
+      render(<LoaderStage onDone={vi.fn()} />);
+      expect(screen.getByTestId("loader-count")).toHaveTextContent("000");
+    });
+  });
+
   it("gives up on a load event that never arrives", () => {
     // readyState is stuck short of complete, so nothing ever settles.
     vi.spyOn(document, "readyState", "get").mockReturnValue("loading");

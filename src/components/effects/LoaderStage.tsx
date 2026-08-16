@@ -32,6 +32,22 @@ export function progressAt(elapsed: number, ready: boolean): number {
 
 const LETTERS = [...profile.name.toUpperCase()];
 
+/**
+ * What the dial in index.html was showing as this one took over.
+ *
+ * That copy is up while the bundle is still arriving — seconds of it on a phone
+ * — so this component inherits a count in progress rather than starting one.
+ * Both values fall back to the here and now wherever the markers are absent,
+ * such as under test.
+ */
+function bootHandoff(): { start: number; progress: number } {
+  const boot = window as { __qmaBootAt?: number; __qmaBootPct?: number };
+  return {
+    start: typeof boot.__qmaBootAt === "number" ? boot.__qmaBootAt : Date.now(),
+    progress: typeof boot.__qmaBootPct === "number" ? boot.__qmaBootPct : 0,
+  };
+}
+
 interface LoaderStageProps {
   readonly onDone: () => void;
 }
@@ -41,11 +57,16 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
   // The dial itself is cheap SVG and keeps animating everywhere; only the
   // blurred scenery behind it is worth parking on a phone.
   const ambient = useAmbientMotion();
-  const [pct, setPct] = useState(0);
+  const [inherited] = useState(bootHandoff);
+  const [pct, setPct] = useState(() => Math.round(inherited.progress * 100));
   const [sealed, setSealed] = useState(false);
-  const arc = useMotionValue(0);
+  const arc = useMotionValue(inherited.progress);
   const readyRef = useRef(false);
-  const startRef = useRef(Date.now());
+  const startRef = useRef(inherited.start);
+  // Whatever the ring has already reached. The two dials keep their own books
+  // on whether the page is ready, and the visitor should never watch one of
+  // them walk the count back.
+  const peakRef = useRef(inherited.progress);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,7 +108,11 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
     const tick = () => {
       const p = sealed
         ? 1
-        : progressAt(Date.now() - startRef.current, readyRef.current);
+        : Math.max(
+            peakRef.current,
+            progressAt(Date.now() - startRef.current, readyRef.current),
+          );
+      peakRef.current = p;
       arc.set(p);
       setPct(Math.round(p * 100));
       if (p < 1) raf = requestAnimationFrame(tick);
@@ -112,7 +137,7 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
       exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 1.12 }}
       transition={{ duration: 0.45, ease: "easeIn" }}
     >
-      <Scenery reduce={reduce || !ambient} sealed={sealed} />
+      <Scenery reduce={reduce} drift={ambient} sealed={sealed} />
 
       <div className="relative flex flex-col items-center">
         <div className="relative h-[min(80vw,26rem)] w-[min(80vw,26rem)]">
@@ -252,25 +277,30 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
   );
 }
 
+/**
+ * @param reduce Motion is unwelcome; nothing here should move.
+ * @param drift  The looping blurs may run. They are the expensive part — a
+ *               moving `blur()` is re-rasterised every frame — so they hold
+ *               still on a phone even though the one-shot seal still fires.
+ */
 function Scenery({
   reduce,
+  drift,
   sealed,
-}: Readonly<{ reduce: boolean; sealed: boolean }>) {
+}: Readonly<{ reduce: boolean; drift: boolean; sealed: boolean }>) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
       <motion.span
         className="absolute left-1/2 top-1/2 h-[44rem] w-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-600/30 blur-[150px]"
         animate={
-          reduce ? undefined : { scale: [1, 1.12, 1], opacity: [0.75, 1, 0.75] }
+          drift ? { scale: [1, 1.12, 1], opacity: [0.75, 1, 0.75] } : undefined
         }
         transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.span
         className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/25 blur-[120px]"
         animate={
-          reduce
-            ? undefined
-            : { x: [0, 120, 0, -120, 0], y: [0, -90, 0, 90, 0] }
+          drift ? { x: [0, 120, 0, -120, 0], y: [0, -90, 0, 90, 0] } : undefined
         }
         transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
       />
