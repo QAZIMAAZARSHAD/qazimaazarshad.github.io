@@ -4,7 +4,7 @@
  */
 
 @font-face {
-  font-family: "Inter";
+  font-family: "Inter Web";
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
@@ -16,7 +16,7 @@
 }
 
 @font-face {
-  font-family: "JetBrains Mono";
+  font-family: "JetBrains Mono Web";
   font-style: normal;
   font-weight: 400 500;
   font-display: swap;
@@ -28,7 +28,7 @@
 }
 
 @font-face {
-  font-family: "Sora";
+  font-family: "Sora Web";
   font-style: normal;
   font-weight: 400 800;
   font-display: swap;

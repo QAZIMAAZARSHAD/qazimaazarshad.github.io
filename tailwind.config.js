@@ -40,9 +40,17 @@ export default {
         // Sora keeps the personality in headings. Body and UI text moved off
         // Space Grotesk, whose short x-height and wide-set forms were doing
         // the small sizes below no favours.
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Sora", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        // The "Web" faces are the self-hosted files (src/styles/fonts.css).
+        // The bare names sit behind them only as a fallback for the case where
+        // our woff2 fails to load and the visitor happens to have the family.
+        sans: ["Inter Web", "Inter", "system-ui", "sans-serif"],
+        display: ["Sora Web", "Sora", "system-ui", "sans-serif"],
+        mono: [
+          "JetBrains Mono Web",
+          "JetBrains Mono",
+          "ui-monospace",
+          "monospace",
+        ],
       },
       /**
        * Roughly a step up from Tailwind's defaults across the small end, where

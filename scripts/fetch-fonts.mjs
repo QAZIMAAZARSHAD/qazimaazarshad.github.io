@@ -45,7 +45,18 @@ for (const [, subset, block] of blocks) {
 
   const url = /url\(([^)]+)\)/.exec(block)[1];
   const face = faces.get(url) ?? {
-    family: /font-family:\s*'([^']+)'/.exec(block)[1],
+    /**
+     * Suffixed so the face cannot collide with a copy installed on the
+     * machine. Chrome will happily satisfy `font-family: Inter` from the
+     * system and leave our @font-face unloaded, which is invisible on a
+     * machine that has Inter and renders Helvetica on one that does not.
+     * Nobody has "Inter Web" installed, so everyone gets this file.
+     */
+    family: `${/font-family:\s*'([^']+)'/.exec(block)[1]} Web`,
+    slug: /font-family:\s*'([^']+)'/
+      .exec(block)[1]
+      .toLowerCase()
+      .replace(/\s+/g, "-"),
     range: /unicode-range:\s*([^;]+)/.exec(block)[1],
     weights: [],
   };
@@ -57,8 +68,7 @@ const rules = [];
 await mkdir(OUT_DIR, { recursive: true });
 
 for (const [url, face] of faces) {
-  const slug = face.family.toLowerCase().replace(/\s+/g, "-");
-  const file = `${slug}.woff2`;
+  const file = `${face.slug}.woff2`;
   const bytes = Buffer.from(await fetch(url).then((r) => r.arrayBuffer()));
   await writeFile(join(OUT_DIR, file), bytes);
 
