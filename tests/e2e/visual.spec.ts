@@ -94,6 +94,10 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
   // Wait for the preloader to fade out so screenshots capture the real page.
   await enterSite(page);
+  // Again once the page proper is up. fonts.ready only covers faces in use at
+  // the time, and a face that lands after the shot swaps the metrics under it —
+  // which is how a whole run of baselines came to be captured in fallback.
+  await page.evaluate(() => document.fonts.ready);
   // Hide always-on floating widgets so they don't leak into section snapshots.
   await page.addStyleTag({
     content:
