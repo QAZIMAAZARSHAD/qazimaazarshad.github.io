@@ -37,9 +37,28 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Space Grotesk", "system-ui", "sans-serif"],
+        // Sora keeps the personality in headings. Body and UI text moved off
+        // Space Grotesk, whose short x-height and wide-set forms were doing
+        // the small sizes below no favours.
+        sans: ["Inter", "system-ui", "sans-serif"],
         display: ["Sora", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+      },
+      /**
+       * Roughly a step up from Tailwind's defaults across the small end, where
+       * nearly all of this site's text lives: 85-odd places sat at 12px or
+       * below against 14 at 16px. Sizes above 2xl are headings and keep the
+       * stock values. `2xs` replaces the hand-written 10px and 0.65rem labels
+       * so nothing sits off the scale.
+       */
+      fontSize: {
+        "2xs": ["0.6875rem", { lineHeight: "1rem" }],
+        xs: ["0.8125rem", { lineHeight: "1.15rem" }],
+        sm: ["0.9375rem", { lineHeight: "1.45rem" }],
+        base: ["1.0625rem", { lineHeight: "1.7rem" }],
+        lg: ["1.1875rem", { lineHeight: "1.85rem" }],
+        xl: ["1.3125rem", { lineHeight: "1.9rem" }],
+        "2xl": ["1.5625rem", { lineHeight: "2.05rem" }],
       },
       keyframes: {
         "gradient-x": {

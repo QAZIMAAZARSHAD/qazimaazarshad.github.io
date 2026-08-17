@@ -40,11 +40,11 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/90 via-ink-950/20 to-transparent" />
         <div className="absolute inset-0 bg-ink-950/0 transition-colors duration-300 group-hover:bg-ink-950/30" />
 
-        <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-accent-200 backdrop-blur">
+        <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-xs font-medium uppercase tracking-wider text-accent-200 backdrop-blur">
           {project.category}
         </span>
 
-        <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-[11px] text-ink-300 backdrop-blur">
+        <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-xs text-ink-300 backdrop-blur">
           <Calendar className="h-3 w-3" aria-hidden="true" />
           {project.date}
         </span>
@@ -76,13 +76,13 @@ export function ProjectCard({ project, onSelect }: ProjectCardProps) {
           {visibleTech.map((tech) => (
             <span
               key={tech}
-              className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-[11px] text-ink-300"
+              className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-xs text-ink-300"
             >
               {tech}
             </span>
           ))}
           {remainingTech > 0 && (
-            <span className="rounded-lg border border-accent-400/20 bg-accent-500/10 px-2.5 py-1 font-mono text-[11px] text-accent-200">
+            <span className="rounded-lg border border-accent-400/20 bg-accent-500/10 px-2.5 py-1 font-mono text-xs text-accent-200">
               +{remainingTech} more
             </span>
           )}

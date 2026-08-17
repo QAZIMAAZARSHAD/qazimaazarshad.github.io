@@ -237,12 +237,12 @@ function GoogleMeModal({ onClose }: { readonly onClose: () => void }) {
               {RESULTS.map((r) => (
                 <li key={r.id}>
                   <div className="mb-1 flex items-center gap-2 font-mono text-xs text-ink-400">
-                    <span className="grid h-6 w-6 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-[10px] uppercase text-accent-200">
+                    <span className="grid h-6 w-6 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-2xs uppercase text-accent-200">
                       {r.display.charAt(0)}
                     </span>
                     <span className="truncate">{r.display}</span>
                     {r.badge && (
-                      <span className="rounded-full bg-accent-500/15 px-2 py-0.5 text-[10px] uppercase tracking-wide text-accent-200">
+                      <span className="rounded-full bg-accent-500/15 px-2 py-0.5 text-2xs uppercase tracking-wide text-accent-200">
                         {r.badge}
                       </span>
                     )}

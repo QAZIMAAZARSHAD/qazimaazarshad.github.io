@@ -327,7 +327,7 @@ export function CommandPalette() {
                 aria-label="Search commands"
                 className="w-full bg-transparent py-4 text-sm text-ink-100 placeholder:text-ink-500 focus:outline-none"
               />
-              <kbd className="hidden shrink-0 rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] text-ink-400 sm:block">
+              <kbd className="hidden shrink-0 rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono text-2xs text-ink-400 sm:block">
                 ESC
               </kbd>
             </div>
@@ -343,7 +343,7 @@ export function CommandPalette() {
                   if (items.length === 0) return null;
                   return (
                     <div key={group} className="mb-1">
-                      <p className="px-3 pb-1 pt-2 font-mono text-[10px] uppercase tracking-[0.15em] text-ink-400">
+                      <p className="px-3 pb-1 pt-2 font-mono text-2xs uppercase tracking-[0.15em] text-ink-400">
                         {group}
                       </p>
                       {items.map((cmd) => {
@@ -392,7 +392,7 @@ export function CommandPalette() {
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2.5 text-[11px] text-ink-400">
+            <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2.5 text-xs text-ink-400">
               <span className="inline-flex items-center gap-1.5">
                 <CommandIcon className="h-3 w-3" aria-hidden />
                 <span className="font-mono">Command palette</span>

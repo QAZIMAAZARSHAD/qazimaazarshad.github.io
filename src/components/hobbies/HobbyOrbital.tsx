@@ -94,7 +94,7 @@ export function HobbyOrbital({ hobby, meta, onPick }: HobbyOrbitalProps) {
         >
           {hobby}
         </span>
-        <span className="mt-1 max-w-[9rem] text-balance text-[11px] leading-snug text-ink-400 transition-colors duration-300 group-hover:text-ink-300 sm:text-xs">
+        <span className="mt-1 max-w-[9rem] text-balance text-xs leading-snug text-ink-400 transition-colors duration-300 group-hover:text-ink-300 sm:text-sm">
           {meta.blurb}
         </span>
       </button>

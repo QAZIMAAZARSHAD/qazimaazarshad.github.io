@@ -213,7 +213,7 @@ export function LoaderStage({ onDone }: LoaderStageProps) {
                   %
                 </span>
               </span>
-              <output className="mt-4 font-mono text-[10px] uppercase tracking-[0.42em] text-ink-400 sm:text-[11px]">
+              <output className="mt-4 font-mono text-2xs uppercase tracking-[0.42em] text-ink-400 sm:text-xs">
                 Loading
               </output>
             </div>

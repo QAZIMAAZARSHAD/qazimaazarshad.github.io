@@ -143,7 +143,7 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
 
             <span
               className={cn(
-                "font-mono text-[11px] uppercase tracking-[0.45em] transition-colors duration-300",
+                "font-mono text-xs uppercase tracking-[0.45em] transition-colors duration-300",
                 opening || hovered || focused ? "text-white" : "text-ink-400",
               )}
             >
@@ -151,7 +151,7 @@ export function EntryDoor({ onEnter, opening, buttonRef }: EntryDoorProps) {
             </span>
           </button>
 
-          <p className="relative max-w-sm font-mono text-[11px] lowercase tracking-[0.2em] text-ink-400">
+          <p className="relative max-w-sm font-mono text-xs lowercase tracking-[0.2em] text-ink-400">
             and I&rsquo;ll say hello back
           </p>
         </motion.div>

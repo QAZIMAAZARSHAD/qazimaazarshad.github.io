@@ -73,7 +73,7 @@ export function Threshold() {
       />
 
       <div className="container-page relative text-center">
-        <p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.4em] text-ink-400">
+        <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.4em] text-ink-400">
           <Undo2 className="h-3.5 w-3.5" aria-hidden />
           Rewind
         </p>
@@ -101,7 +101,7 @@ export function Threshold() {
           aria-label="Keep going — to the Foundations section"
           className="group mt-10 inline-flex flex-col items-center gap-2 text-ink-400 transition-colors duration-300 hover:text-accent-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
         >
-          <span className="font-mono text-[0.65rem] uppercase tracking-[0.3em]">
+          <span className="font-mono text-2xs uppercase tracking-[0.3em]">
             Keep going
           </span>
           <span className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.03] transition-colors duration-300 group-hover:border-accent-400/40">

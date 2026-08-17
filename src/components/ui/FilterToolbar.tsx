@@ -70,7 +70,7 @@ export function FilterToolbar({
               {count !== undefined && (
                 <span
                   className={cn(
-                    "rounded-full px-1.5 py-0.5 text-[10px]",
+                    "rounded-full px-1.5 py-0.5 text-2xs",
                     isActive ? "bg-white/20" : "bg-white/[0.06] text-ink-400",
                   )}
                 >

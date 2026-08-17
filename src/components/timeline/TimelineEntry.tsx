@@ -125,7 +125,7 @@ export function TimelineEntry({
                     {organization}
                   </h3>
                   {current && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-gradient-to-r from-accent-500/20 to-cyan-500/20 px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-cyan-200">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-gradient-to-r from-accent-500/20 to-cyan-500/20 px-2.5 py-0.5 font-mono text-2xs font-medium uppercase tracking-wider text-cyan-200">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan-400" />
@@ -172,7 +172,7 @@ export function TimelineEntry({
                 {spanDuration && (
                   <span
                     className={cn(
-                      "mt-0.5 block font-mono text-[11px]",
+                      "mt-0.5 block font-mono text-xs",
                       current ? "text-cyan-300/80" : "text-ink-400",
                     )}
                   >
@@ -207,7 +207,7 @@ export function TimelineEntry({
                         <h4 className="font-medium leading-tight text-white">
                           {r.title}
                         </h4>
-                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-300">
+                        <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-2xs uppercase tracking-wide text-ink-300">
                           {r.type}
                         </span>
                       </div>
@@ -248,7 +248,7 @@ export function TimelineEntry({
                     {newest.title}
                   </h4>
                 </span>
-                <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink-300">
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-2xs uppercase tracking-wide text-ink-300">
                   {newest.type}
                 </span>
               </div>

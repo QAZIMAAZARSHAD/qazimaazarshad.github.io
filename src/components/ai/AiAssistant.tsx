@@ -228,7 +228,7 @@ export function AiAssistant() {
                   <p className="text-sm font-semibold text-white">
                     Ask my portfolio
                   </p>
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-accent-300">
+                  <p className="font-mono text-2xs uppercase tracking-wider text-accent-300">
                     Runs 100% in your browser
                   </p>
                 </div>
@@ -269,7 +269,7 @@ export function AiAssistant() {
                         key={q}
                         type="button"
                         onClick={() => void ask(q)}
-                        className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-[11px] text-ink-300 transition-colors hover:border-accent-400/40 hover:text-white"
+                        className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-xs text-ink-300 transition-colors hover:border-accent-400/40 hover:text-white"
                       >
                         {q}
                       </button>
@@ -344,7 +344,7 @@ function LoadPanel({
             />
           </div>
           <p
-            className="mt-2 line-clamp-2 font-mono text-[11px] text-ink-400"
+            className="mt-2 line-clamp-2 font-mono text-xs text-ink-400"
             title={progressText || "Preparing…"}
           >
             {progressText || "Preparing…"}
@@ -360,7 +360,7 @@ function LoadPanel({
             <Sparkles className="h-4 w-4" aria-hidden />
             Start chat
           </button>
-          <p className="font-mono text-[10px] uppercase tracking-wider text-ink-400">
+          <p className="font-mono text-2xs uppercase tracking-wider text-ink-400">
             {MODEL_SIZE_LABEL}
           </p>
           {status === "error" && (
@@ -447,7 +447,7 @@ function Conversation({
         );
       })}
       {generating && messages[messages.length - 1]?.content !== "" && (
-        <span className="self-start px-1 text-[11px] text-ink-400">
+        <span className="self-start px-1 text-xs text-ink-400">
           generating…
         </span>
       )}

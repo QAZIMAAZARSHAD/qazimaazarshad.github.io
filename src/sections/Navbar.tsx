@@ -194,7 +194,7 @@ export function Navbar() {
               <span
                 className={cn(
                   "grid place-items-center rounded-xl bg-gradient-to-br from-accent-500 to-cyan-400 font-display font-bold text-white shadow-lg shadow-accent-500/25 transition-all duration-500 group-hover:scale-105",
-                  docked ? "h-9 w-9 text-[11px]" : "h-10 w-10 text-sm",
+                  docked ? "h-9 w-9 text-xs" : "h-10 w-10 text-sm",
                 )}
               >
                 QMA

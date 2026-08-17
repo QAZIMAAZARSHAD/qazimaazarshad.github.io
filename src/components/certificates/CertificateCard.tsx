@@ -64,12 +64,12 @@ export function CertificateCard({
 
         <div className="absolute inset-0 bg-gradient-to-t from-ink-950/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-white/10 bg-ink-950/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-accent-200 backdrop-blur">
+        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-white/10 bg-ink-950/70 px-2 py-0.5 font-mono text-2xs uppercase tracking-wider text-accent-200 backdrop-blur">
           <Icon className="h-3 w-3" aria-hidden />
           {label}
         </span>
 
-        <span className="absolute bottom-2 right-2 inline-flex translate-y-2 items-center gap-1 rounded-full bg-gradient-to-r from-accent-500 to-cyan-500 px-2.5 py-1 font-mono text-[10px] font-medium text-white opacity-0 shadow-lg shadow-accent-500/30 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+        <span className="absolute bottom-2 right-2 inline-flex translate-y-2 items-center gap-1 rounded-full bg-gradient-to-r from-accent-500 to-cyan-500 px-2.5 py-1 font-mono text-2xs font-medium text-white opacity-0 shadow-lg shadow-accent-500/30 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
           <Eye className="h-3 w-3" aria-hidden />
           View
         </span>

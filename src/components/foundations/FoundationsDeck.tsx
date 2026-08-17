@@ -209,7 +209,7 @@ function MetricGrid({
             <span className="font-display text-lg font-bold leading-none text-white">
               {metric.value}
             </span>
-            <span className="text-[10px] leading-tight text-ink-400">
+            <span className="text-2xs leading-tight text-ink-400">
               {metric.label}
             </span>
           </div>
@@ -265,7 +265,7 @@ function DeckCard({
           {spotlight && item.featured && (
             <span
               className={cn(
-                "mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider",
+                "mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 font-mono text-2xs font-medium uppercase tracking-wider",
                 category.accentText,
               )}
             >
@@ -314,13 +314,13 @@ function DeckCard({
       <div className="flex flex-wrap items-center gap-2">
         <span
           className={cn(
-            "rounded-full border px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider",
+            "rounded-full border px-2.5 py-1 font-mono text-xs uppercase tracking-wider",
             category.pill,
           )}
         >
           {category.id}
         </span>
-        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-ink-400">
+        <span className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-400">
           <Calendar className="h-3 w-3" aria-hidden />
           {item.period}
         </span>
@@ -420,7 +420,7 @@ function FilterBar({
         {label}
         <span
           className={cn(
-            "rounded-full px-1.5 text-[10px]",
+            "rounded-full px-1.5 text-2xs",
             isActive ? "bg-white/20 text-white" : "bg-white/10 text-ink-400",
           )}
         >
@@ -512,7 +512,7 @@ function SummaryBar({ items }: { readonly items: readonly ExperienceItem[] }) {
             <span className="whitespace-nowrap bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
               {items.length}
             </span>
-            <span className="text-[11px] uppercase tracking-wide text-ink-400">
+            <span className="text-xs uppercase tracking-wide text-ink-400">
               Experiences
             </span>
           </div>
@@ -520,14 +520,14 @@ function SummaryBar({ items }: { readonly items: readonly ExperienceItem[] }) {
             <span className="whitespace-nowrap bg-gradient-to-r from-accent-300 to-cyan-300 bg-clip-text font-display text-2xl font-bold text-transparent">
               {span}
             </span>
-            <span className="text-[11px] uppercase tracking-wide text-ink-400">
+            <span className="text-xs uppercase tracking-wide text-ink-400">
               Active Years
             </span>
           </div>
         </div>
 
         <div className="flex min-w-0 flex-col gap-1.5">
-          <span className="text-[11px] uppercase tracking-wide text-ink-400">
+          <span className="text-xs uppercase tracking-wide text-ink-400">
             Focus Areas
           </span>
           <ul className="flex flex-wrap gap-1.5">

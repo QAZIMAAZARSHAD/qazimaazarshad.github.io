@@ -101,7 +101,7 @@ export function SynthwaveMode() {
             className="fixed inset-x-0 bottom-6 z-[130] flex justify-center px-4"
           >
             <div className="flex items-center gap-1 rounded-full border border-fuchsia-400/40 bg-ink-950/80 px-2 py-1.5 shadow-[0_0_30px_rgba(255,62,205,0.35)] backdrop-blur-xl">
-              <span className="px-3 font-mono text-[10px] uppercase tracking-[0.3em] text-fuchsia-300">
+              <span className="px-3 font-mono text-2xs uppercase tracking-[0.3em] text-fuchsia-300">
                 Synthwave
               </span>
 
@@ -124,7 +124,7 @@ export function SynthwaveMode() {
               <button
                 type="button"
                 onClick={() => setOn(false)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-fuchsia-500/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-fuchsia-200 transition-colors hover:bg-fuchsia-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/70"
+                className="inline-flex items-center gap-1.5 rounded-full bg-fuchsia-500/15 px-3 py-1.5 font-mono text-2xs uppercase tracking-[0.2em] text-fuchsia-200 transition-colors hover:bg-fuchsia-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400/70"
               >
                 <Power className="h-3 w-3" aria-hidden />
                 Exit

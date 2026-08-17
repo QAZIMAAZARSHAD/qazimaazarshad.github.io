@@ -36,7 +36,7 @@ function Face({ honour, large }: Readonly<{ honour: Honour; large: boolean }>) {
   if (honour.markKind === "rank") {
     return (
       <span aria-hidden className="flex flex-col items-center leading-none">
-        <span className="font-mono text-[0.5rem] uppercase tracking-[0.2em] text-white/50">
+        <span className="font-mono text-2xs uppercase tracking-[0.2em] text-white/50">
           AIR
         </span>
         <CountUp
@@ -143,7 +143,7 @@ export function MedalCard({
         <p
           className={cn(
             "font-display font-semibold leading-snug text-white",
-            featured ? "text-lg sm:text-xl" : "text-sm sm:text-[0.95rem]",
+            featured ? "text-lg sm:text-xl" : "text-sm sm:text-base",
           )}
         >
           {honour.title}

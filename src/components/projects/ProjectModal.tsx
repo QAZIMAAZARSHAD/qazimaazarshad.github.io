@@ -100,7 +100,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/40 to-transparent" />
-            <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-accent-200 backdrop-blur">
+            <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-ink-950/70 px-3 py-1 font-mono text-xs font-medium uppercase tracking-wider text-accent-200 backdrop-blur">
               {project.category}
             </span>
           </div>
