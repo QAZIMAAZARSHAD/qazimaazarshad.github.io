@@ -211,15 +211,21 @@ export function TimelineEntry({
                           {r.type}
                         </span>
                       </div>
-                      {/* Fixed date columns on lg so every row lines up. Below
-                          that they wrap freely — held rigid, they run off the
-                          edge of the card on a 320px screen. */}
-                      <div className="flex flex-wrap items-baseline gap-x-3 font-mono text-xs text-ink-400 lg:shrink-0 lg:flex-nowrap lg:gap-x-4">
-                        <span className="lg:w-[10.5rem] lg:text-right">
+                      {/* Date columns line up on lg. Below that they wrap
+                          freely — held rigid, they run off the edge of the card
+                          on a 320px screen. The widths are minimums rather than
+                          fixed: a live tenure grows a word longer every so often
+                          ("1 yr 1 mo" → "1 yr 2 mos"), and a rigid column breaks
+                          it across two lines when it does. */}
+                      <div
+                        data-testid="role-dates"
+                        className="flex flex-wrap items-baseline gap-x-3 font-mono text-xs text-ink-400 lg:shrink-0 lg:flex-nowrap lg:gap-x-4"
+                      >
+                        <span className="whitespace-nowrap lg:min-w-[10.5rem] lg:text-right">
                           {r.period}
                         </span>
                         {roleDuration(r) && (
-                          <span className="text-ink-300 lg:w-[4.5rem] lg:text-right">
+                          <span className="whitespace-nowrap text-ink-300 lg:min-w-[6rem] lg:text-right">
                             {roleDuration(r)}
                           </span>
                         )}
