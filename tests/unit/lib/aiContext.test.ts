@@ -63,6 +63,23 @@ describe("isPersonalQuestion", () => {
     }
   });
 
+  // Regression: asking "hometown" got a confidently invented city and state
+  // back, because only where he *works* is in the profile.
+  it("flags where-he-is-from questions, which the profile has no answer for", () => {
+    for (const q of [
+      "hometown",
+      "what is his home town",
+      "where is he from",
+      "where was he born",
+      "his birthplace",
+      "where did he grow up",
+      "his date of birth",
+      "what is his nationality",
+    ]) {
+      expect(isPersonalQuestion(q), q).toBe(true);
+    }
+  });
+
   it("does NOT flag legitimate professional questions", () => {
     for (const q of [
       "What does Maaz do at Salesforce?",
@@ -71,6 +88,9 @@ describe("isPersonalQuestion", () => {
       "How can I contact him?",
       "Tell me about his experience",
       "What are his achievements?",
+      // Where he is based is in the profile, unlike where he is from.
+      "Where is he based?",
+      "his location",
     ]) {
       expect(isPersonalQuestion(q), q).toBe(false);
     }

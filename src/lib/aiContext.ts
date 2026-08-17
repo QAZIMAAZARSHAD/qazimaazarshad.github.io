@@ -103,9 +103,28 @@ const PERSONAL_KEYWORDS = new Set([
   "salary",
   "income",
   "phone",
+  // Where he works is in the profile; where he is *from* is not, and the model
+  // will happily invent a city and state when asked.
+  "hometown",
+  "birthplace",
+  "born",
+  "native",
+  "nationality",
 ]);
 
-const PERSONAL_PHRASES = ["how old", "net worth", "home address"];
+const PERSONAL_PHRASES = [
+  "how old",
+  "net worth",
+  "home address",
+  "home town",
+  "grew up",
+  "grow up",
+  "date of birth",
+  "place of birth",
+  "where is he from",
+  "where are you from",
+  "where's he from",
+];
 
 export function isPersonalQuestion(text: string): boolean {
   const lower = text.toLowerCase();
