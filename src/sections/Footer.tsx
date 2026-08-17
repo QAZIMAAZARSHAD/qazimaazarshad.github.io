@@ -20,8 +20,8 @@ export function Footer() {
           the floating Ask AI and back-to-top buttons, which are pinned to the
           viewport and would otherwise sit on top of it at the end of the page. */}
       <div className="relative z-10 px-5 pb-28 pt-14 sm:px-8 sm:pb-10 sm:pt-20">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-ink-400">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 2xl:max-w-7xl min-[1920px]:max-w-[88rem]">
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-ink-400">
             EOF — thanks for scrolling
           </p>
           <VisitCounter />
@@ -45,7 +45,7 @@ export function Footer() {
             aria-hidden
             className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
           />
-          <p className="mt-6 text-center font-mono text-[11px] text-ink-400">
+          <p className="mt-6 text-center font-mono text-xs text-ink-400">
             © {year} {profile.name}. All rights reserved.
           </p>
         </div>
