@@ -206,7 +206,9 @@ export function Hobbies() {
         initial="hidden"
         whileInView="show"
         viewport={viewportOnce}
-        className="mx-auto flex max-w-5xl flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6"
+        // Widths are picked so a row never ends in a single orphan: five across
+        // by default (5/5/3), seven once a large monitor has room for it (7/6).
+        className="mx-auto flex max-w-5xl flex-wrap justify-center gap-x-4 gap-y-10 sm:gap-x-6 min-[1920px]:max-w-[79rem]"
       >
         {hobbies.map((hobby) => {
           const meta = HOBBY_META[hobby] ?? DEFAULT_META;

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { enterSite } from "./intro";
 
 /**
@@ -77,3 +77,62 @@ for (const viewport of VIEWPORTS) {
     await expect(hero).toHaveScreenshot(`hero-${viewport.name}.png`);
   });
 }
+
+/**
+ * The page shell used to be capped at a flat 1152px, which left a 2560px
+ * monitor showing a narrow strip of content between two enormous empty
+ * gutters. It now steps up at 1536 and 1920. These assert the steps rather
+ * than exact pixels, so the widths can be retuned without a failure, but
+ * flattening the shell back to one cap cannot pass.
+ */
+test.describe("The shell widens on large displays", () => {
+  const shellWidth = (page: Page) =>
+    page
+      .locator("#hero .container-page")
+      .evaluate((el) => el.getBoundingClientRect().width);
+
+  test("content keeps its share of the width as the monitor grows", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await enterSite(page);
+    const atLaptop = await shellWidth(page);
+
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await page.waitForTimeout(200);
+    const atWide = await shellWidth(page);
+
+    await page.setViewportSize({ width: 2560, height: 1440 });
+    await page.waitForTimeout(200);
+    const atMonitor = await shellWidth(page);
+
+    expect(atWide).toBeGreaterThan(atLaptop);
+    expect(atMonitor).toBeGreaterThan(atWide);
+
+    // Better than half the screen, rather than the 45% it sat at before.
+    expect(atMonitor / 2560).toBeGreaterThan(0.5);
+  });
+
+  test("the deck grows with the shell instead of staying a small island", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await enterSite(page);
+
+    const card = page.locator("#earlier [role='tabpanel']").first();
+    await card.scrollIntoViewIfNeeded();
+    const atLaptop = await card.evaluate(
+      (el) => el.getBoundingClientRect().width,
+    );
+
+    await page.setViewportSize({ width: 2560, height: 1440 });
+    await page.waitForTimeout(400);
+    const atMonitor = await card.evaluate(
+      (el) => el.getBoundingClientRect().width,
+    );
+
+    expect(atMonitor).toBeGreaterThan(atLaptop);
+  });
+});

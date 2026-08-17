@@ -126,7 +126,7 @@ export function AvatarRing() {
       }
       transition={reduce ? settle : { duration: 0.9, ease: EASE_GLIDE }}
       style={reduce ? undefined : { x, y }}
-      className="relative mx-auto aspect-square w-64 sm:w-80 lg:w-[24rem]"
+      className="relative mx-auto aspect-square w-64 sm:w-80 lg:w-[24rem] 2xl:w-[26rem] min-[1920px]:w-[28rem]"
     >
       <motion.div
         aria-hidden

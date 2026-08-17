@@ -73,7 +73,7 @@ export function Hero() {
             </motion.span>
           </Mask>
 
-          <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[3.75rem] xl:text-7xl">
+          <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[3.75rem] xl:text-7xl 2xl:text-[5rem] min-[1920px]:text-[5.5rem]">
             <span className="sr-only">{profile.name}</span>
             <span
               aria-hidden

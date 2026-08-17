@@ -513,7 +513,7 @@ function SummaryBar({ items }: { readonly items: readonly ExperienceItem[] }) {
               {items.length}
             </span>
             <span className="text-[11px] uppercase tracking-wide text-ink-400">
-              Exp
+              Experiences
             </span>
           </div>
           <div className="flex flex-col gap-0.5">
@@ -674,17 +674,17 @@ export function FoundationsDeck({
         >
           <div
             className={cn(
-              "absolute left-1/2 top-1/2 h-64 w-[38rem] max-w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] blur-[90px] transition-colors duration-700",
+              "absolute left-1/2 top-1/2 h-64 w-[38rem] max-w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] blur-[90px] transition-colors duration-700 2xl:w-[44rem] min-[1920px]:w-[50rem]",
               currentCategory.wash,
             )}
           />
           <div
             className={cn(
-              "absolute bottom-1 left-1/2 h-10 w-[26rem] max-w-[85%] -translate-x-1/2 rounded-[50%] blur-2xl transition-colors duration-700",
+              "absolute bottom-1 left-1/2 h-10 w-[26rem] max-w-[85%] -translate-x-1/2 rounded-[50%] blur-2xl transition-colors duration-700 2xl:w-[30rem] min-[1920px]:w-[34rem]",
               currentCategory.wash,
             )}
           />
-          <div className="absolute inset-x-0 bottom-0 mx-auto h-px w-[80%] max-w-[36rem] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 mx-auto h-px w-[80%] max-w-[36rem] bg-gradient-to-r from-transparent via-white/30 to-transparent 2xl:max-w-[42rem] min-[1920px]:max-w-[48rem]" />
         </div>
 
         {/* Clips the back of the deck, thrown wider than the viewport on a
@@ -727,7 +727,9 @@ export function FoundationsDeck({
                     className={cn(
                       // Height follows the card so the spotlight (with its
                       // metric strip) can stand taller than its neighbours.
-                      "relative w-[min(84vw,30rem)]",
+                      // Grows on the same breakpoints as the page shell, so the
+                      // deck keeps its share of the width on a large monitor.
+                      "relative w-[min(84vw,30rem)] 2xl:w-[34rem] min-[1920px]:w-[38rem]",
                       !parked && "pointer-events-auto",
                     )}
                   >

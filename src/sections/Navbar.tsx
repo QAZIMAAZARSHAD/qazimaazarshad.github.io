@@ -166,7 +166,9 @@ export function Navbar() {
           data-testid="nav-dock"
           data-docked={docked}
           className={cn(
-            "relative mx-auto flex max-w-6xl items-center transition-[height,padding,background-color,border-color,border-radius,box-shadow] duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)]",
+            // Tracks the page shell's steps so the dock never floats as a small
+            // bar over a much wider page on a large monitor.
+            "relative mx-auto flex max-w-6xl items-center transition-[height,padding,background-color,border-color,border-radius,box-shadow] duration-500 ease-[cubic-bezier(0.16,0.84,0.44,1)] 2xl:max-w-7xl min-[1920px]:max-w-[88rem]",
             docked
               ? "h-14 rounded-full border border-white/10 bg-ink-950/70 px-4 shadow-2xl shadow-black/50 backdrop-blur-xl"
               : "h-16 rounded-full border border-transparent bg-transparent px-5 sm:h-20 sm:px-8",

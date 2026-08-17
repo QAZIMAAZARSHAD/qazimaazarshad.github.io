@@ -39,8 +39,10 @@
 }
 
 @layer components {
+  /* Widens in steps past the xl breakpoint so large monitors get a page
+     instead of a narrow island floating between two empty gutters. */
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8 2xl:max-w-7xl min-[1920px]:max-w-[88rem];
   }
 
   /* Gradient text used for headings / brand */
