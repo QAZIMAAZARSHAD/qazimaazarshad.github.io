@@ -60,21 +60,21 @@ function wrappedRuns(page: Page) {
 }
 
 test.describe("Experience dates", () => {
-  test("neither column breaks across lines at any desktop width", async ({
-    page,
-  }) => {
-    await freezeClock(page, "2026-07-15T00:00:00Z");
-
-    for (const width of [1024, 1180, 1280, 1440, 1920]) {
+  // One test per width rather than a loop inside one: each pass has to sit
+  // through the intro, and five of those together ran past the timeout on CI.
+  for (const width of [1024, 1180, 1280, 1440, 1920]) {
+    test(`neither column breaks across lines at ${width}px`, async ({
+      page,
+    }) => {
+      await freezeClock(page, "2026-07-15T00:00:00Z");
       await page.setViewportSize({ width, height: 900 });
       await openExperience(page);
+
       // Polled rather than measured once: on a loaded runner the row can be
       // caught mid-reflow and report a height it does not settle at.
-      await expect
-        .poll(() => wrappedRuns(page), { message: `at ${width}px` })
-        .toEqual([]);
-    }
-  });
+      await expect.poll(() => wrappedRuns(page)).toEqual([]);
+    });
+  }
 
   /**
    * Regression: the tenure column was a fixed 4.5rem, which fit "1 yr 1 mo" with
