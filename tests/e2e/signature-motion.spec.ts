@@ -2,16 +2,12 @@ import { test, expect, devices, type Page } from "@playwright/test";
 import { enterSite } from "./intro";
 
 /**
- * Guards for the two pieces of motion that carry the site's character: the
- * curtain that splits away after the greeting, and the constellation drifting
- * behind the page.
+ * The curtain that splits away after the greeting, and the constellation
+ * drifting behind the page.
  *
- * Both were removed at one point without a single test going red. Nothing here
- * is a pixel snapshot, because a snapshot could not have caught either one: the
- * visual suite runs the whole page under `prefers-reduced-motion: reduce`,
- * which switches both of these off by design, so their baselines never
- * contained them in the first place. What follows samples what is actually on
- * screen over time and asserts it moved.
+ * Sampled over time rather than snapshotted: the visual suite runs under
+ * `prefers-reduced-motion: reduce`, which switches both of these off, so a
+ * baseline could never have contained them.
  */
 
 /** Open the door and hold at the settled greeting, ready to be skipped. */
@@ -88,8 +84,7 @@ test.describe("The curtain splits open after the greeting", () => {
     expect(top.at(-1)!).toBeLessThan(-height * 0.4);
     expect(bottom.at(-1)!).toBeGreaterThan(height * 0.9);
 
-    // Regression: a cut, or a fade with the panels left in place, would satisfy
-    // the assertions above at the endpoints alone. This is the slide itself.
+    // The slide itself: a cut or a fade would satisfy the endpoints alone.
     expect(stops(top)).toBeGreaterThan(8);
     expect(stops(bottom)).toBeGreaterThan(8);
   });
@@ -109,10 +104,6 @@ test.describe("The curtain splits open after the greeting", () => {
     await context.close();
   });
 
-  /**
-   * The one case where it is meant to go quietly. Documented here so that
-   * turning the split off for everybody can never be mistaken for this.
-   */
   test("it fades instead for anyone who asked for less motion", async ({
     page,
   }) => {
@@ -170,11 +161,7 @@ test.describe("The constellation drifts behind the page", () => {
     expect(second.fingerprint).not.toBe(first.fingerprint);
   });
 
-  /**
-   * Regression: this was switched off on touchscreens on the grounds that no
-   * cursor can reach it, which missed that it drifts by itself and is the one
-   * thing back here anybody notices.
-   */
+  // It drifts by itself, so having no cursor is not a reason to switch it off.
   test("it runs on a phone, where there is no cursor to push it", async ({
     browser,
   }) => {

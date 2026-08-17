@@ -37,12 +37,8 @@ export default {
         },
       },
       fontFamily: {
-        // Sora keeps the personality in headings. Body and UI text moved off
-        // Space Grotesk, whose short x-height and wide-set forms were doing
-        // the small sizes below no favours.
-        // The "Web" faces are the self-hosted files (src/styles/fonts.css).
-        // The bare names sit behind them only as a fallback for the case where
-        // our woff2 fails to load and the visitor happens to have the family.
+        // The "Web" faces are the self-hosted files (src/styles/fonts.css); the
+        // bare names sit behind them only as a fallback.
         sans: ["Inter Web", "Inter", "system-ui", "sans-serif"],
         display: ["Sora Web", "Sora", "system-ui", "sans-serif"],
         mono: [

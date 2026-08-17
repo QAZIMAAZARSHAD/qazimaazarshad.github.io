@@ -184,10 +184,8 @@ export function Navbar() {
 
           <nav
             aria-label="Primary"
-            // Eleven controls leave no room to spare between the dock
-            // breakpoint and 2xl, where the capsule is pinned to max-w-6xl. The
-            // row tightens through that band and relaxes at 2xl, which is
-            // exactly where the capsule itself steps up to max-w-7xl.
+            // Eleven controls have no room to spare while the capsule is pinned
+            // to max-w-6xl, so the row tightens until 2xl widens it.
             className="flex w-full items-center justify-between gap-2 2xl:gap-4"
           >
             <a
@@ -277,8 +275,6 @@ export function Navbar() {
                 className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-ink-400 transition-colors duration-300 hover:border-accent-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400/60"
               >
                 <Search className="h-4 w-4" aria-hidden />
-                {/* The shortcut hint is the first thing to go when the row is
-                    tight; the palette is still one click or ⌘K away. */}
                 <kbd className="hidden font-mono text-xs 2xl:inline">⌘K</kbd>
               </button>
               <Magnetic strength={0.25} max={8}>

@@ -85,9 +85,8 @@
 }
 
 /* A highlight glints across the accent word of the hero name once it lands.
-   Drawn on a pseudo-element so the word is not repeated in the document — the
-   glyphs have to be there to clip the gradient to, and a second copy in the
-   markup would land in the h1's text. */
+   Drawn on a pseudo-element so the glyphs the gradient clips to are not
+   repeated inside the h1's text. */
 @keyframes qma-sheen {
   from {
     background-position: 210% 0;
@@ -362,14 +361,10 @@ html[data-synthwave] .qma-shades {
   transform: translate(-50%, 0);
 }
 
-/* Brand pedestal in the experience timeline: a solid slab built from six faces
-   in a preserve-3d parent, with the perspective one level up so the near edge
-   bulges as it comes round. Both broad faces carry the logo, so a full turn
-   never shows the brand mirrored, and the four rims give it thickness — without
-   them it passes through side-on as a paper-thin sliver.
-
-   The half-extents have to be absolute lengths (translateZ ignores
-   percentages), so they track the w-20/h-20 the tile is rendered at. */
+/* Brand pedestal in the experience timeline: a slab of six faces in a
+   preserve-3d parent, with the perspective one level up. Half-extents must be
+   absolute lengths (translateZ ignores percentages), so they track the w-20/h-20
+   the tile renders at. */
 .qma-coin {
   perspective: 620px;
   --coin-half: 40px;
@@ -398,16 +393,13 @@ html[data-synthwave] .qma-shades {
   transform: rotateY(180deg) translateZ(calc(var(--coin-depth) / 2));
 }
 
-/* Rims stop short of the corners by the face's border radius, so they sit on
-   the straight run of each side and never poke out past the rounding. They are
-   pitched well below the white of the faces — matched in brightness they read
-   as a flap hinged off the front rather than as the slab's own thickness. */
+/* Rims stop short of the corners by the face's border radius so they never poke
+   out past the rounding, and sit darker than the faces to read as thickness. */
 .qma-coin-rim {
   position: absolute;
   border-radius: 3px;
-  /* Every rim is built facing outward, so culling backfaces is what keeps the
-     far side of the slab from being painted over the near one — depth sorting
-     alone does not reliably hide it. */
+  /* Rims face outward; culling keeps the far side off the near one, which depth
+     sorting alone does not reliably do. */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background: linear-gradient(to bottom, #aab3c6, #7b8496);

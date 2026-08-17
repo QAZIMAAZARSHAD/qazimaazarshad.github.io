@@ -1,12 +1,7 @@
 /**
- * Pulls the latin cuts of the three families out of Google Fonts and writes
- * them into public/fonts, plus the @font-face rules that point at them.
- *
- * Self-hosting is not a micro-optimisation here. With the fonts coming from
- * fonts.gstatic.com, what got rendered depended on whether that fetch had
- * landed yet, so CI screenshotted fallback metrics while this machine — which
- * happens to have Inter installed — never showed the problem. Same-origin
- * files render the same everywhere.
+ * Pulls the latin cuts of the three families out of Google Fonts into
+ * public/fonts, plus the @font-face rules pointing at them. Self-hosted so
+ * every environment renders the same glyphs rather than whatever arrives first.
  *
  * Run with: node scripts/fetch-fonts.mjs
  */
@@ -33,25 +28,18 @@ const blocks = [
 ];
 
 /**
- * All three are variable fonts, so every requested weight of a family comes
- * back pointing at one file. Group by URL and emit a single face per family
- * carrying a weight range, rather than four identical copies of Inter.
+ * All three are variable fonts, so every requested weight of a family points at
+ * one file. Group by URL and emit a single face per family with a weight range.
  */
 const faces = new Map();
 for (const [, subset, block] of blocks) {
-  // Latin alone. The site has no Cyrillic, Greek or Vietnamese copy, and
-  // shipping those would multiply the payload for nothing.
+  // Latin alone; the site has no Cyrillic, Greek or Vietnamese copy.
   if (subset !== "latin") continue;
 
   const url = /url\(([^)]+)\)/.exec(block)[1];
   const face = faces.get(url) ?? {
-    /**
-     * Suffixed so the face cannot collide with a copy installed on the
-     * machine. Chrome will happily satisfy `font-family: Inter` from the
-     * system and leave our @font-face unloaded, which is invisible on a
-     * machine that has Inter and renders Helvetica on one that does not.
-     * Nobody has "Inter Web" installed, so everyone gets this file.
-     */
+    // Suffixed so an installed copy cannot shadow the face: Chrome will satisfy
+    // `font-family: Inter` from the system and leave ours unloaded.
     family: `${/font-family:\s*'([^']+)'/.exec(block)[1]} Web`,
     slug: /font-family:\s*'([^']+)'/
       .exec(block)[1]
@@ -86,10 +74,8 @@ for (const [url, face] of faces) {
       "  font-style: normal;",
       `  font-weight: ${weight};`,
       "  font-display: swap;",
-      // Plain woff2, even though these are variable. Chrome treats the older
-      // 'woff2-variations' hint as an unsupported format, drops the face, and
-      // quietly falls back — which looks fine on a machine that has the family
-      // installed and wrong everywhere else.
+      // Plain woff2 even though these are variable; Chrome drops the face if
+      // told 'woff2-variations'.
       `  src: url('/fonts/${file}') format('woff2');`,
       `  unicode-range: ${face.range};`,
       "}",

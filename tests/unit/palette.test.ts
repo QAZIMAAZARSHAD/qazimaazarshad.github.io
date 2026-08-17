@@ -16,11 +16,9 @@ function sourceFiles(dir: string): string[] {
 }
 
 /**
- * The resolved theme, not `theme.extend`. Reading the extension alone gets it
- * wrong in both directions: it skips shades that a built-in scale never had
- * (cyan-1000 is just as dead as accent-950), and it would quietly stop covering
- * a palette that ever moved out of `extend` — the one case where unlisted
- * shades really are deleted rather than merged.
+ * The resolved theme, not `theme.extend`, which misses shades a built-in scale
+ * never had (cyan-1000 is as dead as accent-950) and any palette moved out of
+ * `extend`.
  */
 const palettes = resolveConfig(tailwind).theme.colors as unknown as Record<
   string,

@@ -2,12 +2,9 @@ import { test, expect, type Page } from "@playwright/test";
 import { enterSite } from "./intro";
 
 /**
- * Responsiveness tests across popular screen dimensions.
- *
- * For each viewport we assert there is no horizontal overflow, that the
- * navbar switches between the mobile hamburger and the desktop inline links
- * at the 1180px dock breakpoint, that the hero name renders, and we capture
- * a hero-section element screenshot for a visual record across dimensions.
+ * Per viewport: no horizontal overflow, the navbar switches between hamburger
+ * and inline links at the 1180px dock breakpoint, the hero name renders, and a
+ * hero screenshot is kept as a visual record.
  */
 
 interface Viewport {
@@ -79,11 +76,8 @@ for (const viewport of VIEWPORTS) {
 }
 
 /**
- * The page shell used to be capped at a flat 1152px, which left a 2560px
- * monitor showing a narrow strip of content between two enormous empty
- * gutters. It now steps up at 1536 and 1920. These assert the steps rather
- * than exact pixels, so the widths can be retuned without a failure, but
- * flattening the shell back to one cap cannot pass.
+ * The shell steps up at 1536 and 1920 rather than sitting at one flat cap.
+ * Asserted as steps, not exact pixels, so the widths stay retunable.
  */
 test.describe("The shell widens on large displays", () => {
   const shellWidth = (page: Page) =>

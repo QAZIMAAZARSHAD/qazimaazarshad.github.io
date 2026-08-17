@@ -25,10 +25,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build # tsc --noEmit + vite build → dist/
-      # enablement flips the Pages source to "GitHub Actions". Without it the
-      # repo can sit in branch mode, where GitHub's own builder publishes the
-      # repo root — the unbuilt index.html, which loads /src/main.tsx and
-      # renders nothing.
+      # enablement keeps the Pages source on "GitHub Actions"; in branch mode
+      # GitHub publishes the unbuilt repo root instead.
       - uses: actions/configure-pages@v5
         with:
           enablement: true

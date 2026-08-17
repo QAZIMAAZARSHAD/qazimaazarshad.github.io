@@ -2,13 +2,10 @@ import { test, expect, type Page, type Locator } from "@playwright/test";
 import { enterSite } from "./intro";
 
 /**
- * Visual regression tests — one element screenshot per section, plus the
- * navbar and a filtered projects state.
- *
- * Determinism: reduced-motion is enabled BEFORE navigation so the animated
- * canvas particle background is disabled and global CSS freezes animations.
- * We also wait for web fonts and let each Framer scroll-reveal settle before
- * capturing an element (not full-page) screenshot.
+ * One element screenshot per section, plus the navbar and a filtered projects
+ * state. Reduced-motion is set before navigation so the particle canvas and
+ * all animations are frozen; fonts and scroll-reveals are awaited before each
+ * shot.
  */
 
 const SECTION_IDS = [
@@ -26,17 +23,10 @@ const SECTION_IDS = [
 ] as const;
 
 /**
- * Take the header out of the shot.
- *
- * It floats over whatever is behind it, so it lands in section screenshots and
- * carries its own state into them — docked or not, which item is current — none
- * of which belongs to the section underneath. That state moves whenever the
- * page above changes length, which is how a nav reorder came to sit in these
- * baselines unnoticed, under the diff tolerance, until an unrelated section
- * grew and pushed it over. The header has two snapshots of its own, and its
- * current-item behaviour is asserted in navigation.spec.ts.
- *
- * It is fixed, so hiding it reflows nothing.
+ * Take the header out of the shot. It floats over the section beneath and
+ * carries its own state — docked or not, which item is current — into that
+ * section's baseline. It has two snapshots of its own, and navigation.spec.ts
+ * covers its behaviour. Being fixed, hiding it reflows nothing.
  */
 async function hideHeader(page: Page): Promise<void> {
   await page.addStyleTag({ content: "header{display:none !important}" });
@@ -94,9 +84,7 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
   // Wait for the preloader to fade out so screenshots capture the real page.
   await enterSite(page);
-  // Again once the page proper is up. fonts.ready only covers faces in use at
-  // the time, and a face that lands after the shot swaps the metrics under it —
-  // which is how a whole run of baselines came to be captured in fallback.
+  // Again once the page is up: fonts.ready only covers faces in use when called.
   await page.evaluate(() => document.fonts.ready);
   // Hide always-on floating widgets so they don't leak into section snapshots.
   await page.addStyleTag({

@@ -169,19 +169,9 @@ export const heroTaglines = [
 ];
 
 /**
- * Footer counters via Abacus — "<namespace>/<key>", empty disables.
- *
- * These moved off CounterAPI when it retired its unauthenticated v1 on 7 Aug
- * 2026. Its v2 wants a bearer token on every call, which on a static site can
- * only ship in the bundle for anyone to read and reset. Abacus needs no
- * account, and its domain carries no EasyPrivacy rule where `counterapi.dev`
- * did — so blockers no longer swallow most of the traffic.
- *
- * Visits were seeded to the last total observed on the old backend; the v1
- * reads died with the writes, so it could not be migrated exactly.
- *
- * A counter expires six months after its last access, which any live traffic
- * keeps pushing out. Only a site nobody visits for half a year would lose one.
+ * Footer counters via Abacus — "<namespace>/<key>", empty disables. Chosen over
+ * CounterAPI v2, which wants a bearer token that a static site can only ship in
+ * the bundle. Counters expire six months after their last access.
  */
 export const analytics = {
   visitCounter: "qazimaazarshad-portfolio/visits",
@@ -190,23 +180,13 @@ export const analytics = {
 } as const;
 
 /**
- * Web3Forms access key, which relays the footer's heart to my inbox — there is
- * no backend here to receive it. Empty means no email is sent; the heart still
- * counts, so the feature degrades to a plain reaction rather than breaking.
+ * Web3Forms access key relaying the footer's heart to my inbox. Empty sends no
+ * email; the heart still counts.
  *
- * The key is public by necessity: it ships in the bundle, as it must for any
- * backend-less form. Web3Forms treat it as an alias for an email address rather
- * than a secret, and it can only send mail to me.
- *
- * Be clear about what actually limits abuse, which is Web3Forms' own rate
- * limiting and quota — and nothing else. The honeypot field only catches bots
- * that fill in every input of a rendered form, and there is no rendered form
- * here; anyone POSTing the key directly is unaffected by it. The one-per-browser
- * rule is a courtesy to honest visitors, not a control. If the quota is ever
- * burned the relay fails silently by design, so the first sign would be mail
- * that stops arriving. A real challenge (hCaptcha or Turnstile, both supported)
- * is the only thing that would raise the cost, at the price of putting a puzzle
- * in front of a one-tap heart.
+ * Public by necessity — it ships in the bundle, as it must without a backend,
+ * and can only send mail to me. Nothing here limits abuse except Web3Forms' own
+ * quota: the honeypot and one-per-browser rule do not apply to anyone POSTing
+ * the key directly. Only a real challenge (hCaptcha, Turnstile) would.
  */
 export const reactionKey = "b331f813-debd-4cea-bddb-5e7b3ea36e80";
 

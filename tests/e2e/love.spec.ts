@@ -7,11 +7,9 @@ const loved = (page: Page) =>
   page.getByRole("button", { name: /you loved this site/i });
 
 /**
- * Nothing here may touch the real counter or send a real email.
- *
- * The relay has to be stubbed regardless: Web3Forms blocks anything that isn't
- * a real browser, so a headless run gets a network-level failure rather than a
- * response. Verified by hand in headed Chrome instead.
+ * Nothing here may touch the real counter or send a real email. The relay is
+ * stubbed regardless — Web3Forms blocks non-browser clients, so a headless run
+ * fails at the network. Verified by hand in headed Chrome instead.
  */
 async function stub(page: Page, counts = 128) {
   const seen = { bumps: 0, mails: 0, notes: [] as string[] };

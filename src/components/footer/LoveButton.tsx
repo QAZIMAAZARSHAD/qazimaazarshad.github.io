@@ -25,15 +25,12 @@ export function LoveButton() {
   const sent = useRef(false);
 
   useEffect(() => {
-    // Straight to the end for someone who has already given one. The note box
-    // is offered once, in the moment — restoring it every visit would leave an
-    // open, unbounded mail button sitting in the footer.
+    // The note box is offered once, in the moment, not on every later visit.
     if (hasLoved()) setStage("thanked");
 
     let alive = true;
     void readCount(COUNTER).then((value) => {
-      // A tap while this was in flight already moved the number, and this
-      // reply predates the bump, so it would undo it.
+      // A tap while this was in flight already moved the number.
       if (alive && value !== null && !tapped.current) setCount(value);
     });
     return () => {
@@ -47,13 +44,11 @@ export function LoveButton() {
     tapped.current = true;
     setStage("loved");
     setBurst((n) => n + 1);
-    // Counted straight away: the number is the feedback, and waiting on a
-    // request that blockers often kill would leave the tap feeling dead.
+    // Counted straight away; blockers often kill the request.
     setCount((value) => (value ?? 0) + 1);
     rememberLove();
 
     void sendLove();
-    // The bump replies with the real total, which settles the guess above.
     void bumpCount(COUNTER).then((total) => {
       if (total !== null) setCount(total);
     });
@@ -62,9 +57,8 @@ export function LoveButton() {
 
   const send = (event: React.FormEvent) => {
     event.preventDefault();
-    // Latched in a ref, not read from state: the form stays mounted through
-    // its exit animation holding this render's handler, so a second press
-    // would see a stale "loved" and relay the same note twice.
+    // Latched in a ref: the form stays mounted through its exit animation
+    // holding this render's handler, so state here would be stale.
     if (sent.current || !note.trim()) return;
     sent.current = true;
     void sendLove(note);
@@ -73,9 +67,8 @@ export function LoveButton() {
 
   const filled = stage !== "idle";
 
-  // The visible copy is aria-hidden, so this is the only thing spoken. It has
-  // to carry the acknowledgement and the new total, since focus is pulled to
-  // the note field a beat later with no other warning.
+  // The visible copy is aria-hidden, so this is the only thing spoken before
+  // focus is pulled to the note field.
   let announcement = "";
   if (stage === "loved") {
     announcement = count === null ? "Loved." : `Loved. ${count} so far.`;

@@ -1,11 +1,6 @@
 import type { Page } from "@playwright/test";
 
-/**
- * Open the door, skip the greeting, and wait for the intro to clear.
- *
- * Every step throws: this runs in the beforeEach of most of the suite, so a
- * broken entry has to fail here rather than surface as an unrelated assertion.
- */
+/** Open the door, skip the greeting, and wait for the intro to clear. */
 export async function enterSite(
   page: Page,
   options: { keyboard?: boolean } = {},
@@ -23,9 +18,7 @@ export async function enterSite(
     await door.focus();
     await page.keyboard.press("Enter");
   } else {
-    // WebKit in CI often times out on a normal click: the ajar 3D swing moves
-    // the hit target under Playwright's actionability check. Force still
-    // dispatches a real click event onto the button.
+    // Forced: the ajar 3D swing moves the hit target, which times WebKit out.
     await door.click({ timeout: 15_000, force: true });
   }
 

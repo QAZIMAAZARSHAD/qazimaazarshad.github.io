@@ -2,14 +2,9 @@ import { test, expect, type Page } from "@playwright/test";
 import { enterSite } from "./intro";
 
 /**
- * The role rows carry two mono columns, a period and a tenure. The tenure of an
- * ongoing role is computed against the clock, so it gains a character on its own
- * every so often — "1 yr 1 mo" becomes "1 yr 2 mos" — and it once did exactly
- * that inside a column that had a single pixel of room left, breaking the words
- * across two lines with no code change to blame.
- *
- * These run the clock forward rather than only checking today, so the next such
- * break shows up here instead of on the live site.
+ * An ongoing role's tenure is computed against the clock, so it gains a
+ * character on its own over time ("1 yr 1 mo" → "1 yr 2 mos"). These run the
+ * clock forward as well as checking today.
  */
 
 /** Pin `now` so the live tenure is deterministic. */
@@ -60,8 +55,7 @@ function wrappedRuns(page: Page) {
 }
 
 test.describe("Experience dates", () => {
-  // One test per width rather than a loop inside one: each pass has to sit
-  // through the intro, and five of those together ran past the timeout on CI.
+  // One test per width; five intros in a single test outran the CI timeout.
   for (const width of [1024, 1180, 1280, 1440, 1920]) {
     test(`neither column breaks across lines at ${width}px`, async ({
       page,
@@ -70,17 +64,11 @@ test.describe("Experience dates", () => {
       await page.setViewportSize({ width, height: 900 });
       await openExperience(page);
 
-      // Polled rather than measured once: on a loaded runner the row can be
-      // caught mid-reflow and report a height it does not settle at.
+      // Polled: a loaded runner can catch the row mid-reflow.
       await expect.poll(() => wrappedRuns(page)).toEqual([]);
     });
   }
 
-  /**
-   * Regression: the tenure column was a fixed 4.5rem, which fit "1 yr 1 mo" with
-   * a pixel to spare and split the moment the role ticked over to "1 yr 2 mos".
-   * Years from now the same row reads "5 yrs 3 mos" and has to stay on one line.
-   */
   test("a tenure that has grown for years still sits on one line", async ({
     page,
   }) => {
@@ -88,7 +76,6 @@ test.describe("Experience dates", () => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await openExperience(page);
 
-    // The ongoing role should now be reporting a long, multi-word tenure.
     await expect(
       page
         .locator("#experience")

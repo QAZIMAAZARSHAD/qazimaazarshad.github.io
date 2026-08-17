@@ -555,15 +555,11 @@ interface FoundationsDeckProps {
 }
 
 /**
- * The early roles as a filterable deck of cards in perspective: one spotlit at
- * the front with its logo emblem, the impact numbers already written into its
- * description, and a metrics strip; the rest fall away behind it, dimmed. A
- * focus-area filter re-slices the deck, and a summary bar sums up the whole
- * chapter beneath it.
+ * The early roles as a filterable deck of cards in perspective, one spotlit at
+ * the front with the rest dimmed behind it.
  *
- * Drag, arrow keys, the chevrons, and the ticks all move the deck. Structurally
- * this is a WAI-ARIA tabs pattern (tablist + tabpanels with roving tabindex);
- * only the front panel is exposed to AT and pointers via `inert`.
+ * Structurally a WAI-ARIA tabs pattern (tablist + tabpanels with roving
+ * tabindex); only the front panel is exposed to AT and pointers, via `inert`.
  */
 export function FoundationsDeck({
   items,

@@ -21,11 +21,9 @@ interface TipPos {
 }
 
 /**
- * Renders text with whatever truncation classes are passed, and shows a styled
- * tooltip with the full text on hover — but ONLY when the text is actually
- * clipped (single-line ellipsis or line-clamp). The tooltip is portaled to
- * <body> so it's never clipped by a card's `overflow-hidden`. Keeps the native
- * `title` attribute as a keyboard/AT-friendly fallback.
+ * Text with a hover tooltip carrying the full string, shown only when the text
+ * is actually clipped. Portaled to <body> to escape `overflow-hidden`, with the
+ * native `title` kept as a keyboard/AT fallback.
  */
 export function TruncatedText({
   text,

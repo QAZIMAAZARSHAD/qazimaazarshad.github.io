@@ -31,12 +31,9 @@ interface TimelineEntryProps {
 }
 
 /**
- * One company on the vertical experience timeline. Its logo rides a glowing node
- * on the shared rail; the card carries the full employment span in a header
- * chip, every role held there (newest first, so a promotion path reads as one
- * card), and a holographic pedestal of the brand that fills what would
- * otherwise be dead width. The rail line itself lives in the parent so it can
- * run unbroken between companies.
+ * One company on the vertical experience timeline: a logo node on the shared
+ * rail, the employment span, and every role held there, newest first. The rail
+ * line lives in the parent so it runs unbroken between companies.
  */
 export function TimelineEntry({
   item,
@@ -73,7 +70,6 @@ export function TimelineEntry({
 
   return (
     <div className="group relative pl-16 sm:pl-24">
-      {/* Logo node on the rail */}
       <span
         aria-hidden
         className="absolute left-8 top-9 z-10 -translate-x-1/2 -translate-y-1/2 sm:left-10 sm:top-10"
@@ -108,7 +104,6 @@ export function TimelineEntry({
         </span>
       </span>
 
-      {/* Connector from node to card */}
       <span
         aria-hidden
         className="absolute left-[3.25rem] top-9 h-px w-4 -translate-y-1/2 bg-gradient-to-r from-white/25 to-transparent sm:left-[4.25rem] sm:top-10 sm:w-5"
@@ -117,7 +112,6 @@ export function TimelineEntry({
       <article className="glass glass-hover spotlight overflow-hidden rounded-2xl shadow-lg shadow-black/20 hover:shadow-accent-500/20">
         <div className="grid lg:grid-cols-[1fr_13rem]">
           <div className="min-w-0 p-5 sm:p-6">
-            {/* Header: identity left, employment span right */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
@@ -182,7 +176,6 @@ export function TimelineEntry({
               </div>
             </div>
 
-            {/* Roles */}
             {multiRole ? (
               <ol className="relative mt-5 space-y-3.5">
                 <span
@@ -211,12 +204,9 @@ export function TimelineEntry({
                           {r.type}
                         </span>
                       </div>
-                      {/* Date columns line up on lg. Below that they wrap
-                          freely — held rigid, they run off the edge of the card
-                          on a 320px screen. The widths are minimums rather than
-                          fixed: a live tenure grows a word longer every so often
-                          ("1 yr 1 mo" → "1 yr 2 mos"), and a rigid column breaks
-                          it across two lines when it does. */}
+                      {/* Columns line up on lg and wrap freely below, where a
+                          rigid width runs off a 320px card. Minimums, not fixed:
+                          a live tenure grows a word longer over time. */}
                       <div
                         data-testid="role-dates"
                         className="flex flex-wrap items-baseline gap-x-3 font-mono text-xs text-ink-400 lg:shrink-0 lg:flex-nowrap lg:gap-x-4"
@@ -293,14 +283,12 @@ export function TimelineEntry({
                 : "bg-gradient-to-br from-accent-500/[0.08] via-transparent to-fuchsia-500/[0.05]",
             )}
           >
-            {/* Ambient wash behind the whole group */}
             <div
               className={cn(
                 "absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-[70%] rounded-full blur-2xl",
                 current ? "bg-cyan-400/20" : "bg-accent-500/20",
               )}
             />
-            {/* Light beam from the logo down onto the platform */}
             <div
               className={cn(
                 "absolute left-1/2 top-1/2 h-16 w-14 -translate-x-1/2 -translate-y-[6%] [mask-image:linear-gradient(to_bottom,black,transparent)]",
@@ -309,8 +297,7 @@ export function TimelineEntry({
                   : "bg-gradient-to-b from-accent-400/25 to-transparent",
               )}
             />
-            {/* Glow pooled on the platform. It tightens and fades as the tile
-                drifts up, which is what sells the height. */}
+            {/* Pooled glow: tightens and fades as the tile drifts up. */}
             <div className="absolute left-1/2 top-1/2 translate-y-[42%]">
               <div
                 className={cn(
@@ -319,7 +306,6 @@ export function TimelineEntry({
                 )}
               />
             </div>
-            {/* Platform disc the logo appears to rest on */}
             <div
               className={cn(
                 "absolute left-1/2 top-1/2 h-14 w-16 -translate-x-1/2 rounded-[50%] border",
@@ -330,9 +316,7 @@ export function TimelineEntry({
                   "translate(-50%, 34%) perspective(120px) rotateX(66deg)",
               }}
             />
-            {/* Logo hovering over the plinth: drifts on the shared float clock
-                while turning on its own axis. Both faces carry the mark, so a
-                full turn never shows the brand mirrored. */}
+            {/* Both faces carry the mark, so a turn never shows it mirrored. */}
             <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-[78%]">
               <div className="relative h-full w-full motion-safe:animate-float">
                 <div

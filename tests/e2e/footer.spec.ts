@@ -101,16 +101,10 @@ test.describe("Footer signature", () => {
     await expect(footer).not.toContainText("Built with");
   });
 
-  // The wordmark is deliberately wider than every other column, so it alone can
-  // reach the fixed scroll-dots — the last letter used to sit under them.
-  //
-  // Two things are being held at once, and the tighter one is the wrap. The
-  // type is sized in vw against a column that loses a fixed inset, so the
-  // narrow end of this range is where the name comes closest to spilling onto
-  // a second line; 1150 and 1200 are there for that, and stay covered even
-  // though the rail itself only appears from xl. Asserting the line count also
-  // stops the clearance check passing for the wrong reason: a wrapped name is
-  // short, so it clears the rail easily while looking nothing like intended.
+  // The wordmark is wider than every other column, so it alone can reach the
+  // fixed scroll-dots. Its type is sized in vw, so the narrow widths here are
+  // where it comes closest to wrapping — and a wrapped name would clear the
+  // rail for the wrong reason, hence asserting the line count too.
   for (const width of [1025, 1150, 1200, 1280, 1440, 1600, 1920]) {
     test(`stays on one line and clears the scroll-dots rail at ${width}px`, async ({
       page,

@@ -12,15 +12,12 @@ interface DoorRoomProps {
 }
 
 /**
- * What is on the other side. A flat panel of light gave the camera nothing to
- * fly through, so the doorway holds a corridor: frames receding to a vanishing
- * point, light spilling from it, and the monogram waiting at the end.
+ * The corridor behind the door: frames receding to a vanishing point with the
+ * monogram at the end.
  *
- * The corridor travels as one layer rather than per-frame. All of this sits
- * inside a subtree the door scales to 13x, where every independently animated
- * element is re-rasterised at that size — six of them cost a fifth of the
- * flight's frames. Moving forward scales everything about the vanishing point
- * together anyway, so one transform is both cheaper and truer.
+ * It travels as one layer rather than per-frame. This sits inside a subtree the
+ * door scales to 13x, where each independently animated element is re-rasterised
+ * at that size and six of them cost a fifth of the flight's frames.
  */
 export function DoorRoom({
   opening,
