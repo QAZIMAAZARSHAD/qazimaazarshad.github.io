@@ -60,9 +60,13 @@ const BADGES: TechBadge[] = [
   },
 ];
 
+const RING_GRADIENT =
+  "conic-gradient(from 0deg, #6366f1, #22d3ee, #818cf8, #4f46e5, #22d3ee, #6366f1)";
+
 const AT = {
   bloom: 0.05,
   ring: 0.1,
+  orbit: 0.55,
   trace: 0.25,
   iris: 0.35,
   portrait: 0.4,
@@ -168,12 +172,11 @@ export function AvatarRing() {
               }
         }
       >
+        {/* Halo and ring turn together, the halo just wider and blurred, which
+            is what gives the rim its neon bleed rather than a flat edge. */}
         <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background:
-              "conic-gradient(from 0deg, #6366f1, #22d3ee, #818cf8, #4f46e5, #22d3ee, #6366f1)",
-          }}
+          className="absolute -inset-[3px] rounded-full opacity-70 blur-lg"
+          style={{ background: RING_GRADIENT }}
           animate={reduce ? undefined : { rotate: 360 }}
           transition={
             reduce
@@ -181,6 +184,73 @@ export function AvatarRing() {
               : { duration: 18, ease: "linear", repeat: Infinity }
           }
         />
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ background: RING_GRADIENT }}
+          animate={reduce ? undefined : { rotate: 360 }}
+          transition={
+            reduce
+              ? undefined
+              : { duration: 18, ease: "linear", repeat: Infinity }
+          }
+        />
+      </motion.div>
+
+      {/* Orbit. Held close to the rim: any wider and it reaches across into the
+          name beside it. Kept off the smallest screens, where expanding past
+          the portrait would push the hero column into horizontal overflow. */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -inset-[6%] hidden sm:block"
+        initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.86 }}
+        animate={
+          entered
+            ? reduce
+              ? { opacity: 1 }
+              : { opacity: 1, scale: 1 }
+            : undefined
+        }
+        transition={
+          reduce ? settle : { duration: 1.4, delay: AT.orbit, ease: EASE_GLIDE }
+        }
+      >
+        <motion.svg
+          viewBox="0 0 200 200"
+          className="h-full w-full"
+          animate={reduce ? undefined : { rotate: 360 }}
+          transition={
+            reduce
+              ? undefined
+              : { duration: 48, ease: "linear", repeat: Infinity }
+          }
+        >
+          <defs>
+            <linearGradient id="qma-orbit" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.05" />
+              <stop offset="45%" stopColor="#67e8f9" stopOpacity="0.55" />
+              <stop offset="100%" stopColor="#818cf8" stopOpacity="0.15" />
+            </linearGradient>
+          </defs>
+          <g transform="rotate(-20 100 100)">
+            <ellipse
+              cx="100"
+              cy="100"
+              rx="95"
+              ry="82"
+              fill="none"
+              stroke="url(#qma-orbit)"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeDasharray="1.5 7"
+            />
+            {[5, 195].map((cx) => (
+              <g key={cx}>
+                <circle cx={cx} cy="100" r="5" fill="#22d3ee" opacity="0.2" />
+                <circle cx={cx} cy="100" r="2" fill="#67e8f9" />
+              </g>
+            ))}
+          </g>
+        </motion.svg>
       </motion.div>
 
       {!reduce && (
@@ -310,11 +380,17 @@ export function AvatarRing() {
           className={cn("absolute z-10", badge.position)}
         >
           <div
-            className="glass flex items-center gap-2 rounded-2xl px-3 py-2 shadow-lg shadow-ink-950/40 animate-float"
+            className="glass animate-float flex items-center gap-2 rounded-2xl px-3 py-2 shadow-lg shadow-ink-950/40 ring-1 ring-inset ring-white/10 sm:gap-2.5 sm:px-3.5 sm:py-2.5"
             style={{ animationDelay: `${badge.delay}s` }}
           >
-            <badge.Icon className={cn("h-4 w-4", badge.color)} aria-hidden />
-            <span className="font-mono text-xs text-ink-200">
+            <badge.Icon
+              className={cn(
+                "h-4 w-4 sm:h-[1.15rem] sm:w-[1.15rem]",
+                badge.color,
+              )}
+              aria-hidden
+            />
+            <span className="font-mono text-xs text-ink-100 sm:text-sm">
               {badge.label}
             </span>
           </div>

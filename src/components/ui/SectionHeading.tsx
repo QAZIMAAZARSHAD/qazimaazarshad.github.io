@@ -5,18 +5,33 @@ import { cn } from "@/lib/utils";
 interface SectionHeadingProps {
   kicker?: string;
   title: string;
+  /** Substring of `title` to carry the brand gradient, as the hero name does. */
+  highlight?: string;
   description?: string;
   align?: "left" | "center";
   className?: string;
 }
 
+/** Splits the title so `highlight` can be wrapped without breaking the text. */
+function titleParts(title: string, highlight?: string) {
+  const at = highlight ? title.lastIndexOf(highlight) : -1;
+  if (at < 0 || !highlight) return { before: title, match: "", after: "" };
+  return {
+    before: title.slice(0, at),
+    match: highlight,
+    after: title.slice(at + highlight.length),
+  };
+}
+
 export function SectionHeading({
   kicker,
   title,
+  highlight,
   description,
   align = "left",
   className,
 }: SectionHeadingProps) {
+  const { before, match, after } = titleParts(title, highlight);
   const prefersReducedMotion = useReducedMotion();
   return (
     <motion.div
@@ -37,7 +52,9 @@ export function SectionHeading({
         </span>
       )}
       <h2 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl">
-        {title}
+        {before}
+        {match && <span className="text-gradient">{match}</span>}
+        {after}
       </h2>
       <motion.span
         aria-hidden

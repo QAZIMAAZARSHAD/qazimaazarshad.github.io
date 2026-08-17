@@ -22,6 +22,7 @@ export function About() {
       <SectionHeading
         kicker="About"
         title="Full-stack engineering, amplified by AI"
+        highlight="AI"
         description="How I build — pairing deep product ownership with AI-first, agentic workflows."
       />
 
