@@ -129,13 +129,21 @@ export function Projects() {
                 type="button"
                 onClick={() => setExpanded((value) => !value)}
                 aria-expanded={expanded}
-                className="glass glass-hover group inline-flex items-center gap-2 rounded-full px-6 py-3 font-mono text-xs font-medium uppercase tracking-wider text-ink-200 outline-none transition-all hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60"
+                className="glass glass-hover group inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-3 font-mono text-xs font-medium uppercase tracking-wider text-ink-200 outline-none transition-all hover:text-white focus-visible:ring-2 focus-visible:ring-accent-400/60 sm:px-6"
               >
                 {expanded ? (
                   "Show less"
                 ) : (
                   <>
-                    Show all {filtered.length} projects{" "}
+                    {/* The full phrase is wider than a small phone and broke
+                        mid-word. "projects" goes visually only, so the button
+                        still reads in full. */}
+                    <span>
+                      Show all {filtered.length}{" "}
+                      <span className="sr-only min-[400px]:not-sr-only min-[400px]:whitespace-nowrap">
+                        projects
+                      </span>
+                    </span>
                     <span className="text-accent-300">({remaining} more)</span>
                   </>
                 )}

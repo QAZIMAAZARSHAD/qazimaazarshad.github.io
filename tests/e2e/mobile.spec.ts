@@ -40,6 +40,40 @@ test.describe("Mobile behavior (regression guards)", () => {
     await expect(page.locator("#contact")).toBeInViewport();
   });
 
+  // Guards the bug where the label was wider than the phone and broke across
+  // two lines mid-phrase ("SHOW ALL 23 / PROJECTS", "(17 / MORE)").
+  for (const width of [320, 360, 390]) {
+    test.describe(`the projects toggle at ${width}px`, () => {
+      test.use({ viewport: { width, height: 800 } });
+
+      test("keeps its label on one line, inside the screen", async ({
+        page,
+      }) => {
+        const button = page.locator("#projects button[aria-expanded]");
+        await button.scrollIntoViewIfNeeded();
+        await expect(button).toBeVisible();
+
+        const box = await button.evaluate((el) => {
+          const cs = getComputedStyle(el);
+          const padding =
+            parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+          const rect = el.getBoundingClientRect();
+          return {
+            lines: Math.round(
+              (rect.height - padding) / parseFloat(cs.lineHeight),
+            ),
+            left: rect.left,
+            right: rect.right,
+          };
+        });
+
+        expect(box.lines).toBe(1);
+        expect(box.left).toBeGreaterThanOrEqual(0);
+        expect(box.right).toBeLessThanOrEqual(width);
+      });
+    });
+  }
+
   test("hamburger toggles the drawer with all nav links", async ({ page }) => {
     const toggle = page.getByRole("button", { name: "Open menu" });
     await toggle.click();
