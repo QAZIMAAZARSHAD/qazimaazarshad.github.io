@@ -984,6 +984,9 @@ export const achievementLinks: Record<string, AchievementLink> = {
   "All India Rank 49 — National Engineering Olympiad": {
     certificateId: "achievement-neo-excellence",
   },
+  "1st Prize — Inter-School Quiz (District Level)": {
+    certificateId: "achievement-inter-school-quiz",
+  },
   "1st Prize — Quizzora Quiz Competition (University Level)": {
     certificateId: "achievement-quizzora-1st",
   },
